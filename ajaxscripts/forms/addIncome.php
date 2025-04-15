@@ -70,12 +70,12 @@
         $spinner.removeClass('d-none');
 
         var formData = {
-            incomeName: $("#incomeName").val(),
-            incomeDescription: $("#incomeDescription").val(),
-            incomeCategory: $("#incomeCategory").val(),
-            incomeAmount: $("#incomeAmount").val(),
-            incomeDate: $("#incomeDate").val(),
-            incomeReceipt: $("#incomeReceipt").val()
+            transactionName: $("#incomeName").val(),
+            transactionDescription: $("#incomeDescription").val(),
+            transactionCategory: $("#incomeCategory").val(),
+            transactionAmount: $("#incomeAmount").val(),
+            transactionDate: $("#incomeDate").val(),
+            transactionReceipt: $("#incomeReceipt").val()
         };
 
         var url = "ajaxscripts/queries/addIncome.php";

@@ -2,7 +2,7 @@
 include('../../includes/functions.php');
 
 $i_id = unlock(unlock($_POST['i_index']));
-$getExp = $mysqli->query("select * from `expenditures` where expId = '$i_id'");
+$getExp = $mysqli->query("select * from `transactions` where transId = '$i_id'");
 $resExp = $getExp->fetch_assoc();
 ?>
 <form autocomplete="off" id="farmExpenditureForm">
@@ -10,7 +10,7 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureName" class="form-label">Expenditure Name <span class="text-danger">*</span></label>
             <input id="expenditureName" class="form-control border-radius-md"
-             type="text" placeholder="Enter expenditure name" value="<?= $resExp['expenditureName'] ?>">
+             type="text" placeholder="Enter expenditure name" value="<?= $resExp['transactionName'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureCategoryEdit" class="form-label">Category <span class="text-danger">*</span></label>
@@ -19,7 +19,7 @@ $resExp = $getExp->fetch_assoc();
                 <?php
                 $getCat = $mysqli->query("SELECT * FROM `expcategory` WHERE `ecatStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    $selected = ($resCat['ecatId'] == $resExp['expenditureCategory']) ? 'selected' : '';
+                    $selected = ($resCat['ecatId'] == $resExp['transactionCategory']) ? 'selected' : '';
                     echo "<option value='{$resCat['ecatId']}' $selected>" . htmlspecialchars($resCat['ecatName']) . "</option>";
                 }
                 ?>
@@ -31,12 +31,12 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureAmount" class="form-label">Amount <span class="text-danger">*</span></label>
             <input id="expenditureAmount" class="form-control border-radius-md"
-             type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['expenditureAmount'] ?>">
+             type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['transactionAmount'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureDateEdit" class="form-label">Date <span class="text-danger">*</span></label>
             <input id="expenditureDateEdit" class="form-control border-radius-md" type="text"
-            placeholder="Select date" required value="<?= $resExp['expenditureDate'] ?>">
+            placeholder="Select date" required value="<?= $resExp['transactionDate'] ?>">
         </div>
     </div>
 
@@ -44,13 +44,13 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureReceipt" class="form-label">Receipt Number (if any)</label>
             <input id="expenditureReceipt" class="form-control border-radius-md" type="text" 
-            placeholder="Enter receipt number" value="<?= $resExp['expenditureReceipt'] ?>">
+            placeholder="Enter receipt number" value="<?= $resExp['transactionReceipt'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureDescription" class="form-label">Description</label>
             <textarea id="expenditureDescription" class="form-control border-radius-md"
              rows="4"
-             placeholder="Enter description"><?= $resExp['expenditureDescription'] ?></textarea>
+             placeholder="Enter description"><?= $resExp['transactionDescription'] ?></textarea>
         </div>
     </div>
 
@@ -83,13 +83,13 @@ $resExp = $getExp->fetch_assoc();
         $spinner.removeClass('d-none');
 
         var formData = {
-            expenditureName: $("#expenditureName").val(),
-            expenditureDescription: $("#expenditureDescription").val(),
-            expenditureCategory: $("#expenditureCategoryEdit").val(),
-            expenditureAmount: $("#expenditureAmount").val(),
-            expenditureDate: $("#expenditureDateEdit").val(),
-            expenditureReceipt: $("#expenditureReceipt").val(),
-            expIndex: '<?php echo $i_id ?>'
+            transactionName: $("#expenditureName").val(),
+            transactionDescription: $("#expenditureDescription").val(),
+            transactionCategory: $("#expenditureCategoryEdit").val(),
+            transactionAmount: $("#expenditureAmount").val(),
+            transactionDate: $("#expenditureDateEdit").val(),
+            transactionReceipt: $("#expenditureReceipt").val(),
+            transIndex: '<?php echo $i_id ?>'
         };
 
         var url = "ajaxscripts/queries/editExpenditure.php";
@@ -118,10 +118,10 @@ $resExp = $getExp->fetch_assoc();
 
         var validateForm = function (formData) {
             var error = '';
-            if (!formData.expenditureName) error += 'Please enter expenditure name\n';
-            if (!formData.expenditureCategory) error += 'Please select category\n';
-            if (!formData.expenditureAmount) error += 'Please enter amount\n';
-            if (!formData.expenditureDate) error += 'Please select date\n';
+            if (!formData.transactionName) error += 'Please enter expenditure name\n';
+            if (!formData.transactionCategory) error += 'Please select category\n';
+            if (!formData.transactionAmount) error += 'Please enter amount\n';
+            if (!formData.transactionDate) error += 'Please select date\n';
             return error;
         };
 

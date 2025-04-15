@@ -2,7 +2,7 @@
 include('../../includes/functions.php');
 
 $i_id = unlock(unlock($_POST['i_index']));
-$getExp = $mysqli->query("select * from `expenditures` where expId = '$i_id'");
+$getExp = $mysqli->query("select * from `transactions` where transId = '$i_id'");
 $resExp = $getExp->fetch_assoc();
 ?>
 <form autocomplete="off" id="farmExpenditureForm">
@@ -10,7 +10,7 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureName" class="form-label">Expenditure Name <span class="text-danger">*</span></label>
             <input id="expenditureName" class="form-control border-radius-md" disabled
-             type="text" placeholder="Enter expenditure name" value="<?= $resExp['expenditureName'] ?>">
+             type="text" placeholder="Enter expenditure name" value="<?= $resExp['transactionName'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureCategory" class="form-label">Category <span class="text-danger">*</span></label>
@@ -19,7 +19,7 @@ $resExp = $getExp->fetch_assoc();
                 <?php
                 $getCat = $mysqli->query("SELECT * FROM `expcategory` WHERE `ecatStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    $selected = ($resCat['ecatId'] == $resExp['expenditureCategory']) ? 'selected' : '';
+                    $selected = ($resCat['ecatId'] == $resExp['transactionCategory']) ? 'selected' : '';
                     echo "<option value='{$resCat['ecatId']}' $selected>" . htmlspecialchars($resCat['ecatName']) . "</option>";
                 }
                 ?>
@@ -31,12 +31,12 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureAmount" class="form-label">Amount <span class="text-danger">*</span></label>
             <input id="expenditureAmount" class="form-control border-radius-md" disabled
-             type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['expenditureAmount'] ?>">
+             type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['transactionAmount'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureDate" class="form-label">Date <span class="text-danger">*</span></label>
             <input id="expenditureDate" class="form-control border-radius-md" type="text" disabled
-            placeholder="Select date" required value="<?= $resExp['expenditureDate'] ?>">
+            placeholder="Select date" required value="<?= $resExp['transactionDate'] ?>">
         </div>
     </div>
 
@@ -44,13 +44,13 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12 col-md-6">
             <label for="expenditureReceipt" class="form-label">Receipt Number (if any)</label>
             <input id="expenditureReceipt" class="form-control border-radius-md" type="text" disabled 
-            placeholder="Enter receipt number" value="<?= $resExp['expenditureReceipt'] ?>">
+            placeholder="Enter receipt number" value="<?= $resExp['transactionReceipt'] ?>">
         </div>
         <div class="col-12 col-md-6">
             <label for="expenditureDescription" class="form-label">Description</label>
             <textarea id="expenditureDescription" class="form-control border-radius-md"
              rows="4" disabled
-             placeholder="Enter description"><?= $resExp['expenditureDescription'] ?></textarea>
+             placeholder="Enter description"><?= $resExp['transactionDescription'] ?></textarea>
         </div>
     </div>
 

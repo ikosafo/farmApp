@@ -12,7 +12,7 @@ $transactionReceipt = mysqli_real_escape_string($mysqli, $_POST['transactionRece
 // Insert into the transactions table
 $insertQuery = "INSERT INTO `transactions` 
                 (`transactionName`, `transactionDescription`, `transactionCategory`, `transactionAmount`, `transactionDate`, `transactionReceipt`, `transactionType`)
-                VALUES ('$transactionName', '$transactionDescription', '$transactionCategory', '$transactionAmount', '$transactionDate', '$transactionReceipt','Expenditure')";
+                VALUES ('$transactionName', '$transactionDescription', '$transactionCategory', '$transactionAmount', '$transactionDate', '$transactionReceipt','Income')";
 
 if ($mysqli->query($insertQuery)) {
     echo "Success";

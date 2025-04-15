@@ -15,39 +15,39 @@ $searchValue = $_POST['search']['value']; // Search value
 $searchQuery = " ";
 if ($searchValue != '') {
     $searchQuery = " AND (
-        incomeName LIKE '%" . $searchValue . "%' 
-        OR incomeDescription LIKE '%" . $searchValue . "%'
-        OR incomeCategory LIKE '%" . $searchValue . "%'
-        OR incomeAmount LIKE '%" . $searchValue . "%'
-        OR incomeDate LIKE '%" . $searchValue . "%'
-        OR incomeReceipt LIKE '%" . $searchValue . "%'
-        OR (SELECT ecatName FROM inccategory WHERE ecatId = incomes.incomeCategory) LIKE '%" . $searchValue . "%'
+        transactionName LIKE '%" . $searchValue . "%' 
+        OR transactionDescription LIKE '%" . $searchValue . "%'
+        OR transactionCategory LIKE '%" . $searchValue . "%'
+        OR transactionAmount LIKE '%" . $searchValue . "%'
+        OR transactionDate LIKE '%" . $searchValue . "%'
+        OR transactionReceipt LIKE '%" . $searchValue . "%'
+        OR (SELECT ecatName FROM inccategory WHERE ecatId = transactions.transactionCategory) LIKE '%" . $searchValue . "%'
     ) ";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($mysqli, "select count(*) as allcount from `incomes` where incStatus = 1");
+$sel = mysqli_query($mysqli, "select count(*) as allcount from `transactions` where `transStatus` = 1 AND `transactionType` = 'Income'");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `incomes` WHERE incStatus = 1 AND 1 " . $searchQuery);
+$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `transactions` WHERE `transStatus` = 1 AND `transactionType` = 'Income' AND 1 " . $searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "SELECT * FROM `incomes` WHERE `incStatus` = 1 AND 1 " . $searchQuery . " ORDER BY incomeDate DESC LIMIT " . $row . "," . $rowperpage;
+$empQuery = "SELECT * FROM `transactions` WHERE `transStatus` = 1 AND `transactionType` = 'Income' AND 1 " . $searchQuery . " ORDER BY transactionDate DESC LIMIT " . $row . "," . $rowperpage;
 $empRecords = mysqli_query($mysqli, $empQuery);
 $data = array();
 
 
 while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
-        "incomeName" => $row['incomeName'],
-        "incomeDate" => $row['incomeDate'],
-        "incomeCategory" => incCategoryName($row['incomeCategory']),
-		"incomeAmount" => number_format(($row['incomeAmount']), 2, '.', ','),	
-        "incomeActions" => manageIncome($row['incId'])
+        "incomeName" => $row['transactionName'],
+        "incomeDate" => $row['transactionDate'],
+        "incomeCategory" => incCategoryName($row['transactionCategory']),
+		"incomeAmount" => number_format(($row['transactionAmount']), 2, '.', ','),	
+        "incomeActions" => manageIncome($row['transId'])
     );
 }
 

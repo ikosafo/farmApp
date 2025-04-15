@@ -70,12 +70,12 @@
         $spinner.removeClass('d-none');
 
         var formData = {
-            expenditureName: $("#expenditureName").val(),
-            expenditureDescription: $("#expenditureDescription").val(),
-            expenditureCategory: $("#expenditureCategory").val(),
-            expenditureAmount: $("#expenditureAmount").val(),
-            expenditureDate: $("#expenditureDate").val(),
-            expenditureReceipt: $("#expenditureReceipt").val()
+            transactionName: $("#expenditureName").val(),
+            transactionDescription: $("#expenditureDescription").val(),
+            transactionCategory: $("#expenditureCategory").val(),
+            transactionAmount: $("#expenditureAmount").val(),
+            transactionDate: $("#expenditureDate").val(),
+            transactionReceipt: $("#expenditureReceipt").val()
         };
 
         var url = "ajaxscripts/queries/addExpenditure.php";
@@ -101,10 +101,10 @@
 
         var validateForm = function (formData) {
             var error = '';
-            if (!formData.expenditureName) error += 'Please enter expenditure name\n';
-            if (!formData.expenditureCategory) error += 'Please select category\n';
-            if (!formData.expenditureAmount) error += 'Please enter amount\n';
-            if (!formData.expenditureDate) error += 'Please select date\n';
+            if (!formData.transactionName) error += 'Please enter expenditure name\n';
+            if (!formData.transactionCategory) error += 'Please select category\n';
+            if (!formData.transactionAmount) error += 'Please enter amount\n';
+            if (!formData.transactionDate) error += 'Please select date\n';
             return error;
         };
 
