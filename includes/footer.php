@@ -260,6 +260,7 @@
 <script src="assets/js/jquery-confirm.min.js"></script>
 <script src="assets/js/select2.min.js"></script>
 <script src="assets/js/chart.min.js"></script>
+<script src="assets/js/flatpickr.js"></script>
 
 </body>
 

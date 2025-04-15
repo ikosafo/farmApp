@@ -34,6 +34,7 @@ function manageProduct($id)
     data-toggle="tooltip" data-original-title="Delete Product" i_index="' . lock(lock($id)) . '">Delete</a>';
 }
 
+
 function manageUser($id)
 {
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewUser_btn" 
@@ -43,6 +44,7 @@ function manageUser($id)
     <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteUser_btn" 
     data-toggle="tooltip" data-original-title="Delete User" i_index="' . lock(lock($id)) . '">Delete</a>';
 }
+
 
 function manageExpenditure($id)
 {
@@ -54,9 +56,43 @@ function manageExpenditure($id)
     data-toggle="tooltip" data-original-title="Delete Expenditure" i_index="' . lock(lock($id)) . '">Delete</a>';
 }
 
+
+function manageIncome($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewIncome_btn" 
+    data-toggle="tooltip" data-original-title="View Income" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editIncome_btn" 
+    data-toggle="tooltip" data-original-title="Edit Income" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteIncome_btn" 
+    data-toggle="tooltip" data-original-title="Delete Income" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
+function manageExpCategories($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewExpCategory_btn" 
+    data-toggle="tooltip" data-original-title="View Expenditure Category" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editExpCategory_btn" 
+    data-toggle="tooltip" data-original-title="Edit Expenditure Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteExpCategory" 
+    data-toggle="tooltip" data-original-title="Delete Expenditure Category" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
+function manageIncCategories($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewIncCategory_btn" 
+    data-toggle="tooltip" data-original-title="View Expenditure Category" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editIncCategory_btn" 
+    data-toggle="tooltip" data-original-title="Edit Expenditure Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteIncCategory" 
+    data-toggle="tooltip" data-original-title="Delete Expenditure Category" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
 function manageCashBook($id)
 {
-    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewExpenditure_btn" 
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewCashBook_btn" 
     data-toggle="tooltip" data-original-title="View Cashbook" i_index="' . lock(lock($id)) . '">View</a> | 
     <a href="javascript:;" class="text-secondary font-weight-bold text-xs editExpenditure_btn" 
     data-toggle="tooltip" data-original-title="Edit Cashbook" i_index="' . lock(lock($id)) . '">Edit</a> | 
@@ -66,12 +102,29 @@ function manageCashBook($id)
 
 function manageCashBookExpenditure($id)
 {
-    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewExpenditure_btn" 
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewCashBookExp_btn" 
     data-toggle="tooltip" data-original-title="View Cashbook" i_index="' . lock(lock($id)) . '">View</a> | 
     <a href="javascript:;" class="text-secondary font-weight-bold text-xs editExpenditure_btn" 
     data-toggle="tooltip" data-original-title="Edit Cashbook" i_index="' . lock(lock($id)) . '">Edit</a> | 
     <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteExpenditure_btn" 
     data-toggle="tooltip" data-original-title="Delete Cashbook Entry" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+function expCategoryName($id) {
+    global $mysqli;
+
+    $getExp = $mysqli->query("select `ecatName` from `expcategory` where `ecatId` = '$id'");
+    $resExp = $getExp->fetch_assoc();
+    return $resExp['ecatName'];
+}
+
+
+function incCategoryName($id) {
+    global $mysqli;
+
+    $getInc = $mysqli->query("select `icatName` from `inccategory` where `icatId` = '$id'");
+    $resInc = $getInc->fetch_assoc();
+    return $resInc['icatName'];
 }
 
 

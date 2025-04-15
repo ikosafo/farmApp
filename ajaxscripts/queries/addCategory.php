@@ -4,7 +4,8 @@ include('../../includes/functions.php');
 
 // Escape and sanitize user inputs
 $categoryName = mysqli_real_escape_string($mysqli, $_POST['categoryName']);
-$categoryCode = mysqli_real_escape_string($mysqli, $_POST['categoryCode']);
+$categoryDescription = mysqli_real_escape_string($mysqli, $_POST['categoryCode']);
+$categoryStatus = mysqli_real_escape_string($mysqli, $_POST['categoryStatus']);
 $datetime = date("Y-m-d H:i:s");
 
 // Check if the category name or category code already exists

@@ -106,7 +106,7 @@
         });
     });
 
-    $(document).off('click', '.viewExpenditure_btn').on('click', '.viewExpenditure_btn', function() {
+    $(document).off('click', '.viewCashbookInc_btn').on('click', '.viewCashbookInc_btn', function() {
         var theindex = $(this).attr('i_index');
         //alert(theindex);
 

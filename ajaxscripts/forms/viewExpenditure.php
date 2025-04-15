@@ -2,81 +2,63 @@
 include('../../includes/functions.php');
 
 $i_id = unlock(unlock($_POST['i_index']));
-$getExp = $mysqli->query("select * from expenditures where expId = '$i_id'");
+$getExp = $mysqli->query("select * from `expenditures` where expId = '$i_id'");
 $resExp = $getExp->fetch_assoc();
-
 ?>
 <form autocomplete="off" id="farmExpenditureForm">
-<div class="card p-3 border-radius-xl bg-white js-active" data-animation="FadeIn" style="margin-bottom: 30px;">
-    
-        <h5 class="font-weight-bolder mb-0">Farm Expenditure</h5>
-        <p class="mb-0 text-sm">View farm expenditure</p>
-
-		
-		
-		
-		  <div class="row mt-3">
-            <div class="col-12 col-sm-6">
-                <label for="expenditureName">Expenditure Name</label>
-                <input id="expenditureName" class="form-control" type="text" name="expenditureName" readonly value="<?php echo $resExp['expenditureName']; ?>" placeholder="Enter expenditure name" required>
-            </div>
-            <div class="col-12 col-sm-6 mt-3 mt-sm-0">
-                <label for="expenditureDescription">Expenditure Description</label>
-                <textarea id="expenditureDescription" class="form-control" disabled name="expenditureDescription" rows="1" placeholder="Enter expenditure description"><?php echo $resExp['expenditureDescription']; ?></textarea>
-            </div>
-			
-			
-			
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="expenditureName" class="form-label">Expenditure Name <span class="text-danger">*</span></label>
+            <input id="expenditureName" class="form-control border-radius-md" disabled
+             type="text" placeholder="Enter expenditure name" value="<?= $resExp['expenditureName'] ?>">
         </div>
-		
-		
-		
-		 <div class="row mt-3">
-		 
-		 <div class="col-12 col-sm-3 mt-3 mt-sm-0">
-                <label for="expenditureCategory">Expenditure Category</label>
-                <select id="expenditureCategory" class="form-select" name="expenditureCategory" required disabled>
-                    <option value="">Select Category</option>
-                    <?php
-                    $expCat = $resExp['expenditureCategory'];
-                    $getCat = $mysqli->query("select * from expense_category where ecatActive = 1");
-                    while ($resCat = $getCat->fetch_assoc()) { ?>
-                        <option <?php if (@$expCat == $resCat['ecatName']) echo "Selected" ?>><?php echo $resCat['ecatName'] ?></option>
-                    <?php } ?>
-                </select>
-            </div>
-		 
-            <div class="col-12 col-sm-2">
-                <label for="expenditureAmount">Amount</label>
-                <input id="expenditureAmount" class="form-control" type="text" disabled onkeypress="return isAmount(event)" value="<?php echo $resExp['expenditureAmount']; ?>" name="expenditureAmount" min="0" step="0.01" placeholder="Enter amount" required>
-            </div>
-            
-			
-			
-			<div class="col-12 col-sm-2">
-                <label for="expenditureDate">Date</label>
-                <input id="expenditureDate" class="form-control" type="date" disabled name="expenditureDate" placeholder="Enter date" required value="<?php echo $resExp['expenditureDate']; ?>">
-            </div>
-			
-			<div class="col-12 col-sm-2">
-                <label for="expenditureReceipt">Receipt Number</label>
-                <input id="expenditureReceipt" class="form-control" type="text" disabled name="expenditureReceipt" placeholder="Enter receipt number" value="<?php echo $resExp['expenditureReceipt']; ?>">
-            </div>
-			
-			<div class="col-12 col-sm-3 mt-3 mt-sm-0">
-                
-				<button  style="width: 80% !important; float: left; margin-top: 30px;" id="addExpBtn" class="btn bg-gradient-dark mb-0 js-btn-next" type="button" title="Save Record">SAVE RECORD >> </button>
-				
-            </div>
-			
-			
-			
-			</div>
-			
- 
+        <div class="col-12 col-md-6">
+            <label for="expenditureCategory" class="form-label">Category <span class="text-danger">*</span></label>
+            <select id="expenditureCategory" disabled class="form-control border-radius-md" required style="width: 100%;">
+                <option value="" disabled>Select a category</option>
+                <?php
+                $getCat = $mysqli->query("SELECT * FROM `expcategory` WHERE `ecatStatus` = 1");
+                while ($resCat = $getCat->fetch_assoc()) {
+                    $selected = ($resCat['ecatId'] == $resExp['expenditureCategory']) ? 'selected' : '';
+                    echo "<option value='{$resCat['ecatId']}' $selected>" . htmlspecialchars($resCat['ecatName']) . "</option>";
+                }
+                ?>
+            </select>
+        </div>
+    </div>
 
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="expenditureAmount" class="form-label">Amount <span class="text-danger">*</span></label>
+            <input id="expenditureAmount" class="form-control border-radius-md" disabled
+             type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['expenditureAmount'] ?>">
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="expenditureDate" class="form-label">Date <span class="text-danger">*</span></label>
+            <input id="expenditureDate" class="form-control border-radius-md" type="text" disabled
+            placeholder="Select date" required value="<?= $resExp['expenditureDate'] ?>">
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="expenditureReceipt" class="form-label">Receipt Number (if any)</label>
+            <input id="expenditureReceipt" class="form-control border-radius-md" type="text" disabled 
+            placeholder="Enter receipt number" value="<?= $resExp['expenditureReceipt'] ?>">
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="expenditureDescription" class="form-label">Description</label>
+            <textarea id="expenditureDescription" class="form-control border-radius-md"
+             rows="4" disabled
+             placeholder="Enter description"><?= $resExp['expenditureDescription'] ?></textarea>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <button type="button" class="btn btn-outline-secondary me-3" data-bs-dismiss="modal">Cancel</button>
     </div>
 </form>
+
 
 
 <script>

@@ -9,7 +9,7 @@ $expenditureCategory = mysqli_real_escape_string($mysqli, $_POST['expenditureCat
 $expenditureAmount = mysqli_real_escape_string($mysqli, $_POST['expenditureAmount']);
 $expenditureDate = mysqli_real_escape_string($mysqli, $_POST['expenditureDate']);
 $expenditureReceipt = mysqli_real_escape_string($mysqli, $_POST['expenditureReceipt']);
-$expId = mysqli_real_escape_string($mysqli, $_POST['i_id']); // Assuming you have an expId to identify the expenditure
+$expIndex = mysqli_real_escape_string($mysqli, $_POST['expIndex']); 
 
 // Update the expenditures table based on expId
 $updateQuery = "UPDATE `expenditures` SET 
@@ -19,7 +19,7 @@ $updateQuery = "UPDATE `expenditures` SET
                 `expenditureAmount` = '$expenditureAmount',
                 `expenditureDate` = '$expenditureDate',
                 `expenditureReceipt` = '$expenditureReceipt'
-                WHERE `expId` = '$expId'";
+                WHERE `expId` = '$expIndex'";
 
 if ($mysqli->query($updateQuery)) {
     // Query executed successfully

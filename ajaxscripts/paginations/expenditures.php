@@ -14,29 +14,29 @@ $searchValue = $_POST['search']['value']; // Search value
 ## Search
 $searchQuery = " ";
 if ($searchValue != '') {
-    $searchQuery = " and 
-    (
-    expenditureName LIKE '%" . $searchValue . "%' 
-    OR expenditureDescription LIKE '%" . $searchValue . "%'
-    OR expenditureCategory LIKE '%" . $searchValue . "%'
-    OR expenditureAmount LIKE '%" . $searchValue . "%'
-    OR expenditureDate LIKE '%" . $searchValue . "%'
-    OR expenditureReceipt LIKE '%" . $searchValue . "%'
+    $searchQuery = " AND (
+        expenditureName LIKE '%" . $searchValue . "%' 
+        OR expenditureDescription LIKE '%" . $searchValue . "%'
+        OR expenditureCategory LIKE '%" . $searchValue . "%'
+        OR expenditureAmount LIKE '%" . $searchValue . "%'
+        OR expenditureDate LIKE '%" . $searchValue . "%'
+        OR expenditureReceipt LIKE '%" . $searchValue . "%'
+        OR (SELECT ecatName FROM expcategory WHERE ecatId = expenditures.expenditureCategory) LIKE '%" . $searchValue . "%'
     ) ";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($mysqli, "select count(*) as allcount from expenditures where expActive = 1");
+$sel = mysqli_query($mysqli, "select count(*) as allcount from `expenditures` where expStatus = 1");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM expenditures WHERE expActive = 1 AND 1 " . $searchQuery);
+$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `expenditures` WHERE expStatus = 1 AND 1 " . $searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "SELECT * FROM expenditures WHERE expActive = 1 AND 1 " . $searchQuery . " ORDER BY expenditureDate DESC LIMIT " . $row . "," . $rowperpage;
+$empQuery = "SELECT * FROM `expenditures` WHERE `expStatus` = 1 AND 1 " . $searchQuery . " ORDER BY expenditureDate DESC LIMIT " . $row . "," . $rowperpage;
 $empRecords = mysqli_query($mysqli, $empQuery);
 $data = array();
 
@@ -45,10 +45,9 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
         "expenditureName" => $row['expenditureName'],
         "expenditureDate" => $row['expenditureDate'],
-        "expenditureCategory" => $row['expenditureCategory'],
-        //"expenditureAmount" => $row['expenditureAmount'],
+        "expenditureCategory" => expCategoryName($row['expenditureCategory']),
 		"expenditureAmount" => number_format(($row['expenditureAmount']), 2, '.', ','),	
-        "action" => manageExpenditure($row['expId'])
+        "expenditureActions" => manageExpenditure($row['expId'])
     );
 }
 
