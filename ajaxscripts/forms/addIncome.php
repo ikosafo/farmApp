@@ -87,9 +87,15 @@
                     className: "success",
                     position: "top right"
                 });
+                // Reset form and plugins
+                $("#farmIncomeForm")[0].reset();
+                $("#incomeCategory").val(null).trigger('change');
+                $("#incomeDate").flatpickr().clear();
                 $('#addIncomeModal').modal('hide');
-                loadPage("ajaxscripts/tables/income.php", function (response) {
-                    $('#pageTable').html(response);
+                $('#addIncomeModal').on('hidden.bs.modal', function () {
+                    loadPage("ajaxscripts/tables/income.php", function (response) {
+                        $('#pageTable').html(response);
+                    });
                 });
             } else {
                 $.notify(response, {
@@ -101,10 +107,10 @@
 
         var validateForm = function (formData) {
             var error = '';
-            if (!formData.incomeName) error += 'Please enter income name\n';
-            if (!formData.incomeCategory) error += 'Please select category\n';
-            if (!formData.incomeAmount) error += 'Please enter amount\n';
-            if (!formData.incomeDate) error += 'Please select date\n';
+            if (!formData.transactionName) error += 'Please enter income name\n';
+            if (!formData.transactionCategory) error += 'Please select category\n';
+            if (!formData.transactionAmount) error += 'Please enter amount\n';
+            if (!formData.transactionDate) error += 'Please select date\n';
             return error;
         };
 
