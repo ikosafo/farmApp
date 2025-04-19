@@ -112,7 +112,7 @@
 
 
                 <li class="nav-item">
-                    <a class="nav-link  <?php echo ($_SERVER['PHP_SELF'] == "/cashbook.php" ? "active" : ""); ?>" href="cashbook">
+                    <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == "/cashbook.php" ? "active" : ""); ?>" href="cashbook">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>office</title>
@@ -138,7 +138,7 @@
 
 
                 <li class="nav-item">
-                    <a class="nav-link  " href="#../pages/billing.php">
+                    <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == "/orders.php" ? "active" : ""); ?>" href="orders">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>credit-card</title>
@@ -166,7 +166,7 @@
 
 
                 <li class="nav-item">
-                    <a class="nav-link  " href="#../pages/tables.php">
+                    <a class="nav-link  <?php echo ($_SERVER['PHP_SELF'] == "/trialbalance.php" ? "active" : ""); ?>" href="trialbalance">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>box-3d-50</title>
