@@ -6,7 +6,7 @@
         <div class="row mt-3">
             <div class="col-12 col-sm-3 mt-3 mt-sm-0">
                 <label for="reportCategory">Category</label>
-                <select id="reportCategory" class="form-select" name="reportCategory" required>
+                <select id="reportCategory" class="form-select" required>
                     <option value="">Select Category</option>
                     <option>Expenditure</option>
                     <option>Income</option>
@@ -16,12 +16,12 @@
 
             <div class="col-12 col-sm-3 mt-3 mt-sm-0">
                 <label for="reportStartDate">Date From</label>
-                <input id="reportStartDate" class="form-control" type="date" name="reportStartDate" placeholder="Enter date" required>
+                <input id="reportStartDate" class="form-control" type="date" placeholder="Enter date" required>
             </div>
 
             <div class="col-12 col-sm-3 mt-3 mt-sm-0">
                 <label for="reportEndDate">Date To</label>
-                <input id="reportEndDate" class="form-control" type="date" name="reportEndDate" placeholder="Enter date" required>
+                <input id="reportEndDate" class="form-control" type="date" placeholder="Enter date" required>
             </div>
 
             <div class="col-12 col-sm-3 mt-3 mt-sm-0">
@@ -36,6 +36,9 @@
 
 <script>
     feather.replace();
+
+    $("#reportStartDate").flatpickr();
+    $("#reportEndDate").flatpickr();
 
     $("#searchReportBtn").click(function() {
         var formData = {
@@ -71,12 +74,10 @@
                 error += 'Please select appropriate date range\n';
                 $("#reportEndDate").focus();
             }
-            // You can add more validation rules as needed
 
             return error;
         };
 
-        // Call the saveForm function with form data, URL, success callback, and validation function
         saveForm(formData, url, successCallback, validateForm);
     });
 </script>

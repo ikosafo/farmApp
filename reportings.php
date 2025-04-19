@@ -21,6 +21,7 @@
 
 <?php include('includes/footer.php') ?>
 
+
 <script>
     loadPage("ajaxscripts/forms/addReporting.php", function(response) {
         $('#pageForm').html(response);
