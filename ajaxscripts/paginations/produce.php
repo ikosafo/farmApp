@@ -14,33 +14,42 @@ $searchValue = $_POST['search']['value']; // Search value
 ## Search
 $searchQuery = " ";
 if ($searchValue != '') {
-    $searchQuery = " and 
-    (pcatName LIKE '%" . $searchValue . "%' OR pcatCode LIKE '%" . $searchValue . "%') ";
+    $searchQuery = " AND (
+        prodName LIKE '%" . $searchValue . "%' 
+        OR prodDescription LIKE '%" . $searchValue . "%'
+        OR prodPrice LIKE '%" . $searchValue . "%'
+        OR expirationDate LIKE '%" . $searchValue . "%'
+        OR prodQuantity LIKE '%" . $searchValue . "%'
+        OR (SELECT pcatName FROM prodcategory WHERE pcatId = producelist.prodCategory) LIKE '%" . $searchValue . "%'
+    ) ";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($mysqli, "select count(*) as allcount from produce_category where pcatActive = 1");
+$sel = mysqli_query($mysqli, "select count(*) as allcount from `producelist` where `prodActive` = 1");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM produce_category WHERE pcatActive = 1 AND 1 " . $searchQuery);
+$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `producelist` WHERE `prodActive` = 1  AND 1 " . $searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "SELECT * FROM produce_category WHERE pcatActive = 1 AND 1 " . $searchQuery . " ORDER BY pcatName LIMIT " . $row . "," . $rowperpage;
+$empQuery = "SELECT * FROM `producelist` WHERE `prodActive` = 1 AND 1 " . $searchQuery . " ORDER BY prodId DESC LIMIT " . $row . "," . $rowperpage;
 $empRecords = mysqli_query($mysqli, $empQuery);
 $data = array();
 
 
 while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
-        "categoryName" => $row['pcatName'],
-        "categoryCode" => $row['pcatCode'],
-        "categoryId" => deleteCategory($row['pcatId'])
+        "produceName" => $row['prodName'],
+        "produceCategory" => expCategoryName($row['prodCategory']),
+        "producePrice" => number_format(($row['prodPrice']), 2, '.', ','),
+		"produceQuantity" => $row['prodQuantity'],	
+        "produceActions" => manageProduction($row['prodId'])
     );
 }
+
 
 ## Response
 $response = array(

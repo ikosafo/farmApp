@@ -39,7 +39,7 @@
             categoryStatus: $("#categoryStatus").is(':checked') ? 1 : 0
         };
 
-        var url = "ajaxscripts/queries/addIncCategory.php";
+        var url = "ajaxscripts/queries/addProdCategory.php";
 
         var successCallback = function(response) {
             $spinner.addClass('d-none');
@@ -49,12 +49,12 @@
                     position: "top right"
                 });
                 $('#addCategoryModal').modal('hide');
-                loadPage("ajaxscripts/tables/incCategory.php", function(response) {
+                loadPage("ajaxscripts/tables/productCategory.php", function(response) {
                     $('#categoryTable').html(response);
                 });
                 
-                if ($('#addIncomeModal').is(':visible')) {
-                    loadPage("ajaxscripts/forms/addIncCategory.php", function(response) {
+                if ($('#addProduceModal').is(':visible')) {
+                    loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
                         $('#pageForm').html(response);
                     });
                 }

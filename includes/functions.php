@@ -68,6 +68,17 @@ function manageIncome($id)
 }
 
 
+function manageProduction($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewProduction_btn" 
+    data-toggle="tooltip" data-original-title="View Produce" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editProduction_btn" 
+    data-toggle="tooltip" data-original-title="Edit Produce" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteProduction_btn" 
+    data-toggle="tooltip" data-original-title="Delete Produce" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
 function manageExpCategories($id)
 {
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewExpCategory_btn" 
@@ -87,6 +98,17 @@ function manageIncCategories($id)
     data-toggle="tooltip" data-original-title="Edit Expenditure Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
     <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteIncCategory" 
     data-toggle="tooltip" data-original-title="Delete Expenditure Category" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
+function manageProdCategories($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewProdCategory_btn" 
+    data-toggle="tooltip" data-original-title="View Product Category" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editProdCategory_btn" 
+    data-toggle="tooltip" data-original-title="Edit Product Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteProdCategory" 
+    data-toggle="tooltip" data-original-title="Delete Product Category" i_index="' . lock(lock($id)) . '">Delete</a>';
 }
 
 
