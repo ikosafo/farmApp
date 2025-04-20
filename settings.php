@@ -133,6 +133,18 @@
         </div>
     </div>
 
+    <div class="modal fade" id="editProduceModal" tabindex="-1" aria-labelledby="editProduceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="editProduceModalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editProduceFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add User Modal -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -248,6 +260,17 @@
         var successCallback = function(response) {
             $('#editProdCategoryFormDiv').html(response);
             $('#editProductCategoryModal').modal('show').find('.modal-title').text('Edit Product Category');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
+    $(document).on('click', '.editProduction_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/editProduce.php";
+        var successCallback = function(response) {
+            $('#editProduceFormDiv').html(response);
+            $('#editProduceModal').modal('show').find('.modal-title').text('Edit Product');
         };
         saveForm(formData, url, successCallback);
     });

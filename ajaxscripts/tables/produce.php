@@ -52,7 +52,7 @@
     });
 
 
-    $(document).off('click', '.deleteProduce_btn').on('click', '.deleteProduce_btn', function() {
+    $(document).off('click', '.deleteProduction_btn').on('click', '.deleteProduction_btn', function() {
         var theindex = $(this).attr('i_index');
         $.confirm({
             title: 'Delete Produce',

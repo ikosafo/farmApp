@@ -6,7 +6,7 @@ include('../../includes/functions.php');
 $i_id = unlock(unlock($_POST['i_index']));
 
 // Prepare the SQL query using a prepared statement
-$updateQuery = "UPDATE `producelist` SET prodActive = 0 WHERE prodId = ?";
+$updateQuery = "UPDATE `producelist` SET prodStatus = 0 WHERE prodId = ?";
 
 // Prepare the statement
 if ($stmt = $mysqli->prepare($updateQuery)) {
