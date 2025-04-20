@@ -2,13 +2,21 @@
 include('../../config.php');
 include('../../includes/functions.php');
 
-$reportCategory = mysqli_real_escape_string($mysqli, $_POST['reportCategory']);
-$reportStartDate = mysqli_real_escape_string($mysqli, $_POST['reportStartDate']);
-$reportEndDate = mysqli_real_escape_string($mysqli, $_POST['reportEndDate']);
+// Validate POST data
+$reportCategory = isset($_POST['reportCategory']) ? mysqli_real_escape_string($mysqli, $_POST['reportCategory']) : null;
+$reportStartDate = isset($_POST['reportStartDate']) ? mysqli_real_escape_string($mysqli, $_POST['reportStartDate']) : null;
+$reportEndDate = isset($_POST['reportEndDate']) ? mysqli_real_escape_string($mysqli, $_POST['reportEndDate']) : null;
+
+// Check if required fields are provided
+if (empty($reportCategory) || empty($reportStartDate) || empty($reportEndDate)) {
+    echo '<div class="card p-3 border-radius-xl bg-white js-active" data-animation="FadeIn" style="margin-bottom: 30px;">';
+    echo '<span style="text-align:center; color:red;">Error: Please select a category and date range.</span>';
+    echo '</div>';
+    exit;
+}
 
 // Determine query based on report category
 if ($reportCategory == 'Trial Balance') {
-    // For Trial Balance, fetch both Income and Expenditure for a summary
     $getResults = $mysqli->query("
         SELECT 
             transactionType,
@@ -42,8 +50,44 @@ if ($reportCategory == 'Trial Balance') {
         ORDER BY 
             transactionType, transactionDate ASC
     ");
+} elseif ($reportCategory == 'Orders') {
+    $getResults = $mysqli->query("
+        SELECT 
+            DATE_FORMAT(createdAt, '%Y-%m') AS monthYear, 
+            SUM(totalAmount) AS totalAmount 
+        FROM 
+            orders 
+        WHERE 
+            createdAt BETWEEN '$reportStartDate' AND '$reportEndDate'
+            AND orderStatus != '0'
+        GROUP BY 
+            monthYear
+        ORDER BY 
+            monthYear ASC
+    ");
+
+    $getResultsDetails = $mysqli->query("
+        SELECT 
+            customerName,
+            customerEmail,
+            customerPhone,
+            orderDetails,
+            deliveryMethod,
+            deliveryDate,
+            paymentMethod,
+            totalAmount,
+            createdAt,
+            orderStatus,
+            customerAddress 
+        FROM 
+            orders 
+        WHERE 
+            createdAt BETWEEN '$reportStartDate' AND '$reportEndDate'
+            AND orderStatus != '0'
+        ORDER BY 
+            createdAt ASC
+    ");
 } else {
-    // For Income or Expenditure
     $transactionType = ($reportCategory == 'Income') ? 'Income' : 'Expenditure';
     
     $getResults = $mysqli->query("
@@ -86,6 +130,8 @@ while ($row = $getResults->fetch_assoc()) {
         $row['categoryName'] = $row['transactionType'] == 'Income' 
             ? incCategoryName($row['transactionCategory']) 
             : expCategoryName($row['transactionCategory']);
+    } elseif ($reportCategory == 'Orders') {
+        $row['categoryName'] = $row['monthYear']; // Use monthYear as categoryName
     } else {
         $row['categoryName'] = $reportCategory == 'Income' 
             ? incCategoryName($row['transactionCategory']) 
@@ -102,55 +148,102 @@ $output .= '<p class="text-sm text-secondary">From ' . htmlspecialchars($reportS
 $output .= '<div class="table-responsive">';
 $output .= '<table class="table table-flush" id="reportTable" style="width: 100%;">';
 $output .= '<thead><tr>';
+
 if ($reportCategory == 'Trial Balance') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transaction Name</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>';
+} elseif ($reportCategory == 'Orders') {
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer Name</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>';
+    $output .= '<th class="text-uppercase text plants font-weight-bolder opacity-7">Phone</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Order Details</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Method</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Date</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Method</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Order Date</th>';
+} else {
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transaction Name</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>';
 }
-$output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transaction Name</th>';
-$output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>';
-$output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
-$output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>';
-$output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>';
 $output .= '</tr></thead>';
 $output .= '<tbody>';
 
 $totalIncome = 0;
 $totalExpenditure = 0;
+$totalOrders = 0;
+
 while ($resResults = $getResultsDetails->fetch_assoc()) { 
-    $amount = $resResults['transactionAmount'];
-    if ($reportCategory == 'Trial Balance' && $resResults['transactionType'] == 'Income') {
-        $totalIncome += $amount;
-    } elseif ($reportCategory == 'Trial Balance' && $resResults['transactionType'] == 'Expenditure') {
-        $totalExpenditure += $amount;
-    } elseif ($reportCategory == 'Income') {
-        $totalIncome += $amount;
-    } else {
-        $totalExpenditure += $amount;
-    }
-    // Map category ID to name
-    $categoryName = $reportCategory == 'Income' ? incCategoryName($resResults['transactionCategory']) : 
-                    ($reportCategory == 'Expenditure' ? expCategoryName($resResults['transactionCategory']) : 
-                    ($resResults['transactionType'] == 'Income' ? incCategoryName($resResults['transactionCategory']) : 
-                    expCategoryName($resResults['transactionCategory'])));
-    $output .= '<tr>';
-    if ($reportCategory == 'Trial Balance') {
+    if ($reportCategory == 'Orders') {
+        $totalOrders += $resResults['totalAmount'];
+        $output .= '<tr>';
+        $output .= '<td>' . htmlspecialchars($resResults['customerName'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['customerEmail'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['customerPhone'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['orderDetails'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['deliveryMethod'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['deliveryDate'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['paymentMethod'] ?? '') . '</td>';
+        $output .= '<td>' . number_format($resResults['totalAmount'], 2 ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['createdAt'] ?? '') . '</td>';
+        $output .= '</tr>';
+    } elseif ($reportCategory == 'Trial Balance') {
+        $amount = $resResults['transactionAmount'];
+        if ($resResults['transactionType'] == 'Income') {
+            $totalIncome += $amount;
+        } else {
+            $totalExpenditure += $amount;
+        }
+        $categoryName = $resResults['transactionType'] == 'Income' 
+            ? incCategoryName($resResults['transactionCategory']) 
+            : expCategoryName($resResults['transactionCategory']);
+        $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionType']) . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionName']) . '</td>';
+        $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionDate']) . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionDescription']) . '</td>';
+        $output .= '<td>' . number_format($resResults['transactionAmount'], 2) . '</td>';
+        $output .= '</tr>';
+    } else {
+        $amount = $resResults['transactionAmount'];
+        if ($reportCategory == 'Income') {
+            $totalIncome += $amount;
+        } else {
+            $totalExpenditure += $amount;
+        }
+        $categoryName = $reportCategory == 'Income' 
+            ? incCategoryName($resResults['transactionCategory']) 
+            : expCategoryName($resResults['transactionCategory']);
+        $output .= '<tr>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionName']) . '</td>';
+        $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionDate']) . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['transactionDescription']) . '</td>';
+        $output .= '<td>' . number_format($resResults['transactionAmount'], 2) . '</td>';
+        $output .= '</tr>';
     }
-    $output .= '<td>' . htmlspecialchars($resResults['transactionName']) . '</td>';
-    $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';
-    $output .= '<td>' . htmlspecialchars($resResults['transactionDate']) . '</td>';
-    $output .= '<td>' . htmlspecialchars($resResults['transactionDescription']) . '</td>';
-    $output .= '<td>' . number_format($resResults['transactionAmount'], 2) . '</td>';
-    $output .= '</tr>';
 }
+
 if ($reportCategory == 'Trial Balance') {
-    $output .= '<tr class="font-weight-bold"><td colspan="' . ($reportCategory == 'Trial Balance' ? 5 : 4) . '">Total Income</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
-    $output .= '<tr class="font-weight-bold"><td colspan="' . ($reportCategory == 'Trial Balance' ? 5 : 4) . '">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
-    $output .= '<tr class="font-weight-bold"><td colspan="' . ($reportCategory == 'Trial Balance' ? 5 : 4) . '">Net Balance</td><td>' . number_format($totalIncome - $totalExpenditure, 2) . '</td></tr>';
+    $output .= '<tr class="font-weight-bold"><td colspan="5">Total Income</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
+    $output .= '<tr class="font-weight-bold"><td colspan="5">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
+    $output .= '<tr class="font-weight-bold"><td colspan="5">Net Balance</td><td>' . number_format($totalIncome - $totalExpenditure, 2) . '</td></tr>';
 } elseif ($reportCategory == 'Income') {
     $output .= '<tr class="font-weight-bold"><td colspan="4">Total Income</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
-} else {
+} elseif ($reportCategory == 'Expenditure') {
     $output .= '<tr class="font-weight-bold"><td colspan="4">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
+} elseif ($reportCategory == 'Orders') {
+    $output .= '<tr class="font-weight-bold"><td colspan="8">Total Orders</td><td>' . number_format($totalOrders, 2) . '</td></tr>';
 }
+
 $output .= '</tbody>';
 $output .= '</table>';
 $output .= '</div>';
@@ -241,7 +334,6 @@ if (!empty($data)) {
     $output .= '        });';
     $output .= '    }';
 
-    // Add Print and Excel Download functionality
     $output .= '    const printButton = document.getElementById("printButton");';
     $output .= '    if (printButton) {';
     $output .= '        printButton.addEventListener("click", () => {';
@@ -250,7 +342,7 @@ if (!empty($data)) {
     $output .= '            document.body.innerHTML = printArea;';
     $output .= '            window.print();';
     $output .= '            document.body.innerHTML = originalContent;';
-    $output .= '            window.location.reload();'; // Reload to restore event listeners
+    $output .= '            window.location.reload();';
     $output .= '        });';
     $output .= '    }';
 
@@ -300,4 +392,3 @@ if (mysqli_num_rows($getResultsDetails) > 0) {
 $output .= '</div>';
 
 echo $output;
-?>

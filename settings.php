@@ -213,7 +213,6 @@
 <?php include('./includes/footer.php'); ?>
 
 <style>
-    /* Premium Tab Styling */
     .premium-tabs {
         display: flex;
         flex-wrap: wrap;

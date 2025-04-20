@@ -8,6 +8,11 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
+    .form-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
     .order-item {
         padding: 15px;
         border: 1px solid #e9ecef;
@@ -28,7 +33,7 @@
             </div>
             <div class="col-12 col-md-6">
                 <label for="email" class="form-label">Email Address </label>
-                <input id="email" class="form-control" type="email" placeholder="Enter email address" required>
+                <input id="email" class="form-control" type="email" placeholder="Enter email address">
             </div>
             <div class="col-12 col-md-6">
                 <label for="phoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
@@ -49,9 +54,9 @@
                     <select class="form-select product-select" name="products[]" required>
                         <option value="" disabled selected>Select a product</option>
                         <?php
-                        $getProducts = $mysqli->query("SELECT `prodName`, `prodPrice` FROM `producelist` WHERE `prodStatus` = 1");
+                        $getProducts = $mysqli->query("SELECT `prodName`, `prodPrice`, `prodQuantity` FROM `producelist` WHERE `prodStatus` = 1 AND `prodQuantity` > 0");
                         while ($product = $getProducts->fetch_assoc()) {
-                            echo "<option value='{$product['prodName']}' data-price='{$product['prodPrice']}'>{$product['prodName']}</option>";
+                            echo "<option value='{$product['prodName']}' data-price='{$product['prodPrice']}' data-quantity='{$product['prodQuantity']}'>{$product['prodName']} (Available: {$product['prodQuantity']})</option>";
                         }
                         ?>
                     </select>
@@ -129,199 +134,204 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        // Initialize Flatpickr
-        $('.flatpickr').flatpickr({
-            minDate: 'today',
-            dateFormat: 'Y-m-d',
-            altInput: true,
-            altFormat: 'F j, Y'
+$(document).ready(function () {
+    // Initialize Flatpickr
+    $('.flatpickr').flatpickr({
+        minDate: 'today',
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'F j, Y'
+    });
+
+    // Function to update disabled options in all product dropdowns
+    function updateProductOptions() {
+        $('.product-select option').prop('disabled', false);
+        const selectedProducts = [];
+        $('.product-select').each(function() {
+            const selectedValue = $(this).val();
+            if (selectedValue) {
+                selectedProducts.push(selectedValue);
+            }
         });
-
-        // Function to update disabled options in all product dropdowns
-        function updateProductOptions() {
-            // Reset all options to enabled
-            $('.product-select option').prop('disabled', false);
-
-            // Collect all selected products
-            const selectedProducts = [];
-            $('.product-select').each(function() {
-                const selectedValue = $(this).val();
-                if (selectedValue) {
-                    selectedProducts.push(selectedValue);
+        $('.product-select').each(function() {
+            const $currentSelect = $(this);
+            const currentValue = $currentSelect.val();
+            selectedProducts.forEach(function(product) {
+                if (product !== currentValue) {
+                    $currentSelect.find(`option[value="${product}"]`).prop('disabled', true);
                 }
             });
+        });
+    }
 
-            // Disable selected products in all dropdowns except the one where they are selected
-            $('.product-select').each(function() {
-                const $currentSelect = $(this);
-                const currentValue = $currentSelect.val();
-                selectedProducts.forEach(function(product) {
-                    if (product !== currentValue) {
-                        $currentSelect.find(`option[value="${product}"]`).prop('disabled', true);
-                    }
-                });
-            });
+    // Update price and subtotal when product or quantity changes
+    function updateItemCalculations($item) {
+        const $productSelect = $item.find('.product-select');
+        const $priceInput = $item.find('.price-input');
+        const $quantityInput = $item.find('.quantity-input');
+        const $subtotalInput = $item.find('.subtotal-input');
+
+        const product = $productSelect.val();
+        const quantity = parseInt($quantityInput.val()) || 0;
+        const price = parseFloat($productSelect.find('option:selected').data('price')) || 0;
+        const availableQuantity = parseInt($productSelect.find('option:selected').data('quantity')) || 0;
+
+        // Validate quantity
+        if (quantity > availableQuantity) {
+            $quantityInput.val(availableQuantity);
+            $.notify(`Only ${availableQuantity} units available for ${product}`, { className: 'warning', position: 'top right' });
         }
 
-        // Update price and subtotal when product or quantity changes
-        function updateItemCalculations($item) {
-            const $productSelect = $item.find('.product-select');
-            const $priceInput = $item.find('.price-input');
-            const $quantityInput = $item.find('.quantity-input');
-            const $subtotalInput = $item.find('.subtotal-input');
+        $priceInput.val(price.toFixed(2));
+        $subtotalInput.val((price * (parseInt($quantityInput.val()) || 0)).toFixed(2));
+        updateTotal();
+    }
 
-            const product = $productSelect.val();
-            const quantity = parseInt($quantityInput.val()) || 0;
-            const price = parseFloat($productSelect.find('option:selected').data('price')) || 0;
+    // Update total amount
+    function updateTotal() {
+        let total = 0;
+        $('.subtotal-input').each(function() {
+            total += parseFloat($(this).val()) || 0;
+        });
+        $('#totalAmount').val(total.toFixed(2));
+    }
 
-            $priceInput.val(price.toFixed(2));
-            $subtotalInput.val((price * quantity).toFixed(2));
+    // Product selection change
+    $(document).on('change', '.product-select', function() {
+        const $item = $(this).closest('.order-item');
+        updateItemCalculations($item);
+        updateProductOptions();
+    });
 
+    // Quantity change
+    $(document).on('input', '.quantity-input', function() {
+        const $item = $(this).closest('.order-item');
+        updateItemCalculations($item);
+    });
+
+    // Add Order Item
+    $('#addOrderItem').click(function () {
+        const $item = $('#orderItemsContainer .order-item:first').clone(true);
+        $item.find('.product-select').val('');
+        $item.find('.quantity-input').val('');
+        $item.find('.price-input').val('');
+        $item.find('.subtotal-input').val('');
+        $item.find('.removeItemBtn').removeClass('d-none');
+        $('#orderItemsContainer').append($item);
+        updateProductOptions();
+    });
+
+    // Remove Order Item
+    $(document).on('click', '.removeItemBtn', function () {
+        const $item = $(this).closest('.order-item');
+        $item.fadeOut(300, function () {
+            $item.remove();
             updateTotal();
-        }
-
-        // Update total amount
-        function updateTotal() {
-            let total = 0;
-            $('.subtotal-input').each(function() {
-                total += parseFloat($(this).val()) || 0;
-            });
-            $('#totalAmount').val(total.toFixed(2));
-        }
-
-        // Product selection change
-        $(document).on('change', '.product-select', function() {
-            const $item = $(this).closest('.order-item');
-            updateItemCalculations($item);
-            updateProductOptions(); // Update disabled options
+            updateProductOptions();
         });
+    });
 
-        // Quantity change
-        $(document).on('input', '.quantity-input', function() {
-            const $item = $(this).closest('.order-item');
-            updateItemCalculations($item);
-        });
+    // Form Submission
+    $('#saveOrder').click(function () {
+        const $submitBtn = $(this);
+        $submitBtn.find('.spinner-border').removeClass('d-none');
 
-        // Add Order Item
-        $('#addOrderItem').click(function () {
-            // Clone the first order item
-            const $item = $('#orderItemsContainer .order-item:first').clone(true);
-            
-            // Clear inputs
-            $item.find('.product-select').val('');
-            $item.find('.quantity-input').val('');
-            $item.find('.price-input').val('');
-            $item.find('.subtotal-input').val('');
+        // Collect form data
+        const formData = {
+            fullName: $('#fullName').val(),
+            email: $('#email').val(),
+            phoneNumber: $('#phoneNumber').val(),
+            address: $('#address').val(),
+            fulfillmentMethod: $('input[name="fulfillmentMethod"]:checked').val(),
+            preferredDate: $('#preferredDate').val(),
+            paymentMethod: $('#paymentMethod').val(),
+            totalAmount: $('#totalAmount').val(),
+            products: [],
+            quantities: []
+        };
 
-            // Show remove button
-            $item.find('.removeItemBtn').removeClass('d-none');
-
-            // Append new item
-            $('#orderItemsContainer').append($item);
-            updateProductOptions(); // Update disabled options after adding new item
-        });
-
-        // Remove Order Item
-        $(document).on('click', '.removeItemBtn', function () {
-            const $item = $(this).closest('.order-item');
-            $item.fadeOut(300, function () {
-                $item.remove();
-                updateTotal();
-                updateProductOptions(); // Update disabled options after removing item
-            });
-        });
-
-        // Form Submission
-        $('#saveOrder').click(function () {
-            const $submitBtn = $(this);
-            $submitBtn.find('.spinner-border').removeClass('d-none');
-
-            // Collect form data
-            const formData = {
-                fullName: $('#fullName').val(),
-                email: $('#email').val(),
-                phoneNumber: $('#phoneNumber').val(),
-                address: $('#address').val(),
-                fulfillmentMethod: $('input[name="fulfillmentMethod"]:checked').val(),
-                preferredDate: $('#preferredDate').val(),
-                paymentMethod: $('#paymentMethod').val(),
-                totalAmount: $('#totalAmount').val(),
-                products: [],
-                quantities: []
-            };
-
-            // Collect order items
-            $('.order-item').each(function() {
-                const $item = $(this);
-                const product = $item.find('.product-select').val();
-                const quantity = $item.find('.quantity-input').val();
-                if (product && quantity) {
+        // Validate quantities against available stock
+        let quantityError = false;
+        $('.order-item').each(function() {
+            const $item = $(this);
+            const product = $item.find('.product-select').val();
+            const quantity = parseInt($item.find('.quantity-input').val()) || 0;
+            const availableQuantity = parseInt($item.find('.product-select option:selected').data('quantity')) || 0;
+            if (product && quantity) {
+                if (quantity > availableQuantity) {
+                    $.notify(`Only ${availableQuantity} units available for ${product}`, { className: 'error', position: 'top right' });
+                    quantityError = true;
+                } else {
                     formData.products.push(product);
                     formData.quantities.push(quantity);
                 }
-            });
-
-            // Validation
-            const validateForm = function(data) {
-                let error = '';
-                if (!data.fullName) error += 'Please enter full name\n';
-                else if (data.email && !validateEmail(data.email)) error += 'Please enter a valid email address\n';
-                if (!data.phoneNumber) error += 'Please enter phone number\n';
-                if (!data.address) error += 'Please enter address\n';
-                if (!data.fulfillmentMethod) error += 'Please select fulfillment method\n';
-                if (!data.preferredDate) error += 'Please select preferred date\n';
-                if (!data.paymentMethod) error += 'Please select payment method\n';
-                if (data.products.length === 0) error += 'Please add at least one product\n';
-                return error;
-            };
-
-            const error = validateForm(formData);
-            if (error) {
-                $submitBtn.find('.spinner-border').addClass('d-none');
-                $.notify(error, { className: 'error', position: 'top right' });
-                return;
             }
-
-            // Submit form
-            const url = 'ajaxscripts/queries/addOrder.php';
-            const successCallback = function(response) {
-                $submitBtn.find('.spinner-border').addClass('d-none');
-                if (response === 'Success') {
-                    $.notify('Order placed successfully', { className: 'success', position: 'top right' });
-                    $('#addOrderForm')[0].reset();
-                    // Reset order items to a single empty item
-                    const $firstItem = $('#orderItemsContainer .order-item:first').clone(true);
-                    $firstItem.find('.product-select').val('');
-                    $firstItem.find('.quantity-input').val('');
-                    $firstItem.find('.price-input').val('');
-                    $firstItem.find('.subtotal-input').val('');
-                    $firstItem.find('.removeItemBtn').addClass('d-none');
-                    $('#orderItemsContainer').html($firstItem);
-                    $('#addOrderModal').modal('hide');
-                    loadPage('ajaxscripts/tables/orders.php', function(response) {
-                        $('#pageTable').html(response);
-                    });
-                    updateProductOptions(); // Reset disabled options after form reset
-                } else {
-                    $.notify(response, { className: 'error', position: 'top right' });
-                }
-            };
-
-            saveForm(formData, url, successCallback);
         });
 
-        function validateEmail(email) {
-            const re = /\S+@\S+\.\S+/;
-            return re.test(email);
+        if (quantityError) {
+            $submitBtn.find('.spinner-border').addClass('d-none');
+            return;
         }
 
-        function isNumber(evt) {
-            const charCode = (evt.which) ? evt.which : evt.keyCode;
-            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                return false;
-            }
-            return true;
+        // Validation
+        const validateForm = function(data) {
+            let error = '';
+            if (!data.fullName) error += 'Please enter full name\n';
+            if (data.email && !validateEmail(data.email)) error += 'Please enter a valid email address\n';
+            if (!data.phoneNumber) error += 'Please enter phone number\n';
+            if (!data.address) error += 'Please enter address\n';
+            if (!data.fulfillmentMethod) error += 'Please select fulfillment method\n';
+            if (!data.preferredDate) error += 'Please select preferred date\n';
+            if (!data.paymentMethod) error += 'Please select payment method\n';
+            if (data.products.length === 0) error += 'Please add at least one product\n';
+            return error;
+        };
+
+        const error = validateForm(formData);
+        if (error) {
+            $submitBtn.find('.spinner-border').addClass('d-none');
+            $.notify(error, { className: 'error', position: 'top right' });
+            return;
         }
+
+        // Submit form
+        const url = 'ajaxscripts/queries/addOrder.php';
+        const successCallback = function(response) {
+            $submitBtn.find('.spinner-border').addClass('d-none');
+            if (response === 'Success') {
+                $.notify('Order placed successfully', { className: 'success', position: 'top right' });
+                $('#addOrderForm')[0].reset();
+                const $firstItem = $('#orderItemsContainer .order-item:first').clone(true);
+                $firstItem.find('.product-select').val('');
+                $firstItem.find('.quantity-input').val('');
+                $firstItem.find('.price-input').val('');
+                $firstItem.find('.subtotal-input').val('');
+                $firstItem.find('.removeItemBtn').addClass('d-none');
+                $('#orderItemsContainer').html($firstItem);
+                $('#addOrderModal').modal('hide');
+                loadPage('ajaxscripts/tables/orders.php', function(response) {
+                    $('#pageTable').html(response);
+                });
+                updateProductOptions();
+            } else {
+                $.notify(response, { className: 'error', position: 'top right' });
+            }
+        };
+
+        saveForm(formData, url, successCallback);
     });
+
+    function validateEmail(email) {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+
+    function isNumber(evt) {
+        const charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+});
 </script>

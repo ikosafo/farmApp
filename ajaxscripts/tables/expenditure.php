@@ -14,19 +14,6 @@
 </div>
 
 
-<div class="modal fade" id="expenditureModal" tabindex="-1" aria-labelledby="expenditureModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-radius-xl">
-            <div class="modal-header border-0">
-                <h5 class="modal-title font-weight-bolder" id="expenditureModal">View Expenditures</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="pageForm3"></div>
-        </div>
-    </div>
-</div>
-
-
 <script>
     var oTable = $('#siteTable').DataTable({
         stateSave: true,
@@ -86,25 +73,4 @@
     });
 
 
-    $(document).on('click', '.viewExpenditure_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewExpenditure.php";
-        var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
-        };
-        saveForm(formData, url, successCallback);
-    });
-
-    $(document).on('click', '.editExpenditure_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editExpenditure.php";
-        var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
-        };
-        saveForm(formData, url, successCallback);
-    });
 </script>

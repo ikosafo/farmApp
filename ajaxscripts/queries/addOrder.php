@@ -24,12 +24,26 @@ if (count($products) !== count($quantities) || empty($products)) {
     exit;
 }
 
-// Create order details as {productName:quantity}
+// Validate quantities against available stock
 for ($i = 0; $i < count($products); $i++) {
     $productName = mysqli_real_escape_string($mysqli, $products[$i]);
     $quantity = intval($quantities[$i]);
+    
     if ($productName && $quantity > 0) {
-        $orderDetails[$productName] = $quantity;
+        // Check available quantity
+        $query = "SELECT `prodQuantity` FROM `producelist` WHERE `prodName` = '$productName' AND `prodStatus` = 1";
+        $result = $mysqli->query($query);
+        if ($result && $result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+            if ($quantity > $product['prodQuantity']) {
+                echo "Error: Only {$product['prodQuantity']} units available for $productName";
+                exit;
+            }
+            $orderDetails[$productName] = $quantity;
+        } else {
+            echo "Error: Product $productName not found";
+            exit;
+        }
     }
 }
 
@@ -40,40 +54,61 @@ if ($orderDetailsJson === false) {
     exit;
 }
 
-// Prepare the SQL query to insert the order
-$insertQuery = "INSERT INTO `orders` (
-    `customerName`,
-    `customerEmail`,
-    `customerPhone`,
-    `customerAddress`,
-    `orderDetails`,
-    `deliveryMethod`,
-    `deliveryDate`,
-    `paymentMethod`,
-    `totalAmount`,
-    `createdAt`,
-    `updatedAt`
-) VALUES (
-    '$customerName',
-    '$customerEmail',
-    '$customerPhone',
-    '$address',
-    '$orderDetailsJson',
-    '$fulfillmentMethod',
-    '$preferredDate',
-    '$paymentMethod',
-    '$totalAmount',
-    '$createdAt',
-    '$updatedAt'
-)";
+// Start transaction
+$mysqli->begin_transaction();
 
-// Execute the SQL query
-if ($mysqli->query($insertQuery)) {
-    // Query executed successfully
+try {
+    // Insert order
+    $insertQuery = "INSERT INTO `orders` (
+        `customerName`,
+        `customerEmail`,
+        `customerPhone`,
+        `customerAddress`,
+        `orderDetails`,
+        `deliveryMethod`,
+        `deliveryDate`,
+        `paymentMethod`,
+        `totalAmount`,
+        `createdAt`,
+        `updatedAt`
+    ) VALUES (
+        '$customerName',
+        '$customerEmail',
+        '$customerPhone',
+        '$address',
+        '$orderDetailsJson',
+        '$fulfillmentMethod',
+        '$preferredDate',
+        '$paymentMethod',
+        '$totalAmount',
+        '$createdAt',
+        '$updatedAt'
+    )";
+
+    if (!$mysqli->query($insertQuery)) {
+        throw new Exception("Error inserting order: " . $mysqli->error);
+    }
+
+    // Update product quantities
+    foreach ($orderDetails as $productName => $quantity) {
+        $productNameEscaped = mysqli_real_escape_string($mysqli, $productName);
+        $updateQuery = "UPDATE `producelist` SET 
+            `prodQuantity` = `prodQuantity` - $quantity,
+            `updatedAt` = '$updatedAt'
+            WHERE `prodName` = '$productNameEscaped'";
+        
+        if (!$mysqli->query($updateQuery)) {
+            throw new Exception("Error updating quantity for $productName: " . $mysqli->error);
+        }
+    }
+
+    // Commit transaction
+    $mysqli->commit();
     echo "Success";
-} else {
-    // Error occurred
-    echo "Error: " . $mysqli->error;
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $mysqli->rollback();
+    echo $e->getMessage();
 }
 
 // Close the database connection

@@ -11,6 +11,7 @@
                     <option>Expenditure</option>
                     <option>Income</option>
                     <option>Trial Balance</option>
+                    <option>Orders</option>
                 </select>
             </div>
 

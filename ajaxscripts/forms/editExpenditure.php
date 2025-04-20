@@ -29,8 +29,8 @@ $resExp = $getExp->fetch_assoc();
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="expenditureAmount" class="form-label">Amount <span class="text-danger">*</span></label>
-            <input id="expenditureAmount" class="form-control border-radius-md"
+            <label for="expenditureAmountEdit" class="form-label">Amount <span class="text-danger">*</span></label>
+            <input id="expenditureAmountEdit" class="form-control border-radius-md"
              type="number" min="0" step="0.01" placeholder="Enter amount" required value="<?= $resExp['transactionAmount'] ?>">
         </div>
         <div class="col-12 col-md-6">

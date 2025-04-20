@@ -10,7 +10,7 @@
             <div class="col-12">
                 <div class="card shadow-sm border-radius-xl p-4">
                     <div class="card-header bg-white border-0">
-                        <ul class="nav nav-tabs" id="incomeTabs" role="tablist">
+                        <ul class="nav nav-tabs premium-tabs" id="incomeTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="incomes-tab" data-bs-toggle="tab" data-bs-target="#incomes" type="button" role="tab" aria-controls="incomes" aria-selected="true">
                                     <i class="fas fa-money-bill-wave me-2"></i>Income
@@ -119,6 +119,76 @@
 </main>
 
 <?php include('./includes/footer.php'); ?>
+
+<style>
+    .premium-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+
+    .premium-tabs .nav-item {
+        flex: 0 1 auto;
+    }
+
+    .premium-tabs .nav-link {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        color: #343a40;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-transform: capitalize;
+        letter-spacing: 0.3px;
+    }
+
+    .premium-tabs .nav-link:hover {
+        background: #e9ecef;
+        color: #1a2a44;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .premium-tabs .nav-link.active {
+        background: #1a2a44;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .premium-tabs .nav-link i {
+        font-size: 1rem;
+        margin-right: 6px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 767px) {
+        .premium-tabs {
+            gap: 8px;
+            padding: 8px;
+        }
+
+        .premium-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        .premium-tabs .nav-link i {
+            font-size: 0.9rem;
+            margin-right: 4px;
+        }
+    }
+</style>
 
 <script>
     // Load Incomes table on page load
