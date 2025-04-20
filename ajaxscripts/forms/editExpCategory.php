@@ -9,13 +9,13 @@ $resExp = $getExp->fetch_assoc();
 <form autocomplete="off" id="categoryForm">
     <div class="row g-3">
         <div class="col-12">
-            <label for="categoryName" class="form-label">Category Name <span class="text-danger">*</span></label>
-            <input id="categoryName" class="form-control border-radius-md" type="text" 
+            <label for="categoryNameEdit" class="form-label">Category Name <span class="text-danger">*</span></label>
+            <input id="categoryNameEdit" class="form-control border-radius-md" type="text" 
             placeholder="Enter category name" value="<?= $resExp['ecatName']?>">
         </div>
         <div class="col-12">
-            <label for="categoryDescription" class="form-label">Description</label>
-            <textarea id="categoryDescription" class="form-control border-radius-md" 
+            <label for="categoryDescriptionEdit" class="form-label">Description</label>
+            <textarea id="categoryDescriptionEdit" class="form-control border-radius-md" 
             rows="3" placeholder="Enter description"><?= $resExp['ecatDesc']?></textarea>
         </div>
         <?php
@@ -26,7 +26,7 @@ $resExp = $getExp->fetch_assoc();
         <div class="col-12">
             <label for="categoryStatus" class="form-label">Status</label>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="categoryStatus" name="categoryStatus" 
+                <input class="form-check-input" type="checkbox" id="categoryStatusEdit" name="categoryStatusEdit" 
                     <?= $statusChecked ?>>
                 <label class="form-check-label" for="categoryStatus"><?= $statusLabel ?></label>
             </div>
@@ -50,9 +50,9 @@ $resExp = $getExp->fetch_assoc();
         $spinner.removeClass('d-none');
 
         var formData = {
-            categoryName: $("#categoryName").val(),
-            categoryDescription: $("#categoryDescription").val(),
-            categoryStatus: $("#categoryStatus").is(':checked') ? 1 : 0,
+            categoryName: $("#categoryNameEdit").val(),
+            categoryDescription: $("#categoryDescriptionEdit").val(),
+            categoryStatus: $("#categoryStatusEdit").is(':checked') ? 1 : 0,
             catIndex: '<?php echo $i_id ?>'
         };
 

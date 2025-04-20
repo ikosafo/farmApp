@@ -8,9 +8,9 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div class="card shadow-sm border-radius-xl p-4">
-                    <div class="card-header bg-white border-0">
-                        <ul class="nav nav-tabs" id="produceTabs" role="tablist">
+                <div class="card shadow-lg border-radius-xl p-4">
+                    <div class="card-header bg-transparent border-0">
+                        <ul class="nav nav-tabs premium-tabs" id="produceTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="produce-tab" data-bs-toggle="tab" data-bs-target="#produce" type="button" role="tab" aria-controls="produce" aria-selected="true">
                                     <i class="fas fa-money-bill-wave me-2"></i>Produce
@@ -18,12 +18,22 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>Produce Category
+                                    <i class="fas fa-tags me-2"></i>Categories
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">
                                     <i class="fas fa-users me-2"></i>Users
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="change-password-tab" data-bs-toggle="tab" data-bs-target="#change-password" type="button" role="tab" aria-controls="change-password" aria-selected="false">
+                                    <i class="fas fa-key me-2"></i>Password
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab" aria-controls="logs" aria-selected="false">
+                                    <i class="fas fa-history me-2"></i>Logs
                                 </button>
                             </li>
                         </ul>
@@ -43,14 +53,13 @@
                             <!-- Categories Tab -->
                             <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Products Categories</h5>
+                                    <h5 class="font-weight-bolder mb-0">Product Categories</h5>
                                     <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                        <i class="fas fa-plus me-2"></i>Add Product Category
+                                        <i class="fas fa-plus me-2"></i>Add Category
                                     </button>
                                 </div>
                                 <div id="categoryTable"></div>
                             </div>
-                            
                             <!-- Users Tab -->
                             <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -60,6 +69,20 @@
                                     </button>
                                 </div>
                                 <div id="userTable"></div>
+                            </div>
+                            <!-- Change Password Tab -->
+                            <div class="tab-pane fade" id="change-password" role="tabpanel" aria-labelledby="change-password-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Change Password</h5>
+                                </div>
+                                <div id="changePasswordForm"></div>
+                            </div>
+                            <!-- Logs Tab -->
+                            <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">System Logs</h5>
+                                </div>
+                                <div id="logsTable"></div>
                             </div>
                         </div>
                     </div>
@@ -107,12 +130,12 @@
         </div>
     </div>
 
-
+    <!-- View Produce Modal -->
     <div class="modal fade" id="viewProduceModal" tabindex="-1" aria-labelledby="viewProduceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="viewProduceModalLabel">View Product Category</h5>
+                    <h5 class="modal-title font-weight-bolder" id="viewProduceModalLabel">View Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewProduceFormDiv"></div>
@@ -133,6 +156,7 @@
         </div>
     </div>
 
+    <!-- Edit Produce Modal -->
     <div class="modal fade" id="editProduceModal" tabindex="-1" aria-labelledby="editProduceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
@@ -188,6 +212,77 @@
 
 <?php include('./includes/footer.php'); ?>
 
+<style>
+    /* Premium Tab Styling */
+    .premium-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+
+    .premium-tabs .nav-item {
+        flex: 0 1 auto;
+    }
+
+    .premium-tabs .nav-link {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        color: #343a40;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-transform: capitalize;
+        letter-spacing: 0.3px;
+    }
+
+    .premium-tabs .nav-link:hover {
+        background: #e9ecef;
+        color: #1a2a44;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .premium-tabs .nav-link.active {
+        background: #1a2a44;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .premium-tabs .nav-link i {
+        font-size: 1rem;
+        margin-right: 6px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 767px) {
+        .premium-tabs {
+            gap: 8px;
+            padding: 8px;
+        }
+
+        .premium-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        .premium-tabs .nav-link i {
+            font-size: 0.9rem;
+            margin-right: 4px;
+        }
+    }
+</style>
+
 <script>
     // Load Produce table on page load
     loadPage("ajaxscripts/tables/produce.php", function(response) {
@@ -229,6 +324,20 @@
         });
     });
 
+    // Load Change Password form when Change Password tab is shown
+    $('#change-password-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/forms/changePassword.php", function(response) {
+            $('#changePasswordForm').html(response);
+        });
+    });
+
+    // Load Logs table when Logs tab is shown
+    $('#logs-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/logs.php", function(response) {
+            $('#logsTable').html(response);
+        });
+    });
+
     // View Product Category
     $(document).on('click', '.viewProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');
@@ -241,6 +350,7 @@
         saveForm(formData, url, successCallback);
     });
 
+    // View Produce
     $(document).on('click', '.viewProduction_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };
@@ -251,7 +361,7 @@
         };
         saveForm(formData, url, successCallback);
     });
-    
+
     // Edit Product Category
     $(document).on('click', '.editProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');
@@ -264,6 +374,7 @@
         saveForm(formData, url, successCallback);
     });
 
+    // Edit Produce
     $(document).on('click', '.editProduction_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };

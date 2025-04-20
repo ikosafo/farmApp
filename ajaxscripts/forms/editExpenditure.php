@@ -8,8 +8,8 @@ $resExp = $getExp->fetch_assoc();
 <form autocomplete="off" id="farmExpenditureForm">
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="expenditureName" class="form-label">Expenditure Name <span class="text-danger">*</span></label>
-            <input id="expenditureName" class="form-control border-radius-md"
+            <label for="expenditureNameEdit" class="form-label">Expenditure Name <span class="text-danger">*</span></label>
+            <input id="expenditureNameEdit" class="form-control border-radius-md"
              type="text" placeholder="Enter expenditure name" value="<?= $resExp['transactionName'] ?>">
         </div>
         <div class="col-12 col-md-6">
@@ -83,7 +83,7 @@ $resExp = $getExp->fetch_assoc();
         $spinner.removeClass('d-none');
 
         var formData = {
-            transactionName: $("#expenditureName").val(),
+            transactionName: $("#expenditureNameEdit").val(),
             transactionDescription: $("#expenditureDescription").val(),
             transactionCategory: $("#expenditureCategoryEdit").val(),
             transactionAmount: $("#expenditureAmount").val(),
