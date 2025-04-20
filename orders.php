@@ -49,7 +49,7 @@
 
 <script>
     // Load Orders table on page load
-    loadPage("ajaxscripts/tables/order.php", function(response) {
+    loadPage("ajaxscripts/tables/orders.php", function(response) {
         $('#pageTable').html(response);
     });
 
