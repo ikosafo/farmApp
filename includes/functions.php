@@ -83,10 +83,12 @@ function manageOrder($id)
 {
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewOrder_btn" 
     data-toggle="tooltip" data-original-title="View Produce" i_index="' . lock(lock($id)) . '">View</a> | 
-    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editOrder_btn" 
-    data-toggle="tooltip" data-original-title="Edit Produce" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <div style="display:none"><a href="javascript:;" class="text-secondary font-weight-bold text-xs editOrder_btn" 
+    data-toggle="tooltip" data-original-title="Edit Produce" i_index="' . lock(lock($id)) . '">Edit</a> | </div>
     <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteOrder_btn" 
-    data-toggle="tooltip" data-original-title="Delete Produce" i_index="' . lock(lock($id)) . '">Delete</a>';
+    data-toggle="tooltip" data-original-title="Delete Produce" i_index="' . lock(lock($id)) . '">Delete</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs printReceipt_btn" 
+    data-toggle="tooltip" data-original-title="Print Receipt" i_index="' . lock(lock($id)) . '">Print Receipt</a>';
 }
 
 

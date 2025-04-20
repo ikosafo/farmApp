@@ -39,11 +39,11 @@
     });
 
 
-    $(document).off('click', '.deleteExpenditure_btn').on('click', '.deleteExpenditure_btn', function() {
+    $(document).off('click', '.deleteOrder_btn').on('click', '.deleteOrder_btn', function() {
         var theindex = $(this).attr('i_index');
         $.confirm({
             title: 'Delete Expenditure',
-            content: 'Are you sure you want to delete this expenditure?',
+            content: 'Are you sure you want to delete this order?',
             theme: 'modern',
             buttons: {
                 cancel: {
@@ -55,13 +55,13 @@
                     btnClass: 'btn-danger',
                     action: function() {
                         var formData = { i_index: theindex };
-                        var url = "ajaxscripts/queries/deleteExpenditure.php";
+                        var url = "ajaxscripts/queries/deleteOrder.php";
                         var successCallback = function(response) {
-                            $.notify("Expenditure deleted successfully!", {
+                            $.notify("Order deleted successfully!", {
                                 className: "success",
                                 position: "top right"
                             });
-                            loadPage("ajaxscripts/tables/expenditure.php", function(response) {
+                            loadPage("ajaxscripts/tables/orders.php", function(response) {
                                 $('#pageTable').html(response);
                             });
                         };
@@ -73,25 +73,4 @@
     });
 
 
-    $(document).on('click', '.viewExpenditure_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewExpenditure.php";
-        var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
-        };
-        saveForm(formData, url, successCallback);
-    });
-
-    $(document).on('click', '.editExpenditure_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editExpenditure.php";
-        var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
-        };
-        saveForm(formData, url, successCallback);
-    });
 </script>

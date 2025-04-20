@@ -42,6 +42,32 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewOrderModalLabel">View Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewOrderFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="editOrderModalLabel">Edit Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editOrderFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
    
 </main>
 
@@ -58,6 +84,28 @@
         loadPage("ajaxscripts/forms/addOrder.php", function(response) {
             $('#pageForm').html(response);
         });
+    });
+
+    $(document).on('click', '.viewOrder_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewOrder.php";
+        var successCallback = function(response) {
+            $('#viewOrderFormDiv').html(response);
+            $('#viewOrderModal').modal('show').find('.modal-title').text('View Order');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
+    $(document).on('click', '.editOrder_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/editOrder.php";
+        var successCallback = function(response) {
+            $('#editOrderFormDiv').html(response);
+            $('#editOrderModal').modal('show').find('.modal-title').text('Edit Order');
+        };
+        saveForm(formData, url, successCallback);
     });
 
 
