@@ -107,6 +107,19 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="viewProduceModal" tabindex="-1" aria-labelledby="viewProduceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewProduceModalLabel">View Product Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewProduceFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Product Category Modal -->
     <div class="modal fade" id="editProductCategoryModal" tabindex="-1" aria-labelledby="editProductCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
@@ -216,6 +229,17 @@
         saveForm(formData, url, successCallback);
     });
 
+    $(document).on('click', '.viewProduction_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewProduce.php";
+        var successCallback = function(response) {
+            $('#viewProduceFormDiv').html(response);
+            $('#viewProduceModal').modal('show').find('.modal-title').text('View Product');
+        };
+        saveForm(formData, url, successCallback);
+    });
+    
     // Edit Product Category
     $(document).on('click', '.editProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');

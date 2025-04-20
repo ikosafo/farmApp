@@ -25,17 +25,17 @@ if ($searchValue != '') {
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($mysqli, "select count(*) as allcount from `producelist` where `prodActive` = 1");
+$sel = mysqli_query($mysqli, "select count(*) as allcount from `producelist` where `prodStatus` = 1");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `producelist` WHERE `prodActive` = 1  AND 1 " . $searchQuery);
+$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `producelist` WHERE `prodStatus` = 1  AND 1 " . $searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "SELECT * FROM `producelist` WHERE `prodActive` = 1 AND 1 " . $searchQuery . " ORDER BY prodId DESC LIMIT " . $row . "," . $rowperpage;
+$empQuery = "SELECT * FROM `producelist` WHERE `prodStatus` = 1 AND 1 " . $searchQuery . " ORDER BY prodId DESC LIMIT " . $row . "," . $rowperpage;
 $empRecords = mysqli_query($mysqli, $empQuery);
 $data = array();
 
@@ -43,9 +43,9 @@ $data = array();
 while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
         "produceName" => $row['prodName'],
-        "produceCategory" => expCategoryName($row['prodCategory']),
+        "produceCategory" => prodCategoryName($row['prodCategory']),
         "producePrice" => number_format(($row['prodPrice']), 2, '.', ','),
-		"produceQuantity" => $row['prodQuantity'],	
+		"produceQuantity" => $row['prodQuantity'].' ('.$row['quantityUnit'].')',	
         "produceActions" => manageProduction($row['prodId'])
     );
 }

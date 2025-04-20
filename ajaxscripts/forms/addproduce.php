@@ -8,7 +8,7 @@
         </div>
         <div class="col-12 col-md-6">
             <label for="productCategory" class="form-label">Category <span class="text-danger">*</span></label>
-            <select id="productCategory" class="form-control border-radius-md" required style="width: 100%;">
+            <select id="productCategory" class="form-control border-radius-md" name="productCategory" required>
                 <option value="" disabled selected>Select a category</option>
                 <?php
                 $getCat = $mysqli->query("SELECT * FROM `prodcategory` WHERE `pcatStatus` = 1");
@@ -33,8 +33,19 @@
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="productQuantity" class="form-label">Quantity</label>
-            <input id="productQuantity" class="form-control border-radius-md" type="number" step="1" placeholder="Enter quantity">
+            <label for="productQuantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input id="productQuantity" class="form-control border-radius-md" type="number" step="1" min="1" placeholder="Enter quantity" required>
+                <select id="quantityUnit" class="form-control border-radius-md" name="quantityUnit" required>
+                    <option value="" disabled selected>Select unit</option>
+                    <option value="kilo">Kilo</option>
+                    <option value="gram">Gram</option>
+                    <option value="milligram">Milligram</option>
+                    <option value="acre">Acre</option>
+                    <option value="hectare">Hectare</option>
+                    <option value="bags">Bag(s)</option>
+                </select>
+            </div>
         </div>
         <div class="col-12 col-md-6">
             <label for="productDescription" class="form-label">Description</label>
@@ -52,30 +63,25 @@
 </form>
 
 <script>
-    $("#productCategory").select2({
-        placeholder: "Select Category",
-        dropdownParent: $("#addProduceModal"),
-        width: '100%' 
-    });
+// Ensure the DOM is fully loaded before initializing plugins
+$(document).ready(function() {
+    // Initialize flatpickr for expiry date
+    $("#expiryDate").flatpickr();
 
-    $("#expiryDate").flatpickr({
-        altInput: true,
-        altFormat: "F j, Y",
-        dateFormat: "Y-m-d"
-    });
-
+    // Form submission
     $("#saveProduce").click(function () {
         var $button = $(this);
         var $spinner = $button.find('.spinner-border');
         $spinner.removeClass('d-none');
 
         var formData = {
-            transactionName: $("#productName").val(),
-            transactionDescription: $("#productDescription").val(),
-            transactionCategory: $("#productCategory").val(),
-            transactionAmount: $("#producePrice").val(),
-            transactionDate: $("#expiryDate").val(),
-            transactionReceipt: $("#productQuantity").val()
+            productName: $("#productName").val(),
+            productDescription: $("#productDescription").val(),
+            produceCategory: $("#productCategory").val(),
+            productPrice: $("#producePrice").val(),
+            productExpiration: $("#expiryDate").val(),
+            productQuantity: $("#productQuantity").val(),
+            quantityUnit: $("#quantityUnit").val()
         };
 
         var url = "ajaxscripts/queries/addProduce.php";
@@ -87,7 +93,7 @@
                     className: "success",
                     position: "top right"
                 });
-                $('#addProduceModal').modal('hide');
+                $('#addproduceModal').modal('hide');
                 loadPage("ajaxscripts/tables/produce.php", function (response) {
                     $('#pageTable').html(response);
                 });
@@ -101,13 +107,16 @@
 
         var validateForm = function (formData) {
             var error = '';
-            if (!formData.transactionName) error += 'Please enter product name\n';
-            if (!formData.transactionCategory) error += 'Please select category\n';
-            if (!formData.transactionAmount) error += 'Please enter amount\n';
-            if (!formData.transactionDate) error += 'Please select date\n';
+            if (!formData.productName) error += 'Please enter product name\n';
+            if (!formData.produceCategory) error += 'Please select category\n';
+            if (!formData.productPrice) error += 'Please enter price\n';
+            if (!formData.productExpiration) error += 'Please select expiry date\n';
+            if (!formData.productQuantity) error += 'Please enter quantity\n';
+            if (!formData.quantityUnit) error += 'Please select quantity unit\n';
             return error;
         };
 
         saveForm(formData, url, successCallback, validateForm);
     });
+});
 </script>

@@ -150,6 +150,15 @@ function incCategoryName($id) {
 }
 
 
+function prodCategoryName($id) {
+    global $mysqli;
+
+    $getInc = $mysqli->query("select `pcatName` from `prodcategory` where `pcatId` = '$id'");
+    $resInc = $getInc->fetch_assoc();
+    return $resInc['pcatName'];
+}
+
+
 
 
 
