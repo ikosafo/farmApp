@@ -1,98 +1,71 @@
-<div class="card mt-4" data-animation="FadeIn">
-    <div class="row">
-        <div class="col-12">
-            <div class="card" style="padding:30px">
-
-                <div class="table-responsive">
-                    <table class="table table-flush" id="siteTable">
-                        <thead>
-                            <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Full Name</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone Number</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Username</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
+<div class="table-responsive">
+    <table class="table table-hover align-items-center mb-0" id="usersTable">
+        <thead>
+            <tr>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Full Name</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Phone Number</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Role</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Username</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 
 
 <script>
-    oTable = $('#siteTable').DataTable({
+    var oTable = $('#usersTable').DataTable({
         stateSave: true,
-        "bLengthChange": false,
-        'processing': true,
-        'serverSide': true,
-        'serverMethod': 'post',
-        'ajax': {
-            'url': 'ajaxscripts/paginations/users.php'
+        lengthChange: false,
+        processing: true,
+        serverSide: true,
+        serverMethod: 'post',
+        ajax: {
+            url: 'ajaxscripts/paginations/users.php'
         },
-        'columns': [{
-                data: 'fullName'
-            },
-            {
-                data: 'phoneNumber'
-            },
-            {
-                data: 'username'
-            },
-            {
-                data: 'emailAddress'
-            },
-            {
-                data: 'userId'
-            }
+        columns: [
+            { data: 'fullName', className: 'text-sm' },
+            { data: 'phoneNumber', className: 'text-sm' },
+            { data: 'userRole', className: 'text-sm' },
+            { data: 'username', className: 'text-sm' },
+            { data: 'userActions', className: 'text-sm' },
+           
         ],
-        'columnDefs': [{
-            targets: [0, 1, 2, 3, 4],
-            className: 'text-sm font-weight-normal'
-        }]
+        language: {
+            emptyTable: "No users found",
+            processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
+        }
     });
 
 
     $(document).off('click', '.deleteUser_btn').on('click', '.deleteUser_btn', function() {
         var theindex = $(this).attr('i_index');
-        //alert(theindex);
         $.confirm({
-            title: 'Delete Record!',
-            content: 'Are you sure to continue?',
+            title: 'Delete User',
+            content: 'Are you sure you want to delete this user?',
+            theme: 'modern',
             buttons: {
-                no: {
-                    text: 'No',
-                    keys: ['enter', 'shift'],
-                    backdrop: 'static',
-                    keyboard: false,
-                    action: function() {
-                        $.alert('Data is safe');
-                    }
+                cancel: {
+                    text: 'Cancel',
+                    btnClass: 'btn-outline-secondary'
                 },
-                yes: {
-                    text: 'Yes, Delete it!',
-                    btnClass: 'btn-blue',
+                confirm: {
+                    text: 'Delete',
+                    btnClass: 'btn-danger',
                     action: function() {
-
-                        var formData = {
-                            i_index: theindex
-                        };
+                        var formData = { i_index: theindex };
                         var url = "ajaxscripts/queries/deleteUser.php";
                         var successCallback = function(response) {
-                            //alert(response);
-                            console.log(response);
-                            loadPage("ajaxscripts/tables/users.php", function(response) {
-                                $('#pageTable').html(response);
+                            $.notify("User deleted successfully!", {
+                                className: "success",
+                                position: "top right"
                             });
-
+                            loadPage("ajaxscripts/tables/users.php", function(response) {
+                                $('#userTable').html(response);
+                            });
                         };
-
-                        // Call the saveForm function with form data, URL, success callback, and validation function
                         saveForm(formData, url, successCallback);
                     }
                 }
@@ -100,47 +73,5 @@
         });
     });
 
-    $(document).off('click', '.editUser_btn').on('click', '.editUser_btn', function() {
-        var theindex = $(this).attr('i_index');
-        //alert(theindex);
 
-        var formData = {
-            i_index: theindex
-        };
-        var url = "ajaxscripts/forms/editUser.php";
-        var successCallback = function(response) {
-            $('#pageForm').html(response);
-
-            // Scroll to the top of the loaded content with animation
-            $('html, body').animate({
-                scrollTop: $('#pageForm').offset().top
-            }, 'fast');
-        };
-
-        // Call the saveForm function with form data, URL, success callback, and validation function
-        saveForm(formData, url, successCallback);
-
-    });
-
-    $(document).off('click', '.viewUser_btn').on('click', '.viewUser_btn', function() {
-        var theindex = $(this).attr('i_index');
-        //alert(theindex);
-
-        var formData = {
-            i_index: theindex
-        };
-        var url = "ajaxscripts/forms/viewUser.php";
-        var successCallback = function(response) {
-            $('#pageForm').html(response);
-
-            // Scroll to the top of the loaded content with animation
-            $('html, body').animate({
-                scrollTop: $('#pageForm').offset().top
-            }, 'fast');
-        };
-
-        // Call the saveForm function with form data, URL, success callback, and validation function
-        saveForm(formData, url, successCallback);
-
-    });
 </script>

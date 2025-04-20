@@ -6,28 +6,22 @@ include('../../includes/functions.php');
 $i_id = unlock(unlock($_POST['i_index']));
 
 // Prepare the SQL query using a prepared statement
-$updateQuery = "UPDATE `users` SET uActive = 0 WHERE `uId` = ?";
+$updateQuery = "UPDATE `users` SET uStatus = 0 WHERE `uId` = ?";
 
 // Prepare the statement
 if ($stmt = $mysqli->prepare($updateQuery)) {
     // Bind the parameter
     $stmt->bind_param("s", $i_id);
 
-    // Execute the statement
     if ($stmt->execute()) {
-        // Query executed successfully
         echo "Success";
     } else {
-        // Error occurred
         echo "Error: " . $mysqli->error;
     }
 
-    // Close the statement
     $stmt->close();
 } else {
-    // Error in preparing the statement
     echo "Error: " . $mysqli->error;
 }
 
-// Close the database connection
 $mysqli->close();

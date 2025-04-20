@@ -28,17 +28,17 @@ if ($searchValue != '') {
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($mysqli, "select count(*) as allcount from users where uActive = 1");
+$sel = mysqli_query($mysqli, "select count(*) as allcount from `users` where uStatus = 1");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM users WHERE uActive = 1 AND 1 " . $searchQuery);
+$sel = mysqli_query($mysqli, "SELECT COUNT(*) AS allcount FROM `users` WHERE uStatus = 1 AND 1 " . $searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "SELECT * FROM users WHERE uActive = 1 AND 1 " . $searchQuery . " ORDER BY fullName LIMIT " . $row . "," . $rowperpage;
+$empQuery = "SELECT * FROM `users` WHERE uStatus = 1 AND 1 " . $searchQuery . " ORDER BY fullName LIMIT " . $row . "," . $rowperpage;
 $empRecords = mysqli_query($mysqli, $empQuery);
 $data = array();
 
@@ -47,9 +47,9 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
         "fullName" => $row['fullName'],
         "phoneNumber" => $row['phoneNumber'],
-        "username" => $row['userName'],
-        "emailAddress" => $row['emailAddress'],
-        "userId" => manageUser($row['uId'])
+        "userRole" => $row['role'],
+        "username" => $row['username'],
+        "userActions" => manageUser($row['uId'])
     );
 }
 

@@ -22,8 +22,8 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>Users
+                                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">
+                                    <i class="fas fa-users me-2"></i>Users
                                 </button>
                             </li>
                         </ul>
@@ -49,6 +49,17 @@
                                     </button>
                                 </div>
                                 <div id="categoryTable"></div>
+                            </div>
+                            
+                            <!-- Users Tab -->
+                            <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Users</h5>
+                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                        <i class="fas fa-plus me-2"></i>Add User
+                                    </button>
+                                </div>
+                                <div id="userTable"></div>
                             </div>
                         </div>
                     </div>
@@ -83,11 +94,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="viewProductCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <!-- View Product Category Modal -->
+    <div class="modal fade" id="viewProductCategoryModal" tabindex="-1" aria-labelledby="viewProductCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="addCategoryModalLabel">Add Product Category</h5>
+                    <h5 class="modal-title font-weight-bolder" id="viewProductCategoryModalLabel">View Product Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewProdCategoryFormDiv"></div>
@@ -95,11 +107,12 @@
         </div>
     </div>
 
+    <!-- Edit Product Category Modal -->
     <div class="modal fade" id="editProductCategoryModal" tabindex="-1" aria-labelledby="editProductCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="editProductCategoryModalLabel">Add Product Category</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editProductCategoryModalLabel">Edit Product Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="editProdCategoryFormDiv"></div>
@@ -107,6 +120,44 @@
         </div>
     </div>
 
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="addUserModalLabel">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="userForm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewUserModalLabel">View User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewUserFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editUserFormDiv"></div>
+            </div>
+        </div>
+    </div>
 
 </main>
 
@@ -139,6 +190,21 @@
         });
     });
 
+    // Load Users table when Users tab is shown
+    $('#users-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/users.php", function(response) {
+            $('#userTable').html(response);
+        });
+    });
+
+    // Load User form into modal
+    $('#addUserModal').on('show.bs.modal', function () {
+        loadPage("ajaxscripts/forms/addUser.php", function(response) {
+            $('#userForm').html(response);
+        });
+    });
+
+    // View Product Category
     $(document).on('click', '.viewProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };
@@ -150,7 +216,7 @@
         saveForm(formData, url, successCallback);
     });
 
-
+    // Edit Product Category
     $(document).on('click', '.editProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };
@@ -158,6 +224,30 @@
         var successCallback = function(response) {
             $('#editProdCategoryFormDiv').html(response);
             $('#editProductCategoryModal').modal('show').find('.modal-title').text('Edit Product Category');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
+    // View User
+    $(document).on('click', '.viewUser_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewUser.php";
+        var successCallback = function(response) {
+            $('#viewUserFormDiv').html(response);
+            $('#viewUserModal').modal('show').find('.modal-title').text('View User');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
+    // Edit User
+    $(document).on('click', '.editUser_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/editUser.php";
+        var successCallback = function(response) {
+            $('#editUserFormDiv').html(response);
+            $('#editUserModal').modal('show').find('.modal-title').text('Edit User');
         };
         saveForm(formData, url, successCallback);
     });
