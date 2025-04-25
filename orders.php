@@ -74,12 +74,12 @@
 <?php include('./includes/footer.php'); ?>
 
 <script>
-    // Load Orders table on page load
+    // Load delivery table on page load
     loadPage("ajaxscripts/tables/orders.php", function(response) {
         $('#pageTable').html(response);
     });
 
-    // Load Order form into modal
+    // Load delivery form into modal
     $('#addOrderModal').on('show.bs.modal', function () {
         loadPage("ajaxscripts/forms/addOrder.php", function(response) {
             $('#pageForm').html(response);
