@@ -16,9 +16,14 @@
                                     <i class="fas fa-money-bill-wave me-2"></i>Expenditures
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <!-- <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>Categories
+                                    <i class="fas fa-tags me-2"></i>Statistics
+                                </button>
+                            </li> -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" data-bs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false">
+                                    <i class="fas fa-chart-bar me-2"></i>Statistics
                                 </button>
                             </li>
                         </ul>
@@ -35,15 +40,9 @@
                                 </div>
                                 <div id="pageTable"></div>
                             </div>
-                            <!-- Categories Tab -->
-                            <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Expenditure Categories</h5>
-                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                        <i class="fas fa-plus me-2"></i>Add Category
-                                    </button>
-                                </div>
-                                <div id="categoryTable"></div>
+                            <!-- Statistics Tab -->
+                            <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+                                <div id="statisticsTable"></div>
                             </div>
                         </div>
                     </div>
@@ -60,13 +59,13 @@
                     <h5 class="modal-title font-weight-bolder" id="addExpenditureModalLabel">Add Farm Expenditure</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="pageForm"></div>
+                <div class="modal-body" id="addExpenditureForm"></div>
             </div>
         </div>
     </div>
 
     <!-- Add Category Modal -->
-    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
@@ -76,16 +75,29 @@
                 <div class="modal-body" id="categoryForm"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="modal fade" id="expenditureModal" tabindex="-1" aria-labelledby="expenditureModal" aria-hidden="true">
+    <div class="modal fade" id="editExpenditureModal" tabindex="-1" aria-labelledby="editExpenditureModal" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="expenditureModal">View Expenditures</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editExpenditureModalLabel">Edit Expenditure</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="pageForm3"></div>
+                <div class="modal-body" id="editExpenditureForm"></div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="modal fade" id="viewExpenditureModal" tabindex="-1" aria-labelledby="viewExpenditureModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewExpenditureModalLabel">View Expenditures</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewExpenditureForm"></div>
             </div>
         </div>
     </div>
@@ -173,11 +185,18 @@
     // Load Expenditure form into modal
     $('#addExpenditureModal').on('show.bs.modal', function () {
         loadPage("ajaxscripts/forms/addExpenditure.php", function(response) {
-            $('#pageForm').html(response);
+            $('#addExpenditureForm').html(response);
         });
     });
 
-    // Load Categories table when Categories tab is shown
+
+    $('#statistics-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/expStatistics.php", function(response) {
+            $('#statisticsTable').html(response);
+        });
+    });
+
+    /* // Load Categories table when Categories tab is shown
     $('#categories-tab').on('shown.bs.tab', function () {
         loadPage("ajaxscripts/tables/expCategory.php", function(response) {
             $('#categoryTable').html(response);
@@ -189,7 +208,7 @@
         loadPage("ajaxscripts/forms/addExpCategory.php", function(response) {
             $('#categoryForm').html(response);
         });
-    });
+    }); */
 
 
 
@@ -198,8 +217,8 @@
         var formData = { i_index: theindex };
         var url = "ajaxscripts/forms/viewExpenditure.php";
         var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
+            $('#viewExpenditureForm').html(response);
+            $('#viewExpenditureModal').modal('show');
         };
         saveForm(formData, url, successCallback);
     });
@@ -209,8 +228,8 @@
         var formData = { i_index: theindex };
         var url = "ajaxscripts/forms/editExpenditure.php";
         var successCallback = function(response) {
-            $('#pageForm3').html(response);
-            $('#expenditureModal').modal('show');
+            $('#editExpenditureForm').html(response);
+            $('#editExpenditureModal').modal('show');
         };
         saveForm(formData, url, successCallback);
     });

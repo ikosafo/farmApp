@@ -154,6 +154,19 @@ function expCategoryName($id) {
 }
 
 
+function categoryName($id) {
+    global $mysqli;
+
+    $getExp = $mysqli->query("SELECT `categoryName` FROM `categories` WHERE `catId` = '$id'");
+    if ($getExp && $getExp->num_rows > 0) {
+        $resExp = $getExp->fetch_assoc();
+        return $resExp['categoryName'];
+    }
+    return null;
+}
+
+
+
 function incCategoryName($id) {
     global $mysqli;
 

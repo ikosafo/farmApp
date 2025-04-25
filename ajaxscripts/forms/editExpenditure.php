@@ -17,10 +17,10 @@ $resExp = $getExp->fetch_assoc();
             <select id="expenditureCategoryEdit" class="form-control border-radius-md" required style="width: 100%;">
                 <option value="" disabled>Select a category</option>
                 <?php
-                $getCat = $mysqli->query("SELECT * FROM `expcategory` WHERE `ecatStatus` = 1");
+                $getCat = $mysqli->query("SELECT * FROM `categories` WHERE `categoryStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    $selected = ($resCat['ecatId'] == $resExp['transactionCategory']) ? 'selected' : '';
-                    echo "<option value='{$resCat['ecatId']}' $selected>" . htmlspecialchars($resCat['ecatName']) . "</option>";
+                    $selected = ($resCat['catId'] == $resExp['transactionCategory']) ? 'selected' : '';
+                    echo "<option value='{$resCat['catId']}' $selected>" . htmlspecialchars($resCat['categoryName']) . "</option>";
                 }
                 ?>
             </select>
@@ -42,13 +42,13 @@ $resExp = $getExp->fetch_assoc();
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="expenditureReceipt" class="form-label">Receipt Number (if any)</label>
-            <input id="expenditureReceipt" class="form-control border-radius-md" type="text" 
+            <label for="expenditureReceiptEdit" class="form-label">Receipt Number (if any)</label>
+            <input id="expenditureReceiptEdit" class="form-control border-radius-md" type="text" 
             placeholder="Enter receipt number" value="<?= $resExp['transactionReceipt'] ?>">
         </div>
         <div class="col-12 col-md-6">
-            <label for="expenditureDescription" class="form-label">Description</label>
-            <textarea id="expenditureDescription" class="form-control border-radius-md"
+            <label for="expenditureDescriptionEdit" class="form-label">Description</label>
+            <textarea id="expenditureDescriptionEdit" class="form-control border-radius-md"
              rows="4"
              placeholder="Enter description"><?= $resExp['transactionDescription'] ?></textarea>
         </div>
@@ -84,11 +84,11 @@ $resExp = $getExp->fetch_assoc();
 
         var formData = {
             transactionName: $("#expenditureNameEdit").val(),
-            transactionDescription: $("#expenditureDescription").val(),
+            transactionDescription: $("#expenditureDescriptionEdit").val(),
             transactionCategory: $("#expenditureCategoryEdit").val(),
-            transactionAmount: $("#expenditureAmount").val(),
+            transactionAmount: $("#expenditureAmountEdit").val(),
             transactionDate: $("#expenditureDateEdit").val(),
-            transactionReceipt: $("#expenditureReceipt").val(),
+            transactionReceipt: $("#expenditureReceiptEdit").val(),
             transIndex: '<?php echo $i_id ?>'
         };
 
@@ -102,7 +102,7 @@ $resExp = $getExp->fetch_assoc();
                     position: "top right"
                 });
                 $('#addExpenditureModal').modal('hide');
-                $('#expenditureModal').modal('hide');
+                $('#editExpenditureModal').modal('hide');
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
                 loadPage("ajaxscripts/tables/expenditure.php", function (response) {

@@ -11,9 +11,9 @@
             <select id="expenditureCategory" class="form-control border-radius-md" required style="width: 100%;">
                 <option value="" disabled selected>Select a category</option>
                 <?php
-                $getCat = $mysqli->query("SELECT * FROM `expcategory` WHERE `ecatStatus` = 1");
+                $getCat = $mysqli->query("SELECT * FROM `categories` WHERE `categoryStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    echo "<option value='{$resCat['ecatId']}'>{$resCat['ecatName']}</option>";
+                    echo "<option value='{$resCat['catId']}'>{$resCat['categoryName']}</option>";
                 }
                 ?>
             </select>

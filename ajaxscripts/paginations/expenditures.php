@@ -45,7 +45,7 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array(
         "expenditureName" => $row['transactionName'],
         "expenditureDate" => $row['transactionDate'],
-        "expenditureCategory" => expCategoryName($row['transactionCategory']),
+        "expenditureCategory" => categoryName($row['transactionCategory']),
 		"expenditureAmount" => number_format(($row['transactionAmount']), 2, '.', ','),	
         "expenditureActions" => manageExpenditure($row['transId'])
     );

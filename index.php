@@ -61,7 +61,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Income</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Revenue</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalIncome, 2, '.', ','); ?>
                                         <span style="font-size:10px;"> GHC </span>
@@ -83,7 +83,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Expenses</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Expenditure</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalExpense, 2, '.', ','); ?>
                                         <span style="font-size:10px;"> GHC </span>
@@ -105,7 +105,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Completed Orders</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Completed Supplies</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalOrders, 0); ?>
                                     </h5>
@@ -126,7 +126,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Product Stock</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Categories</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalProducts, 0); ?>
                                     </h5>
@@ -148,7 +148,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
             <div class="col-lg-6 mb-lg-0 mb-4">
                 <div class="card z-index-2">
                     <div class="card-header pb-0">
-                        <h6>Income vs Expenses</h6>
+                        <h6>Revenue vs Expenditure</h6>
                     </div>
                     <div class="card-body p-3">
                         <div class="chart">
@@ -160,10 +160,10 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
             <div class="col-lg-6">
                 <div class="card h-100">
                     <div class="card-header pb-0">
-                        <h6>Recent Orders</h6>
+                        <h6>Recent Supplies / Deliveries</h6>
                         <p class="text-sm">
                             <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-                            <span class="font-weight-bold">Latest customer orders</span>
+                            <span class="font-weight-bold">Latest supplies</span>
                         </p>
                     </div>
                     <div class="card-body p-3">
@@ -171,10 +171,10 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Phone</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Amount</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Amount</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Payment Status</th>  
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -269,12 +269,12 @@ new Chart(ctxIncomeExpense, {
     data: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
-            label: 'Income',
+            label: 'Revenue',
             data: [12000, 19000, 15000, 22000, 18000, 25000],
             borderColor: 'rgba(75, 192, 192, 1)',
             fill: false
         }, {
-            label: 'Expenses',
+            label: 'Expenditure',
             data: [8000, 10000, 12000, 9000, 11000, 13000],
             borderColor: 'rgba(255, 99, 132, 1)',
             fill: false
