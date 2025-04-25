@@ -74,7 +74,7 @@ if ($reportCategory == 'Trial Balance') {
             orderDetails,
             deliveryMethod,
             deliveryDate,
-            paymentMethod,
+            paymentStatus,
             totalAmount,
             createdAt,
             orderStatus,
@@ -160,10 +160,10 @@ if ($reportCategory == 'Trial Balance') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer Name</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>';
     $output .= '<th class="text-uppercase text plants font-weight-bolder opacity-7">Phone</th>';
-    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Order Details</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Details</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Method</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Date</th>';
-    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Method</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Status</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Order Date</th>';
 } else {
@@ -190,7 +190,7 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
         $output .= '<td>' . htmlspecialchars($resResults['orderDetails'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['deliveryMethod'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['deliveryDate'] ?? '') . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['paymentMethod'] ?? '') . '</td>';
+        $output .= '<td>' . htmlspecialchars($resResults['paymentStatus'] ?? '') . '</td>';
         $output .= '<td>' . number_format($resResults['totalAmount'], 2 ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['createdAt'] ?? '') . '</td>';
         $output .= '</tr>';
@@ -233,11 +233,11 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
 }
 
 if ($reportCategory == 'Trial Balance') {
-    $output .= '<tr class="font-weight-bold"><td colspan="5">Total Income</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
+    $output .= '<tr class="font-weight-bold"><td colspan="5">Total Revenue</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
     $output .= '<tr class="font-weight-bold"><td colspan="5">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
     $output .= '<tr class="font-weight-bold"><td colspan="5">Net Balance</td><td>' . number_format($totalIncome - $totalExpenditure, 2) . '</td></tr>';
 } elseif ($reportCategory == 'Income') {
-    $output .= '<tr class="font-weight-bold"><td colspan="4">Total Income</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
+    $output .= '<tr class="font-weight-bold"><td colspan="4">Total Revenue</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
 } elseif ($reportCategory == 'Expenditure') {
     $output .= '<tr class="font-weight-bold"><td colspan="4">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
 } elseif ($reportCategory == 'Orders') {

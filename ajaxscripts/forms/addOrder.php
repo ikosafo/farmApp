@@ -36,17 +36,17 @@
                 <input id="email" class="form-control" type="email" placeholder="Enter email address">
             </div>
             <div class="col-12 col-md-6">
-                <label for="phoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                <label for="phoneNumber" class="form-label">Phone Number</label>
                 <input id="phoneNumber" class="form-control" maxlength="10" type="tel" onkeypress="return isNumber(event)" placeholder="Enter phone number" required>
             </div>
             <div class="col-12 col-md-6">
-                <label for="address" class="form-label">Home Address <span class="text-danger">*</span></label>
+                <label for="address" class="form-label">Home Address</label>
                 <input id="address" class="form-control" type="text" placeholder="Enter address" required>
             </div>
         </div>
 
-        <!-- Section: Order Details -->
-        <h5 class="form-section-title mt-5">2. Order Details</h5>
+        <!-- Section: Delivery Details -->
+        <h5 class="form-section-title mt-5">2. Delivery Details</h5>
         <div id="orderItemsContainer">
             <div class="row g-4 order-item align-items-end">
                 <div class="col-md-4">
@@ -100,7 +100,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Preferred Date <span class="text-danger">*</span></label>
+                <label class="form-label">Delivery Date <span class="text-danger">*</span></label>
                 <input type="text" id="preferredDate" class="form-control flatpickr" placeholder="Choose date" required>
             </div>
         </div>
@@ -108,12 +108,24 @@
         <!-- Section: Payment -->
         <h5 class="form-section-title mt-5">4. Payment</h5>
         <div class="row g-4">
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <label class="form-label">Payment Method <span class="text-danger">*</span></label>
                 <select id="paymentMethod" class="form-select" name="paymentMethod" required>
                     <option value="" disabled selected>Select payment method</option>
                     <option value="Card">Credit or Debit Card/Mobile Money/Bank Transfer</option>
                     <option value="Cash">Cash on Delivery/Pickup</option>
+                </select>
+            </div> -->
+            <div class="col-md-6">
+                <label class="form-label">Payment Status <span class="text-danger">*</span></label>
+                <select id="paymentStatus" class="form-select" name="paymentStatus" required>
+                    <option value="" disabled selected>Select Payment Status</option>
+                    <option value="Part Payment">Part Payment</option>
+                    <option value="Full Payment">Full Payment</option>
+                    <option value="Overpaid">Overpaid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Refunded">Refunded</option>
+                    <option value="On Hold">On Hold</option>
                 </select>
             </div>
             <div class="col-md-6">
@@ -136,12 +148,7 @@
 <script>
 $(document).ready(function () {
     // Initialize Flatpickr
-    $('.flatpickr').flatpickr({
-        minDate: 'today',
-        dateFormat: 'Y-m-d',
-        altInput: true,
-        altFormat: 'F j, Y'
-    });
+    $('.flatpickr').flatpickr();
 
     // Function to update disabled options in all product dropdowns
     function updateProductOptions() {
@@ -209,7 +216,7 @@ $(document).ready(function () {
         updateItemCalculations($item);
     });
 
-    // Add Order Item
+    // Add Delivery Item
     $('#addOrderItem').click(function () {
         const $item = $('#orderItemsContainer .order-item:first').clone(true);
         $item.find('.product-select').val('');
@@ -244,7 +251,7 @@ $(document).ready(function () {
             address: $('#address').val(),
             fulfillmentMethod: $('input[name="fulfillmentMethod"]:checked').val(),
             preferredDate: $('#preferredDate').val(),
-            paymentMethod: $('#paymentMethod').val(),
+            paymentStatus: $('#paymentStatus').val(),
             totalAmount: $('#totalAmount').val(),
             products: [],
             quantities: []
@@ -278,11 +285,9 @@ $(document).ready(function () {
             let error = '';
             if (!data.fullName) error += 'Please enter full name\n';
             if (data.email && !validateEmail(data.email)) error += 'Please enter a valid email address\n';
-            if (!data.phoneNumber) error += 'Please enter phone number\n';
-            if (!data.address) error += 'Please enter address\n';
             if (!data.fulfillmentMethod) error += 'Please select fulfillment method\n';
-            if (!data.preferredDate) error += 'Please select preferred date\n';
-            if (!data.paymentMethod) error += 'Please select payment method\n';
+            if (!data.preferredDate) error += 'Please select delivery date\n';
+            if (!data.paymentStatus) error += 'Please select payment status\n';
             if (data.products.length === 0) error += 'Please add at least one product\n';
             return error;
         };
@@ -299,7 +304,7 @@ $(document).ready(function () {
         const successCallback = function(response) {
             $submitBtn.find('.spinner-border').addClass('d-none');
             if (response === 'Success') {
-                $.notify('Order placed successfully', { className: 'success', position: 'top right' });
+                $.notify('Delivery information saved successfully', { className: 'success', position: 'top right' });
                 $('#addOrderForm')[0].reset();
                 const $firstItem = $('#orderItemsContainer .order-item:first').clone(true);
                 $firstItem.find('.product-select').val('');

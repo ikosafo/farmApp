@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Customer Details</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Order Details</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Delivery Details</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Delivery</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Payment Details</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>

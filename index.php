@@ -3,7 +3,7 @@ include('./includes/sidebar.php');
 include('config.php');
 
 // Fetch key metrics
-// Total Income
+// Total revenue
 $totalIncomeQuery = "SELECT SUM(transactionAmount) as totalIncome FROM transactions WHERE transactionType = 'Income' AND transStatus = 1";
 $totalIncomeResult = mysqli_query($mysqli, $totalIncomeQuery);
 $totalIncome = mysqli_fetch_assoc($totalIncomeResult)['totalIncome'] ?? 0.0;

@@ -21,7 +21,7 @@ if ($searchValue != '') {
         OR orderDetails LIKE '%" . $searchValue . "%' 
         OR deliveryMethod LIKE '%" . $searchValue . "%' 
         OR deliveryDate LIKE '%" . $searchValue . "%' 
-        OR paymentMethod LIKE '%" . $searchValue . "%' 
+        OR paymentStatus LIKE '%" . $searchValue . "%' 
         OR totalAmount LIKE '%" . $searchValue . "%'
     ) ";
 }
@@ -57,12 +57,12 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         "customerDetails" => "<strong>" . htmlspecialchars($row['customerName']) . "</strong><br>" .
                             "<small>Email: " . htmlspecialchars($row['customerEmail']) . "<br>" .
                             "Phone: " . htmlspecialchars($row['customerPhone']) . "</small>",
-        "orderDetails" => "<strong>Order Placed: " . date('M j, Y', strtotime($row['createdAt'])) . "</strong><br>" .
+        "orderDetails" => "<strong>Delivery Made: " . date('M j, Y', strtotime($row['createdAt'])) . "</strong><br>" .
                          "<small>" . $orderDetailsText . "</small>",
         "deliveryDetails" => "<strong>" . htmlspecialchars($row['deliveryMethod']) . "</strong><br>" .
                             "<small>Date: " . date('M j, Y', strtotime($row['deliveryDate'])) . "</small>",
         "paymentDetails" => "<strong>GHC " . number_format($row['totalAmount'], 2, '.', ',') . "</strong><br>" .
-                           "<small>Method: " . htmlspecialchars($row['paymentMethod']) . "</small>",
+                           "<small>Status: " . htmlspecialchars($row['paymentStatus']) . "</small>",
         "orderActions" => manageOrder($row['orderid'])
     );
 }

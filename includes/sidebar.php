@@ -115,7 +115,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                                 </g>
                             </svg>
                         </div>
-                        <span class="nav-link-text ms-1">Income/Receivings </span>
+                        <span class="nav-link-text ms-1">Revenue </span>
                     </a>
                 </li>
 
@@ -163,7 +163,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                                 </g>
                             </svg>
                         </div>
-                        <span class="nav-link-text ms-1">Orders</span>
+                        <span class="nav-link-text ms-1">Deliveries / Supplies</span>
                     </a>
                 </li>
 

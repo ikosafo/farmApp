@@ -13,7 +13,7 @@
                         <ul class="nav nav-tabs premium-tabs" id="incomeTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="incomes-tab" data-bs-toggle="tab" data-bs-target="#incomes" type="button" role="tab" aria-controls="incomes" aria-selected="true">
-                                    <i class="fas fa-money-bill-wave me-2"></i>Income
+                                    <i class="fas fa-money-bill-wave me-2"></i>Revenue
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -28,7 +28,7 @@
                             <!-- Incomes Tab -->
                             <div class="tab-pane fade show active" id="incomes" role="tabpanel" aria-labelledby="incomes-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Farm Incomes</h5>
+                                    <h5 class="font-weight-bolder mb-0">Farm Revenues</h5>
                                     <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
                                         <i class="fas fa-plus me-2"></i>Add Income
                                     </button>
@@ -61,7 +61,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="addIncomeModalLabel">Add Farm Income</h5>
+                    <h5 class="modal-title font-weight-bolder" id="addIncomeModalLabel">Add Farm Revenue</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="addIncomeForm"></div>
@@ -87,7 +87,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="viewIncomeModalLabel">View Income Details</h5>
+                    <h5 class="modal-title font-weight-bolder" id="viewIncomeModalLabel">View Revenue Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewIncomeContent"></div>
@@ -100,7 +100,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="editIncomeModalLabel">Edit Income</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editIncomeModalLabel">Edit Revenue</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="editIncomeContent"></div>

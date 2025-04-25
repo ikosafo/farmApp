@@ -9,18 +9,18 @@ $customerPhone = mysqli_real_escape_string($mysqli, $_POST['customerPhone']);
 $customerAddress = mysqli_real_escape_string($mysqli, $_POST['customerAddress']);
 $deliveryMethod = mysqli_real_escape_string($mysqli, $_POST['deliveryMethod']);
 $deliveryDate = mysqli_real_escape_string($mysqli, $_POST['deliveryDate']);
-$paymentMethod = mysqli_real_escape_string($mysqli, $_POST['paymentMethod']);
+$paymentStatus = mysqli_real_escape_string($mysqli, $_POST['paymentStatus']);
 $totalAmount = mysqli_real_escape_string($mysqli, $_POST['totalAmount']);
 $products = $_POST['products'];
 $quantities = $_POST['quantities'];
 
 // Validate inputs
-if (empty($orderid) || empty($customerName) || empty($customerPhone) || empty($customerAddress) || empty($deliveryMethod) || empty($deliveryDate) || empty($paymentMethod) || empty($products)) {
+if (empty($orderid) || empty($customerName) || empty($customerPhone) || empty($customerAddress) || empty($deliveryMethod) || empty($deliveryDate) || empty($paymentStatus) || empty($products)) {
     echo "Missing required fields";
     exit;
 }
 
-// Prepare order details JSON
+// Prepare Delivery details JSON
 $orderDetails = [];
 foreach ($products as $index => $productName) {
     $productName = mysqli_real_escape_string($mysqli, $productName);
@@ -43,11 +43,11 @@ foreach ($products as $index => $productName) {
 
 $orderDetailsJson = json_encode($orderDetails);
 if ($orderDetailsJson === false) {
-    echo "Error encoding order details";
+    echo "Error encoding Delivery details";
     exit;
 }
 
-// Update order in database
+// Update Delivery in database
 $updateQuery = "UPDATE `orders` SET 
     `customerName` = '$customerName',
     `customerEmail` = '$customerEmail',
@@ -55,7 +55,7 @@ $updateQuery = "UPDATE `orders` SET
     `customerAddress` = '$customerAddress',
     `deliveryMethod` = '$deliveryMethod',
     `deliveryDate` = '$deliveryDate',
-    `paymentMethod` = '$paymentMethod',
+    `paymentStatus` = '$paymentStatus',
     `totalAmount` = '$totalAmount',
     `orderDetails` = '$orderDetailsJson',
     `updatedAt` = NOW()

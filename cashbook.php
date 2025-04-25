@@ -165,12 +165,12 @@
         <table class="accounting-table">
             <thead>
                 <tr>
-                    <th colspan="3">Income</th>
+                    <th colspan="3">Revenue</th>
                     <th colspan="3">Expenditure</th>
                 </tr>
                 <tr>
-                    <th>Entry</th><th>Date</th><th>Amount</th>
-                    <th>Entry</th><th>Date</th><th>Amount</th>
+                    <th>Date</th><th>Entry</th><th>Amount</th>
+                    <th>Date</th><th>Entry</th><th>Amount</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -186,18 +186,18 @@
 
             html += `
             <tr>
-                <td>${incomeRow.transactionName || ''}</td>
                 <td>${incomeRow.transactionDate || ''}</td>
+                <td>${incomeRow.transactionName || ''}</td>
                 <td class="text-end">${incomeRow.transactionAmount ? incomeAmt.toFixed(2) : ''}</td>
-                <td>${expenseRow.transactionName || ''}</td>
                 <td>${expenseRow.transactionDate || ''}</td>
+                <td>${expenseRow.transactionName || ''}</td>
                 <td class="text-end">${expenseRow.transactionAmount ? expenseAmt.toFixed(2) : ''}</td>
             </tr>`;
         }
 
         html += `
             <tr style="font-weight: bold; background: #f8f9fa;">
-                <td colspan="2" class="text-end">Total Income:</td>
+                <td colspan="2" class="text-end">Total Revenue:</td>
                 <td class="text-end">GHS ${incomeTotal.toFixed(2)}</td>
                 <td colspan="2" class="text-end">Total Expenditure:</td>
                 <td class="text-end">GHS ${expenseTotal.toFixed(2)}</td>

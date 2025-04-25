@@ -14,9 +14,9 @@
                             <!-- Orders Tab -->
                             <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Farm Orders</h5>
+                                    <h5 class="font-weight-bolder mb-0">Farm Deliveries</h5>
                                     <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrderModal">
-                                        <i class="fas fa-plus me-2"></i>Add New Order
+                                        <i class="fas fa-plus me-2"></i>Add New Delivery
                                     </button>
                                 </div>
                                 <div id="pageTable"></div>
@@ -29,12 +29,12 @@
         </div>
     </div>
 
-    <!-- Add Order Modal -->
+    <!-- Add Delivery Modal -->
     <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="addOrderModalLabel">Add Order</h5>
+                    <h5 class="modal-title font-weight-bolder" id="addOrderModalLabel">Add Delivery</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="pageForm"></div>
@@ -47,7 +47,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="viewOrderModalLabel">View Order</h5>
+                    <h5 class="modal-title font-weight-bolder" id="viewOrderModalLabel">View Delivery</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewOrderFormDiv"></div>
@@ -60,7 +60,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="editOrderModalLabel">Edit Order</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editOrderModalLabel">Edit Delivery</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="editOrderFormDiv"></div>
@@ -92,7 +92,7 @@
         var url = "ajaxscripts/forms/viewOrder.php";
         var successCallback = function(response) {
             $('#viewOrderFormDiv').html(response);
-            $('#viewOrderModal').modal('show').find('.modal-title').text('View Order');
+            $('#viewOrderModal').modal('show').find('.modal-title').text('View Delivery');
         };
         saveForm(formData, url, successCallback);
     });

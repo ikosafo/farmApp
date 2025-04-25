@@ -87,7 +87,7 @@ $output .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcs
 $output .= '<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>';
 
 // Header
-$output .= '<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Income Report - ' . $currentQuarterStr . '</h1>';
+$output .= '<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Revenue Report - ' . $currentQuarterStr . '</h1>';
 
 // Debug data
 $output .= '<!-- Debug: ' . $currentQuarterStr . ' has ' . count($details) . ' transactions -->';
@@ -136,7 +136,7 @@ $output .= '</div>';
 
 // Chart (moved to bottom with caption)
 $output .= '<div class="bg-gray-50 rounded-lg p-3 mt-4 shadow-sm">'; 
-$output .= '<h2 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Income Comparison</h2>';
+$output .= '<h2 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Revenue Comparison</h2>';
 $output .= '<canvas id="comparisonChart" class="max-h-80"></canvas>';
 $output .= '</div>';
 
@@ -147,7 +147,7 @@ $output .= '</div>'; // End background
 // JavaScript for chart
 $output .= '<script>';
 $output .= '(function() {';
-$output .= '    console.log("Script initialized for Income Report");';
+$output .= '    console.log("Script initialized for Revenue Report");';
 $output .= '    const chartData = ' . json_encode($chartData) . ';';
 
 // Chart

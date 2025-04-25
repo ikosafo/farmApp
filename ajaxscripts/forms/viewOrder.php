@@ -53,8 +53,8 @@ if (!is_array($orderDetails)) {
             </div>
         </div>
 
-        <!-- Section: Order Details -->
-        <h5 class="form-section-title mt-5">2. Order Details</h5>
+        <!-- Section: Delivery Details -->
+        <h5 class="form-section-title mt-5">2. Delivery Details</h5>
         <div id="orderItemsContainer">
             <?php
             if (empty($orderDetails)) {
@@ -106,7 +106,7 @@ if (!is_array($orderDetails)) {
                 </div>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Preferred Date</label>
+                <label class="form-label">Delivery Date</label>
                 <input type="text" id="preferredDate" class="form-control" value="<?php echo htmlspecialchars($resProd['deliveryDate']); ?>" disabled>
             </div>
         </div>
@@ -116,9 +116,14 @@ if (!is_array($orderDetails)) {
         <div class="row g-4">
             <div class="col-md-6">
                 <label class="form-label">Payment Method</label>
-                <select id="paymentMethod" class="form-select" disabled>
-                    <option value="Card" <?php echo $resProd['paymentMethod'] == 'Card' ? 'selected' : ''; ?>>Credit or Debit Card/Mobile Money/Bank Transfer</option>
-                    <option value="Cash" <?php echo $resProd['paymentMethod'] == 'Cash' ? 'selected' : ''; ?>>Cash on Delivery/Pickup</option>
+                <select id="paymentStatus" class="form-select" name="paymentStatus" required disabled>
+                    <option value="" disabled selected>Select Payment Status</option>
+                    <option value="Part Payment" <?php echo $resProd['paymentStatus'] == 'Part Payment' ? 'selected' : ''; ?>>Part Payment</option>
+                    <option value="Full Payment" <?php echo $resProd['paymentStatus'] == 'Full Payment' ? 'selected' : ''; ?>>Full Payment</option>
+                    <option value="Overpaid" <?php echo $resProd['paymentStatus'] == 'Overpaid' ? 'selected' : ''; ?>>Overpaid</option>
+                    <option value="Pending" <?php echo $resProd['paymentStatus'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                    <option value="Refunded" <?php echo $resProd['paymentStatus'] == 'Refunded' ? 'selected' : ''; ?>>Refunded</option>
+                    <option value="On Hold" <?php echo $resProd['paymentStatus'] == 'On Hold' ? 'selected' : ''; ?>>On Hold</option>
                 </select>
             </div>
             <div class="col-md-6">

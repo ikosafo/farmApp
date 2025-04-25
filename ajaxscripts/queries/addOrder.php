@@ -9,18 +9,18 @@ $customerPhone = mysqli_real_escape_string($mysqli, $_POST['phoneNumber']);
 $address = mysqli_real_escape_string($mysqli, $_POST['address']);
 $fulfillmentMethod = mysqli_real_escape_string($mysqli, $_POST['fulfillmentMethod']);
 $preferredDate = mysqli_real_escape_string($mysqli, $_POST['preferredDate']);
-$paymentMethod = mysqli_real_escape_string($mysqli, $_POST['paymentMethod']);
+$paymentStatus = mysqli_real_escape_string($mysqli, $_POST['paymentStatus']);
 $totalAmount = floatval($_POST['totalAmount']);
 $createdAt = date("Y-m-d H:i:s");
 $updatedAt = $createdAt;
 
-// Process order details (products and quantities)
+// Process Delivery details (products and quantities)
 $products = $_POST['products'] ?? [];
 $quantities = $_POST['quantities'] ?? [];
 $orderDetails = [];
 
 if (count($products) !== count($quantities) || empty($products)) {
-    echo "Error: Invalid order details provided";
+    echo "Error: Invalid Delivery details provided";
     exit;
 }
 
@@ -47,10 +47,10 @@ for ($i = 0; $i < count($products); $i++) {
     }
 }
 
-// Convert order details to JSON
+// Convert Delivery details to JSON
 $orderDetailsJson = json_encode($orderDetails);
 if ($orderDetailsJson === false) {
-    echo "Error: Failed to encode order details";
+    echo "Error: Failed to encode Delivery details";
     exit;
 }
 
@@ -67,7 +67,7 @@ try {
         `orderDetails`,
         `deliveryMethod`,
         `deliveryDate`,
-        `paymentMethod`,
+        `paymentStatus`,
         `totalAmount`,
         `createdAt`,
         `updatedAt`
@@ -79,7 +79,7 @@ try {
         '$orderDetailsJson',
         '$fulfillmentMethod',
         '$preferredDate',
-        '$paymentMethod',
+        '$paymentStatus',
         '$totalAmount',
         '$createdAt',
         '$updatedAt'

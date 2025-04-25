@@ -61,12 +61,12 @@ if (json_last_error() !== JSON_ERROR_NONE || !is_array($orderDetails)) {
             </div>
         </div>
 
-        <!-- Section: Order Details -->
-        <h5 class="form-section-title mt-5">2. Order Details</h5>
+        <!-- Section: Delivery Details -->
+        <h5 class="form-section-title mt-5">2. Delivery Details</h5>
         <div id="orderItemsContainer">
             <?php
             if (empty($orderDetails)) {
-                // Display a single empty order item if no valid order details
+                // Display a single empty order item if no valid Delivery details
                 ?>
                 <div class="row g-4 order-item align-items-end">
                     <div class="col-md-4">
@@ -162,7 +162,7 @@ if (json_last_error() !== JSON_ERROR_NONE || !is_array($orderDetails)) {
                 </div>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Preferred Date <span class="text-danger">*</span></label>
+                <label class="form-label">Delivery Date <span class="text-danger">*</span></label>
                 <input type="text" id="deliveryDate" class="form-control flatpickr" placeholder="Choose date" value="<?php echo htmlspecialchars($resProd['deliveryDate']); ?>" required>
             </div>
         </div>
@@ -171,13 +171,19 @@ if (json_last_error() !== JSON_ERROR_NONE || !is_array($orderDetails)) {
         <h5 class="form-section-title mt-5">4. Payment</h5>
         <div class="row g-4">
             <div class="col-md-6">
-                <label class="form-label">Payment Method <span class="text-danger">*</span></label>
-                <select id="paymentMethod" class="form-select" name="paymentMethod" required>
-                    <option value="" disabled>Select payment method</option>
-                    <option value="Card" <?php echo $resProd['paymentMethod'] == 'Card' ? 'selected' : ''; ?>>Credit or Debit Card/Mobile Money/Bank Transfer</option>
-                    <option value="Cash" <?php echo $resProd['paymentMethod'] == 'Cash' ? 'selected' : ''; ?>>Cash on Delivery/Pickup</option>
+                <label class="form-label">Payment Status <span class="text-danger">*</span></label>
+                <select id="paymentStatus" class="form-select" name="paymentStatus" required>
+                    <option value="" disabled selected>Select Payment Status</option>
+                    <option value="Part Payment" <?php echo $resProd['paymentStatus'] == 'Part Payment' ? 'selected' : ''; ?>>Part Payment</option>
+                    <option value="Full Payment" <?php echo $resProd['paymentStatus'] == 'Full Payment' ? 'selected' : ''; ?>>Full Payment</option>
+                    <option value="Overpaid" <?php echo $resProd['paymentStatus'] == 'Overpaid' ? 'selected' : ''; ?>>Overpaid</option>
+                    <option value="Pending" <?php echo $resProd['paymentStatus'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                    <option value="Refunded" <?php echo $resProd['paymentStatus'] == 'Refunded' ? 'selected' : ''; ?>>Refunded</option>
+                    <option value="On Hold" <?php echo $resProd['paymentStatus'] == 'On Hold' ? 'selected' : ''; ?>>On Hold</option>
                 </select>
             </div>
+
+
             <div class="col-md-6">
                 <label class="form-label">Total Amount (GHC)</label>
                 <input type="text" id="totalAmount" class="form-control" value="<?php echo number_format($resProd['totalAmount'], 2); ?>" readonly placeholder="Auto-calculated">
@@ -264,7 +270,7 @@ $(document).ready(function () {
         updateItemCalculations($item);
     });
 
-    // Add Order Item
+    // Add Delivery Item
     $('#addOrderItem').click(function () {
         const $item = $('#orderItemsContainer .order-item:first').clone(true);
         $item.find('.product-select').val('');
@@ -300,7 +306,7 @@ $(document).ready(function () {
             customerAddress: $('#customerAddress').val(),
             deliveryMethod: $('input[name="deliveryMethod"]:checked').val(),
             deliveryDate: $('#deliveryDate').val(),
-            paymentMethod: $('#paymentMethod').val(),
+            paymentStatus: $('#paymentStatus').val(),
             totalAmount: $('#totalAmount').val(),
             products: [],
             quantities: []
@@ -325,8 +331,8 @@ $(document).ready(function () {
             if (!data.customerPhone) error += 'Please enter phone number\n';
             if (!data.customerAddress) error += 'Please enter address\n';
             if (!data.deliveryMethod) error += 'Please select fulfillment method\n';
-            if (!data.deliveryDate) error += 'Please select preferred date\n';
-            if (!data.paymentMethod) error += 'Please select payment method\n';
+            if (!data.deliveryDate) error += 'Please select delivery date\n';
+            if (!data.paymentStatus) error += 'Please select payment status\n';
             if (data.products.length === 0) error += 'Please add at least one product\n';
             return error;
         };
