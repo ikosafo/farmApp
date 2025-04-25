@@ -66,10 +66,10 @@ $resExp = $getExp->fetch_assoc();
 
 
 <script>
-   $("#expenditureCategoryEdit").select2({
+   /* $("#expenditureCategoryEdit").select2({
         placeholder: "Select Category",
         width: '100%' 
-    });
+    }); */
 
     $("#expenditureDateEdit").flatpickr({
         altInput: true,

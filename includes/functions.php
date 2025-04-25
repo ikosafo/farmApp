@@ -125,6 +125,17 @@ function manageProdCategories($id)
 }
 
 
+function manageCategories($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewCategory_btn" 
+    data-toggle="tooltip" data-original-title="View Category" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editCategory_btn" 
+    data-toggle="tooltip" data-original-title="Edit Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteCategory" 
+    data-toggle="tooltip" data-original-title="Delete Category" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
 function manageCashBook($id)
 {
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewCashBook_btn" 

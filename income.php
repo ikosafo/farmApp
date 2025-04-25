@@ -17,8 +17,8 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>Categories
+                                <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" data-bs-target="#statistics" type="button" role="tab" aria-controls="statistics" aria-selected="false">
+                                    <i class="fas fa-chart-bar me-2"></i>Statistics
                                 </button>
                             </li>
                         </ul>
@@ -36,7 +36,7 @@
                                 <div id="pageTable"></div>
                             </div>
                             <!-- Categories Tab -->
-                            <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+                            <!-- <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="font-weight-bolder mb-0">Income Categories</h5>
                                     <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
@@ -44,6 +44,10 @@
                                     </button>
                                 </div>
                                 <div id="categoryTable"></div>
+                            </div> -->
+                            <!-- Statistics Tab -->
+                            <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+                                <div id="statisticsTable"></div>
                             </div>
                         </div>
                     </div>
@@ -66,7 +70,7 @@
     </div>
 
     <!-- Add Category Modal -->
-    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
@@ -76,7 +80,7 @@
                 <div class="modal-body" id="addCategoryForm"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- View Income Modal -->
     <div class="modal fade" id="viewIncomeModal" tabindex="-1" aria-labelledby="viewIncomeModalLabel" aria-hidden="true">
@@ -105,7 +109,7 @@
     </div>
 
     <!-- View/Edit Income Category Modal -->
-    <div class="modal fade" id="incCatModal" tabindex="-1" aria-labelledby="incCatModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="incCatModal" tabindex="-1" aria-labelledby="incCatModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
@@ -115,7 +119,7 @@
                 <div class="modal-body" id="incomeCatContent"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 </main>
 
 <?php include('./includes/footer.php'); ?>
@@ -204,18 +208,18 @@
     });
 
     // Load Categories table when Categories tab is shown
-    $('#categories-tab').on('shown.bs.tab', function () {
+    /* $('#categories-tab').on('shown.bs.tab', function () {
         loadPage("ajaxscripts/tables/incCategory.php", function(response) {
             $('#categoryTable').html(response);
         });
-    });
+    }); */
 
     // Load Category form into modal
-    $('#addCategoryModal').on('show.bs.modal', function () {
+    /* $('#addCategoryModal').on('show.bs.modal', function () {
         loadPage("ajaxscripts/forms/addIncCategory.php", function(response) {
             $('#addCategoryForm').html(response);
         });
-    });
+    }); */
 
     // Handle View Income
     $(document).on('click', '.viewIncome_btn', function() {
@@ -242,7 +246,7 @@
     });
 
     // Handle View Income Category
-    $(document).on('click', '.viewIncCategory_btn', function() {
+    /* $(document).on('click', '.viewIncCategory_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };
         var url = "ajaxscripts/forms/viewIncCategory.php";
@@ -251,10 +255,10 @@
             $('#incCatModal').modal('show').find('.modal-title').text('View Income Category');
         };
         saveForm(formData, url, successCallback);
-    });
+    }); */
 
     // Handle Edit Income Category
-    $(document).on('click', '.editIncCategory_btn', function() {
+    /* $(document).on('click', '.editIncCategory_btn', function() {
         var theindex = $(this).attr('i_index');
         var formData = { i_index: theindex };
         var url = "ajaxscripts/forms/editIncCategory.php";
@@ -263,5 +267,12 @@
             $('#incCatModal').modal('show').find('.modal-title').text('Edit Income Category');
         };
         saveForm(formData, url, successCallback);
+    }); */
+
+
+    $('#statistics-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/incStatistics.php", function(response) {
+            $('#statisticsTable').html(response);
+        });
     });
 </script>

@@ -8,7 +8,7 @@ $currentQuarter = ceil(date('n') / 3); // Q2
 $currentQuarterStr = $currentYear . '-Q' . $currentQuarter; // 2025-Q2
 $prevQuarterStr = $currentQuarter == 1 ? ($currentYear - 1) . '-Q4' : $currentYear . '-Q' . ($currentQuarter - 1); // 2025-Q1
 
-// Query for current quarter detailed expenditure transactions
+// Query for current quarter detailed income transactions
 $getCurrentDetails = $mysqli->query("
     SELECT 
         transactionName,
@@ -19,32 +19,32 @@ $getCurrentDetails = $mysqli->query("
     FROM 
         transactions 
     WHERE 
-        transactionType = 'Expenditure' AND transStatus = 1
+        transactionType = 'Income' AND transStatus = 1
         AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$currentQuarterStr'
     ORDER BY 
         transactionDate ASC
 ");
 
-// Query for current quarter total expenditure
+// Query for current quarter total income
 $getCurrentTotal = $mysqli->query("
     SELECT 
         SUM(transactionAmount) AS totalAmount
     FROM 
         transactions 
     WHERE 
-        transactionType = 'Expenditure' AND transStatus = 1
+        transactionType = 'Income' AND transStatus = 1
         AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$currentQuarterStr'
 ");
 $currentTotal = $getCurrentTotal->fetch_assoc()['totalAmount'] ?? 0;
 
-// Query for previous quarter total expenditure
+// Query for previous quarter total income
 $getPrevTotal = $mysqli->query("
     SELECT 
         SUM(transactionAmount) AS totalAmount
     FROM 
         transactions 
     WHERE 
-        transactionType = 'Expenditure' AND transStatus = 1
+        transactionType = 'Income' AND transStatus = 1
         AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$prevQuarterStr'
 ");
 $prevTotal = $getPrevTotal->fetch_assoc()['totalAmount'] ?? 0;
@@ -58,7 +58,7 @@ $getChartData = $mysqli->query("
     FROM 
         transactions 
     WHERE 
-        transactionType = 'Expenditure' AND transStatus = 1
+        transactionType = 'Income' AND transStatus = 1
         AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) IN ('$currentQuarterStr', '$prevQuarterStr')
     GROUP BY 
         transactionCategory, quarter
@@ -87,7 +87,7 @@ $output .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcs
 $output .= '<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>';
 
 // Header
-$output .= '<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Expenditure Report - ' . $currentQuarterStr . '</h1>';
+$output .= '<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Income Report - ' . $currentQuarterStr . '</h1>';
 
 // Debug data
 $output .= '<!-- Debug: ' . $currentQuarterStr . ' has ' . count($details) . ' transactions -->';
@@ -107,9 +107,9 @@ $output .= '</tr>';
 $output .= '</thead>';
 $output .= '<tbody>';
 
-$totalExpenditure = 0;
+$totalIncome = 0;
 foreach ($details as $resResults) {
-    $totalExpenditure += $resResults['transactionAmount'];
+    $totalIncome += $resResults['transactionAmount'];
     $output .= '<tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">';
     $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['transactionName']) . '</td>';
     $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['categoryName']) . '</td>';
@@ -120,8 +120,8 @@ foreach ($details as $resResults) {
 }
 
 $output .= '<tr class="bg-gray-100 font-semibold">';
-$output .= '<td colspan="4" class="py-2 px-3 text-sm text-gray-700">Total Expenditure</td>';
-$output .= '<td class="py-2 px-3 text-sm text-gray-700">' . number_format($totalExpenditure, 2) . '</td>';
+$output .= '<td colspan="4" class="py-2 px-3 text-sm text-gray-700">Total Income</td>';
+$output .= '<td class="py-2 px-3 text-sm text-gray-700">' . number_format($totalIncome, 2) . '</td>';
 $output .= '</tr>';
 $output .= '</tbody>';
 $output .= '</table>';
@@ -136,7 +136,7 @@ $output .= '</div>';
 
 // Chart (moved to bottom with caption)
 $output .= '<div class="bg-gray-50 rounded-lg p-3 mt-4 shadow-sm">'; 
-$output .= '<h2 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Expenditure Comparison</h2>';
+$output .= '<h2 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Income Comparison</h2>';
 $output .= '<canvas id="comparisonChart" class="max-h-80"></canvas>';
 $output .= '</div>';
 
@@ -147,7 +147,7 @@ $output .= '</div>'; // End background
 // JavaScript for chart
 $output .= '<script>';
 $output .= '(function() {';
-$output .= '    console.log("Script initialized for Expenditure Report");';
+$output .= '    console.log("Script initialized for Income Report");';
 $output .= '    const chartData = ' . json_encode($chartData) . ';';
 
 // Chart
@@ -190,7 +190,7 @@ $output .= '                    responsive: true,';
 $output .= '                    scales: {';
 $output .= '                        y: {';
 $output .= '                            beginAtZero: true,';
-$output .= '                            title: { display: true, text: "Expenditure (GHS)" }';
+$output .= '                            title: { display: true, text: "Income (GHS)" }';
 $output .= '                        },';
 $output .= '                        x: {';
 $output .= '                            title: { display: true, text: "Category" }';

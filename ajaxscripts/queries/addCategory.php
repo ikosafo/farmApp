@@ -4,32 +4,29 @@ include('../../includes/functions.php');
 
 // Escape and sanitize user inputs
 $categoryName = mysqli_real_escape_string($mysqli, $_POST['categoryName']);
-$categoryDescription = mysqli_real_escape_string($mysqli, $_POST['categoryCode']);
+$categoryDescription = mysqli_real_escape_string($mysqli, $_POST['categoryDescription']); 
 $categoryStatus = mysqli_real_escape_string($mysqli, $_POST['categoryStatus']);
 $datetime = date("Y-m-d H:i:s");
 
-// Check if the category name or category code already exists
-$checkQuery = "SELECT COUNT(*) AS count FROM `produce_category` WHERE `pcatActive` = 1 AND (`pcatName` = '$categoryName' OR `pcatCode` = '$categoryCode')";
+// Check if the category already exists
+$checkQuery = "SELECT COUNT(*) AS count FROM `categories` WHERE `categoryStatus` = 1 AND `categoryName` = '$categoryName'";
 $result = $mysqli->query($checkQuery);
 $row = $result->fetch_assoc();
 $count = $row['count'];
 
 if ($count > 0) {
-    // Category name or category code already exists
-    echo "Error: Category name or category code already exists";
+    echo "Error: Category name already exists";
 } else {
-    // Prepare the SQL query
-    $insertQuery = "INSERT INTO `produce_category` (`pcatName`, `pcatCode`) VALUES ('$categoryName', '$categoryCode')";
+    // Insert new category
+    $insertQuery = "INSERT INTO `categories` (`categoryName`, `categoryDescription`, `categoryStatus`) 
+                    VALUES ('$categoryName', '$categoryDescription', '$categoryStatus')";
 
-    // Execute the SQL query
     if ($mysqli->query($insertQuery)) {
-        // Query executed successfully
         echo "Success";
     } else {
-        // Error occurred
         echo "Error: " . $mysqli->error;
     }
 }
 
-// Close the database connection
 $mysqli->close();
+?>
