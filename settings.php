@@ -132,9 +132,8 @@
         </div>
     </div>
 
-
-     <!-- Add Product Category Modal -->
-     <div class="modal fade" id="addProdCategoryModal" tabindex="-1" aria-labelledby="addProdCategoryModalLabel" aria-hidden="true">
+    <!-- Add Product Category Modal -->
+    <div class="modal fade" id="addProdCategoryModal" tabindex="- plank1" aria-labelledby="addProdCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
@@ -159,8 +158,8 @@
         </div>
     </div>
 
-     <!-- View Product Category Modal -->
-     <div class="modal fade" id="viewProdCategoryModal" tabindex="-1" aria-labelledby="viewProdCategoryModalLabel" aria-hidden="true">
+    <!-- View Product Category Modal -->
+    <div class="modal fade" id="viewProdCategoryModal" tabindex="-1" aria-labelledby="viewProdCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
@@ -338,6 +337,9 @@
 </style>
 
 <script>
+    // Simulated permission check (replace with actual logic, e.g., AJAX call or session check)
+    const hasLogPermission = false; // Set to false to simulate no permission
+
     // Load Produce table on page load
     loadPage("ajaxscripts/tables/produce.php", function(response) {
         $('#pageTable').html(response);
@@ -357,7 +359,7 @@
         });
     });
 
-    // Load Product Categories table when prod Categories tab is shown
+    // Load Product Categories table when Product Categories tab is shown
     $('#prodcategories-tab').on('shown.bs.tab', function () {
         loadPage("ajaxscripts/tables/productCategory.php", function(response) {
             $('#prodcategoryTable').html(response);
@@ -371,7 +373,7 @@
         });
     });
 
-    // Load product Category form into modal
+    // Load Product Category form into modal
     $('#addProdCategoryModal').on('show.bs.modal', function () {
         loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
             $('#prodcategoryForm').html(response);
@@ -399,11 +401,20 @@
         });
     });
 
-    // Load Logs table when Logs tab is shown
+    // Load Logs table when Logs tab is shown, with permission check
     $('#logs-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/tables/logs.php", function(response) {
-            $('#logsTable').html(response);
-        });
+        if (hasLogPermission) {
+            loadPage("ajaxscripts/tables/logs.php", function(response) {
+                $('#logsTable').html(response);
+            });
+        } else {
+            $('#logsTable').html(`
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Access Denied:</strong> You do not have permission to view logs.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `);
+        }
     });
 
     // View Category
@@ -454,7 +465,6 @@
         saveForm(formData, url, successCallback);
     });
 
-
     // Edit Product Category
     $(document).on('click', '.editProdCategory_btn', function() {
         var theindex = $(this).attr('i_index');
@@ -466,7 +476,6 @@
         };
         saveForm(formData, url, successCallback);
     });
-
 
     // Edit Produce
     $(document).on('click', '.editProduction_btn', function() {
