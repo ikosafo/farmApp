@@ -10,11 +10,12 @@ $columnIndex = $_POST['order'][0]['column']; // Column index
 $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
 $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($mysqli, $_POST['search']['value']); // Search value
+$paymentStatus = isset($_POST['paymentStatus']) ? mysqli_real_escape_string($mysqli, $_POST['paymentStatus']) : ''; // Payment status filter
 
 ## Search query
 $searchQuery = "";
 if ($searchValue != '') {
-    $searchQuery = " AND (
+    $searchQuery .= " AND (
         customerName LIKE '%" . $searchValue . "%' 
         OR customerEmail LIKE '%" . $searchValue . "%' 
         OR customerPhone LIKE '%" . $searchValue . "%' 
@@ -24,6 +25,10 @@ if ($searchValue != '') {
         OR paymentStatus LIKE '%" . $searchValue . "%' 
         OR totalAmount LIKE '%" . $searchValue . "%'
     ) ";
+}
+
+if ($paymentStatus != '') {
+    $searchQuery .= " AND paymentStatus = '" . $paymentStatus . "' ";
 }
 
 ## Total number of records without filtering

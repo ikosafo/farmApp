@@ -61,16 +61,16 @@ $resInc = $getInc->fetch_assoc();
         var successCallback = function(response) {
             $spinner.addClass('d-none');
             if (response === 'Success') {
-                $.notify("Category updated successfully!", {
+                $.notify("Product Category updated successfully!", {
                     className: "success",
                     position: "top right"
                 });
-                $('#editProductCategoryModal').modal('hide');
+                $('#editProdCategoryModal').modal('hide');
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
 
                 loadPage("ajaxscripts/tables/productCategory.php", function(response) {
-                    $('#categoryTable').html(response);
+                    $('#prodcategoryTable').html(response);
                 });
 
                 if ($('#addCategoryModal').is(':visible')) {

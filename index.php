@@ -23,29 +23,63 @@ $totalProductsQuery = "SELECT COUNT(prodQuantity) as totalProducts FROM `produce
 $totalProductsResult = mysqli_query($mysqli, $totalProductsQuery);
 $totalProducts = mysqli_fetch_assoc($totalProductsResult)['totalProducts'] ?? 0;
 
+// Total Categories
+$totalCategoriesQuery = "SELECT COUNT(*) as totalCategories FROM `categories` WHERE categoryStatus = 1";
+$totalCategoriesResult = mysqli_query($mysqli, $totalCategoriesQuery);
+$totalCategories = mysqli_fetch_assoc($totalCategoriesResult)['totalCategories'] ?? 0;
+
 // Recent Orders
-$recentOrdersQuery = "SELECT customerName, customerPhone, totalAmount, createdAt, orderStatus FROM orders ORDER BY createdAt DESC LIMIT 5";
+$recentOrdersQuery = "SELECT `paymentStatus`,`customerName`, `totalAmount`, `orderStatus`,`deliveryDate` FROM `orders` ORDER BY `deliveryDate` DESC LIMIT 5";
 $recentOrdersResult = mysqli_query($mysqli, $recentOrdersQuery);
 
 // Recent Transactions
 $recentTransactionsQuery = "SELECT transactionName, transactionAmount, transactionDate, transactionType FROM transactions ORDER BY transactionDate DESC LIMIT 5";
 $recentTransactionsResult = mysqli_query($mysqli, $recentTransactionsQuery);
 
-// Product Names and Quantities for Pie Chart
-$productsQuery = "SELECT prodName, prodQuantity FROM producelist WHERE prodStatus = 1 LIMIT 6"; // Limit to 6 for better chart readability
-$productsResult = mysqli_query($mysqli, $productsQuery);
-$productNames = [];
-$quantities = [];
-while ($row = mysqli_fetch_assoc($productsResult)) {
-    $productNames[] = $row['prodName'];
-    $quantities[] = $row['prodQuantity'];
+// Sales Distribution for Pie Chart (from orders.orderDetails)
+$salesQuery = "SELECT orderDetails FROM orders WHERE orderStatus = 1";
+$salesResult = mysqli_query($mysqli, $salesQuery);
+$productQuantities = [];
+while ($row = mysqli_fetch_assoc($salesResult)) {
+    $orderDetails = json_decode($row['orderDetails'], true);
+    if (is_array($orderDetails)) {
+        foreach ($orderDetails as $product => $quantity) {
+            if (isset($productQuantities[$product])) {
+                $productQuantities[$product] += $quantity;
+            } else {
+                $productQuantities[$product] = $quantity;
+            }
+        }
+    }
+}
+// Sort by quantity descending and limit to top 6 for chart readability
+arsort($productQuantities);
+$topProducts = array_slice($productQuantities, 0, 6, true);
+$productNames = array_keys($topProducts);
+$quantities = array_values($topProducts);
+
+// Revenue vs Expenditure for Line Chart (last 6 months)
+$monthsQuery = "SELECT DATE_FORMAT(transactionDate, '%b %Y') as month, 
+                SUM(CASE WHEN transactionType = 'Income' THEN transactionAmount ELSE 0 END) as income,
+                SUM(CASE WHEN transactionType = 'Expenditure' THEN transactionAmount ELSE 0 END) as expenditure
+                FROM transactions 
+                WHERE transStatus = 1 
+                AND transactionDate >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(transactionDate, '%b %Y'), DATE_FORMAT(transactionDate, '%Y-%m')
+                ORDER BY DATE_FORMAT(transactionDate, '%Y-%m') ASC";
+$monthsResult = mysqli_query($mysqli, $monthsQuery);
+$monthLabels = [];
+$incomeData = [];
+$expenditureData = [];
+while ($row = mysqli_fetch_assoc($monthsResult)) {
+    $monthLabels[] = $row['month'];
+    $incomeData[] = $row['income'] ?? 0.0;
+    $expenditureData[] = $row['expenditure'] ?? 0.0;
 }
 ?>
 
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
-    <!-- Header -->
     <?php include('./includes/header.php') ?>
-    <!-- End Header -->
 
     <style>
         canvas {
@@ -128,7 +162,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                                 <div class="numbers">
                                     <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Categories</p>
                                     <h5 class="font-weight-bolder mb-0">
-                                        <?php echo number_format($totalProducts, 0); ?>
+                                        <?php echo number_format($totalCategories, 0); ?>
                                     </h5>
                                 </div>
                             </div>
@@ -159,6 +193,8 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
             </div>
             <div class="col-lg-6">
                 <div class="card h-100">
+
+
                     <div class="card-header pb-0">
                         <h6>Recent Supplies / Deliveries</h6>
                         <p class="text-sm">
@@ -180,6 +216,9 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                                 <tbody>
                                     <?php while ($order = mysqli_fetch_assoc($recentOrdersResult)) { ?>
                                         <tr>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-xs font-weight-bold"><?php echo date('d M Y', strtotime($order['deliveryDate'])); ?></span>
+                                            </td>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
@@ -188,13 +227,10 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="text-xs font-weight-bold"><?php echo htmlspecialchars($order['customerPhone']); ?></span>
+                                                <span class="text-xs font-weight-bold"><?php echo number_format($order['totalAmount'], 2); ?></span>
                                             </td>
                                             <td>
-                                                <span class="text-xs font-weight-bold"><?php echo number_format($order['totalAmount'], 2); ?> GHC</span>
-                                            </td>
-                                            <td class="align-middle text-center text-sm">
-                                                <span class="text-xs font-weight-bold"><?php echo date('d M Y', strtotime($order['createdAt'])); ?></span>
+                                                <span class="text-xs font-weight-bold"><?php echo htmlspecialchars($order['paymentStatus']); ?></span>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -206,7 +242,7 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
             </div>
         </div>
 
-        <!-- Transactions and Product Categories -->
+        <!-- Transactions and Sales Distribution -->
         <div class="row mt-4">
             <div class="col-lg-4 mb-lg-0 mb-4">
                 <div class="card">
@@ -239,15 +275,15 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
             <div class="col-lg-8">
                 <div class="card z-index-2">
                     <div class="card-header pb-0">
-                        <h6>Product Distribution</h6>
+                        <h6>Sales Distribution</h6>
                         <p class="text-sm">
                             <i class="fa fa-arrow-up text-success"></i>
-                            <span class="font-weight-bold">Quantity distribution of products</span>
+                            <span class="font-weight-bold">Quantity distribution of sold products</span>
                         </p>
                     </div>
                     <div class="card-body p-3">
                         <div class="chart">
-                            <canvas id="chart-product-categories" class="chart-canvas" height="300"></canvas>
+                            <canvas id="chart-sales-distribution" class="chart-canvas" height="300"></canvas>
                         </div>
                     </div>
                 </div>
@@ -262,20 +298,20 @@ while ($row = mysqli_fetch_assoc($productsResult)) {
 <!-- Chart.js for visualizations -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Income vs Expenses Chart
+// Revenue vs Expenditure Chart
 const ctxIncomeExpense = document.getElementById('chart-income-expense').getContext('2d');
 new Chart(ctxIncomeExpense, {
     type: 'line',
     data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: <?php echo json_encode($monthLabels); ?>,
         datasets: [{
             label: 'Revenue',
-            data: [12000, 19000, 15000, 22000, 18000, 25000],
+            data: <?php echo json_encode($incomeData); ?>,
             borderColor: 'rgba(75, 192, 192, 1)',
             fill: false
         }, {
             label: 'Expenditure',
-            data: [8000, 10000, 12000, 9000, 11000, 13000],
+            data: <?php echo json_encode($expenditureData); ?>,
             borderColor: 'rgba(255, 99, 132, 1)',
             fill: false
         }]
@@ -290,9 +326,9 @@ new Chart(ctxIncomeExpense, {
     }
 });
 
-// Product Distribution Chart
-const ctxProductCategories = document.getElementById('chart-product-categories').getContext('2d');
-new Chart(ctxProductCategories, {
+// Sales Distribution Chart
+const ctxSalesDistribution = document.getElementById('chart-sales-distribution').getContext('2d');
+new Chart(ctxSalesDistribution, {
     type: 'pie',
     data: {
         labels: <?php echo json_encode($productNames); ?>,

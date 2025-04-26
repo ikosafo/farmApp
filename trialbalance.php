@@ -184,7 +184,7 @@
         <table class="accounting-table">
             <thead>
                 <tr>
-                    <th>Category</th>
+                    <th>Transaction</th>
                     <th>Type</th>
                     <th class="text-end">Debit (GHS)</th>
                     <th class="text-end">Credit (GHS)</th>

@@ -128,14 +128,14 @@ $data = [];
 while ($row = $getResults->fetch_assoc()) {
     if ($reportCategory == 'Trial Balance') {
         $row['categoryName'] = $row['transactionType'] == 'Income' 
-            ? incCategoryName($row['transactionCategory']) 
-            : expCategoryName($row['transactionCategory']);
+            ? categoryName($row['transactionCategory']) 
+            : categoryName($row['transactionCategory']);
     } elseif ($reportCategory == 'Orders') {
         $row['categoryName'] = $row['monthYear']; // Use monthYear as categoryName
     } else {
         $row['categoryName'] = $reportCategory == 'Income' 
-            ? incCategoryName($row['transactionCategory']) 
-            : expCategoryName($row['transactionCategory']);
+            ? categoryName($row['transactionCategory']) 
+            : categoryName($row['transactionCategory']);
     }
     $data[] = $row;
 }
@@ -202,8 +202,8 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
             $totalExpenditure += $amount;
         }
         $categoryName = $resResults['transactionType'] == 'Income' 
-            ? incCategoryName($resResults['transactionCategory']) 
-            : expCategoryName($resResults['transactionCategory']);
+            ? categoryName($resResults['transactionCategory']) 
+            : categoryName($resResults['transactionCategory']);
         $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionType']) . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionName']) . '</td>';
@@ -220,8 +220,8 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
             $totalExpenditure += $amount;
         }
         $categoryName = $reportCategory == 'Income' 
-            ? incCategoryName($resResults['transactionCategory']) 
-            : expCategoryName($resResults['transactionCategory']);
+            ? categoryName($resResults['transactionCategory']) 
+            : categoryName($resResults['transactionCategory']);
         $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionName']) . '</td>';
         $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';

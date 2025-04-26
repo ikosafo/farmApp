@@ -17,8 +17,13 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="prodcategories-tab" data-bs-toggle="tab" data-bs-target="#prodcategories" type="button" role="tab" aria-controls="prodcategories" aria-selected="false">
+                                    <i class="fas fa-layer-group me-2"></i>Product Categories
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>Categories
+                                    <i class="fas fa-tags me-2"></i>General Categories
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -59,6 +64,16 @@
                                     </button>
                                 </div>
                                 <div id="categoryTable"></div>
+                            </div>
+                            <!-- Product Categories Tab -->
+                            <div class="tab-pane fade" id="prodcategories" role="tabpanel" aria-labelledby="prodcategories-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Product Categories</h5>
+                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProdCategoryModal">
+                                        <i class="fas fa-plus me-2"></i>Add Product Category
+                                    </button>
+                                </div>
+                                <div id="prodcategoryTable"></div>
                             </div>
                             <!-- Users Tab -->
                             <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -117,6 +132,20 @@
         </div>
     </div>
 
+
+     <!-- Add Product Category Modal -->
+     <div class="modal fade" id="addProdCategoryModal" tabindex="-1" aria-labelledby="addProdCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="addProdCategoryModalLabel">Add Product Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="prodcategoryForm"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- View Category Modal -->
     <div class="modal fade" id="viewCategoryModal" tabindex="-1" aria-labelledby="viewCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
@@ -126,6 +155,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewCategoryFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
+     <!-- View Product Category Modal -->
+     <div class="modal fade" id="viewProdCategoryModal" tabindex="-1" aria-labelledby="viewProdCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewProdCategoryModalLabel">View Product Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewProdCategoryFormDiv"></div>
             </div>
         </div>
     </div>
@@ -152,6 +194,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="editCategoryFormDiv"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Category Modal -->
+    <div class="modal fade" id="editProdCategoryModal" tabindex="-1" aria-labelledby="editProdCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="editProdCategoryModalLabel">Edit Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editProdCategoryFormDiv"></div>
             </div>
         </div>
     </div>
@@ -302,10 +357,24 @@
         });
     });
 
+    // Load Product Categories table when prod Categories tab is shown
+    $('#prodcategories-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/productCategory.php", function(response) {
+            $('#prodcategoryTable').html(response);
+        });
+    });
+
     // Load Category form into modal
     $('#addCategoryModal').on('show.bs.modal', function () {
         loadPage("ajaxscripts/forms/addCategory.php", function(response) {
             $('#categoryForm').html(response);
+        });
+    });
+
+    // Load product Category form into modal
+    $('#addProdCategoryModal').on('show.bs.modal', function () {
+        loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
+            $('#prodcategoryForm').html(response);
         });
     });
 
@@ -349,6 +418,18 @@
         saveForm(formData, url, successCallback);
     });
 
+    // View Product Category
+    $(document).on('click', '.viewProdCategory_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewProdCategory.php";
+        var successCallback = function(response) {
+            $('#viewProdCategoryFormDiv').html(response);
+            $('#viewProdCategoryModal').modal('show').find('.modal-title').text('View Category');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
     // View Produce
     $(document).on('click', '.viewProduction_btn', function() {
         var theindex = $(this).attr('i_index');
@@ -372,6 +453,20 @@
         };
         saveForm(formData, url, successCallback);
     });
+
+
+    // Edit Product Category
+    $(document).on('click', '.editProdCategory_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/editProdCategory.php";
+        var successCallback = function(response) {
+            $('#editProdCategoryFormDiv').html(response);
+            $('#editProdCategoryModal').modal('show').find('.modal-title').text('Edit Category');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
 
     // Edit Produce
     $(document).on('click', '.editProduction_btn', function() {

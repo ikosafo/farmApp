@@ -52,12 +52,12 @@
                         var formData = { i_index: theindex };
                         var url = "ajaxscripts/queries/deleteprodCategory.php";
                         var successCallback = function(response) {
-                            $.notify("Category deleted successfully!", {
+                            $.notify("Product Category deleted successfully!", {
                                 className: "success",
                                 position: "top right"
                             });
                             loadPage("ajaxscripts/tables/productCategory.php", function(response) {
-                                $('#categoryTable').html(response);
+                                $('#prodcategoryTable').html(response);
                             });
                         };
                         saveForm(formData, url, successCallback);

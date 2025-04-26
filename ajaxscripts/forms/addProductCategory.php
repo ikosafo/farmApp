@@ -44,20 +44,21 @@
         var successCallback = function(response) {
             $spinner.addClass('d-none');
             if (response === 'Success') {
-                $.notify("Category saved successfully!", {
+                $.notify("Product Category saved successfully!", {
                     className: "success",
                     position: "top right"
                 });
-                $('#addCategoryModal').modal('hide');
+                $('#addProdCategoryModal').modal('hide');
                 loadPage("ajaxscripts/tables/productCategory.php", function(response) {
-                    $('#categoryTable').html(response);
+                    $('#prodcategoryTable').html(response);
                 });
                 
-                if ($('#addProduceModal').is(':visible')) {
+                if ($('#addProdCategoryModal').is(':visible')) {
                     loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
-                        $('#pageForm').html(response);
+                        $('#prodcategoryForm').html(response);
                     });
                 }
+
             } else {
                 $.notify(response, {
                     className: "error",
