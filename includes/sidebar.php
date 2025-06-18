@@ -93,13 +93,13 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                                 </g>
                             </svg>
                         </div>
-                        <span class="nav-link-text ms-1">Expenditures </span>
+                        <span class="nav-link-text ms-1">Payments </span>
                     </a>
                 </li>
 
 
                 <li class="nav-item">
-                    <a class="nav-link  <?php echo ($_SERVER['PHP_SELF'] == "/income.php" ? "active" : ""); ?>" href="income">
+                    <a class="nav-link  <?php echo ($_SERVER['PHP_SELF'] == "/receipt.php" ? "active" : ""); ?>" href="receipt">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>office</title>
@@ -115,7 +115,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                                 </g>
                             </svg>
                         </div>
-                        <span class="nav-link-text ms-1">Revenue </span>
+                        <span class="nav-link-text ms-1">Receipt </span>
                     </a>
                 </li>
 

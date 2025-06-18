@@ -1,15 +1,67 @@
 <?php include('../../config.php'); ?>
 
 <form autocomplete="off" id="farmIncomeForm">
-    <div class="row g-4">
+
+     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="incomeName" class="form-label">Receivable <span class="text-danger">*</span></label>
-            <input id="incomeName" class="form-control border-radius-md" type="text" placeholder="Enter income name" required>
+            <label for="incomeDate" class="form-label">Date <span class="text-danger">*</span></label>
+            <input id="incomeDate" class="form-control border-radius-md" type="text" placeholder="Select date" required>
         </div>
         <div class="col-12 col-md-6">
-            <label for="incomeCategory" class="form-label">Category <span class="text-danger">*</span></label>
+            <label for="incomePayee" class="form-label">Payee <span class="text-danger">*</span></label>
+            <input id="incomePayee" class="form-control border-radius-md" type="text" placeholder="Enter Payee" required>
+        </div>
+     </div>
+     <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="farmProduce" class="form-label">Produce </label>
+            <select id="farmProduce" class="form-control border-radius-md" required style="width: 100%;">
+                <option value="" disabled selected>Select produce</option>
+                <?php
+                $getProd = $mysqli->query("SELECT * FROM `producelist` WHERE `prodStatus` = 1");
+                while ($resProd = $getProd->fetch_assoc()) {
+                    echo "<option value='{$resProd['prodId']}'>{$resProd['prodName']}</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="invoiceNumber" class="form-label">Invoice No. </label>
+            <input id="invoiceNumber" class="form-control border-radius-md" type="text" placeholder="Enter Invoice No." required>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="currency" class="form-label">Currency <span class="text-danger">*</span></label>
+            <select id="currency" class="form-control border-radius-md" required style="width: 100%;">
+                <option value="" disabled selected>Select currency</option>
+                <option value="GHS">GHS</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="incomeAmount" class="form-label">Amount <span class="text-danger">*</span></label>
+            <input id="incomeAmount" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" required>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="exchangeRate" class="form-label">Exc Rate </label>
+            <input id="exchangeRate" class="form-control border-radius-md" type="number" step="0.01" placeholder="Enter Rate" value="1.00" required>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="ghsEquivalent" class="form-label">GHS Equivalent. </label>
+            <input id="ghsEquivalent" class="form-control border-radius-md" type="text" readonly>
+        </div>
+    </div>
+    
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <label for="incomeCategory" class="form-label">Nominal Account <span class="text-danger">*</span></label>
             <select id="incomeCategory" class="form-control border-radius-md" required style="width: 100%;">
-                <option value="" disabled selected>Select a category</option>
+                <option value="" disabled selected>Select account</option>
                 <?php
                 $getCat = $mysqli->query("SELECT * FROM `categories` WHERE `categoryStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
@@ -18,29 +70,14 @@
                 ?>
             </select>
         </div>
-    </div>
-
-    <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="incomeAmount" class="form-label">Amount <span class="text-danger">*</span></label>
-            <input id="incomeAmount" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" required>
-        </div>
-        <div class="col-12 col-md-6">
-            <label for="incomeDate" class="form-label">Date <span class="text-danger">*</span></label>
-            <input id="incomeDate" class="form-control border-radius-md" type="text" placeholder="Select date" required>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-12 col-md-6">
-            <label for="incomeReceipt" class="form-label">Receipt Number (if any)</label>
-            <input id="incomeReceipt" class="form-control border-radius-md" type="text" placeholder="Enter receipt number">
-        </div>
-        <div class="col-12 col-md-6">
-            <label for="incomeDescription" class="form-label">Description</label>
+             <label for="incomeDescription" class="form-label">Description</label>
             <textarea id="incomeDescription" class="form-control border-radius-md" rows="4" placeholder="Enter description"></textarea>
         </div>
+        
     </div>
+
+   
 
     <div class="d-flex justify-content-center mt-4">
         <button type="button" class="btn btn-outline-secondary me-3" data-bs-dismiss="modal">Cancel</button>

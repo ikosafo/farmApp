@@ -13,7 +13,7 @@
                         <ul class="nav nav-tabs premium-tabs" id="incomeTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="incomes-tab" data-bs-toggle="tab" data-bs-target="#incomes" type="button" role="tab" aria-controls="incomes" aria-selected="true">
-                                    <i class="fas fa-money-bill-wave me-2"></i>Revenue
+                                    <i class="fas fa-money-bill-wave me-2"></i>Receipts
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -28,23 +28,14 @@
                             <!-- Incomes Tab -->
                             <div class="tab-pane fade show active" id="incomes" role="tabpanel" aria-labelledby="incomes-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Farm Revenues</h5>
+                                    <h5 class="font-weight-bolder mb-0">Farm Receipts</h5>
                                     <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
-                                        <i class="fas fa-plus me-2"></i>Add Income
+                                        <i class="fas fa-plus me-2"></i>Add Receipt
                                     </button>
                                 </div>
                                 <div id="pageTable"></div>
                             </div>
-                            <!-- Categories Tab -->
-                            <!-- <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Income Categories</h5>
-                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                        <i class="fas fa-plus me-2"></i>Add Category
-                                    </button>
-                                </div>
-                                <div id="categoryTable"></div>
-                            </div> -->
+                           
                             <!-- Statistics Tab -->
                             <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
                                 <div id="statisticsTable"></div>
@@ -68,19 +59,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Add Category Modal -->
-    <!-- <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content border-radius-xl">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="addCategoryModalLabel">Add Income Category</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="addCategoryForm"></div>
-            </div>
-        </div>
-    </div> -->
 
     <!-- View Income Modal -->
     <div class="modal fade" id="viewIncomeModal" tabindex="-1" aria-labelledby="viewIncomeModalLabel" aria-hidden="true">
@@ -207,19 +185,6 @@
         });
     });
 
-    // Load Categories table when Categories tab is shown
-    /* $('#categories-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/tables/incCategory.php", function(response) {
-            $('#categoryTable').html(response);
-        });
-    }); */
-
-    // Load Category form into modal
-    /* $('#addCategoryModal').on('show.bs.modal', function () {
-        loadPage("ajaxscripts/forms/addIncCategory.php", function(response) {
-            $('#addCategoryForm').html(response);
-        });
-    }); */
 
     // Handle View Income
     $(document).on('click', '.viewIncome_btn', function() {

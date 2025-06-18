@@ -1,55 +1,86 @@
 <?php include('./includes/sidebar.php'); ?>
 
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
+    <!-- Header -->
     <?php include('./includes/header.php'); ?>
+    <!-- End Header -->
 
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div class="card shadow-sm border-radius-xl p-4 mb-4">
-                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                        <h5 class="font-weight-bolder mb-0">Cashbook Report</h5>
-                        <div>
-                            <button id="printCashbook" class="btn btn-sm btn-outline-secondary me-2">
-                                <i class="fas fa-print me-1"></i> Print
-                            </button>
-                            <button id="downloadExcelBtn" class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-file-excel me-1"></i> Download Excel
-                            </button>
-                        </div>
+                <div class="card shadow-sm border-radius-xl p-4">
+                    <div class="card-header bg-white border-0">
+                        <ul class="nav nav-tabs premium-tabs" id="cashbookTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab" aria-controls="transactions" aria-selected="true">
+                                    <i class="fas fa-book me-2"></i>Transactions
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab" aria-controls="report" aria-selected="false">
+                                    <i class="fas fa-chart-bar me-2"></i>Detailed Report
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-4">
-                            <div class="col-md-3">
-                                <label for="startDate" class="form-label mb-1">Start Date</label>
-                                <input id="startDate" class="form-control border-radius-md" type="text" placeholder="Select start date" required>
+                        <div class="tab-content" id="cashbookTabsContent">
+                            <!-- Transactions Tab -->
+                            <div class="tab-pane fade show active" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Cashbook Transactions</h5>
+                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                                        <i class="fas fa-plus me-2"></i>Add Transaction
+                                    </button>
+                                </div>
+                                <div id="pageTable"></div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="endDate" class="form-label mb-1">End Date</label>
-                                <input id="endDate" class="form-control border-radius-md" type="text" placeholder="Select end date" required>
-                            </div>
-                            <div class="col-md-2 mt-4 d-flex align-items-end">
-                                <button id="searchCashbook" class="btn bg-gradient-primary w-100">
-                                    <i class="fas fa-search me-2"></i>Search
-                                </button>
+                            <!-- Report Tab -->
+                            <div class="tab-pane fade" id="report" role="tabpanel" aria-labelledby="report-tab">
+                                <div id="reportTable"></div>
                             </div>
                         </div>
-
-
-
-                        <div id="cashbookTables" class="table-responsive table-container"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast for errors -->
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <!-- Add Transaction Modal -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="addTransactionModalLabel">Add Cashbook Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="addTransactionForm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Transaction Modal -->
+    <div class="modal fade" id="viewTransactionModal" tabindex="-1" aria-labelledby="viewTransactionModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="viewTransactionModalLabel">View Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewTransactionForm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="editTransactionModalLabel">Edit Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editTransactionForm"></div>
             </div>
         </div>
     </div>
@@ -57,190 +88,114 @@
 
 <?php include('./includes/footer.php'); ?>
 
-<!-- STYLES -->
 <style>
-    .accounting-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.9rem;
-        margin-top: 20px;
-    }
-
-    .accounting-table th,
-    .accounting-table td {
-        border: 1px solid #dee2e6;
+    .premium-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #ffffff;
         padding: 10px;
-        text-align: left;
-        vertical-align: top;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
     }
 
-    .accounting-table thead th {
-        background-color: #f1f3f5;
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        text-align: center;
+    .premium-tabs .nav-item {
+        flex: 0 1 auto;
     }
 
-    .table-container {
-        overflow-x: auto;
+    .premium-tabs .nav-link {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        color: #343a40;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-transform: capitalize;
+        letter-spacing: 0.3px;
+    }
+
+    .premium-tabs .nav-link:hover {
+        background: #e9ecef;
+        color: #1a2a44;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .premium-tabs .nav-link.active {
+        background: #1a2a44;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .premium-tabs .nav-link i {
+        font-size: 1rem;
+        margin-right: 6px;
+    }
+
+    @media (max-width: 767px) {
+        .premium-tabs {
+            gap: 8px;
+            padding: 8px;
+        }
+
+        .premium-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        .premium-tabs .nav-link i {
+            font-size: 0.9rem;
+            margin-right: 4px;
+        }
     }
 </style>
 
-<!-- SCRIPTS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script>
-    $("#startDate, #endDate").flatpickr({
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "F j, Y",
-        maxDate: "today"
+    // Load Transactions table on page load
+    loadPage("ajaxscripts/tables/cashbook.php", function(response) {
+        $('#pageTable').html(response);
     });
 
-    function showErrorToast(message) {
-        const toastEl = document.getElementById('errorToast');
-        toastEl.querySelector('.toast-body').textContent = message;
-        new bootstrap.Toast(toastEl, { delay: 5000 }).show();
-    }
-
-    function formatDate(date) {
-        return date.toISOString().split('T')[0];
-    }
-
-    let incomeGlobal = [];
-    let expenseGlobal = [];
-
-    $("#searchCashbook").click(function () {
-        let startDate = $("#startDate").val();
-        let endDate = $("#endDate").val();
-
-        if (!startDate || !endDate) return showErrorToast("Please select both start and end dates.");
-
-        let start = new Date(startDate);
-        let end = new Date(endDate);
-        if (end < start) return showErrorToast("End date cannot be before start date.");
-
-        loadCashbookTables(start, end);
+    // Load Transaction form into modal
+    $('#addTransactionModal').on('show.bs.modal', function () {
+        loadPage("ajaxscripts/forms/addTransaction.php", function(response) {
+            $('#addTransactionForm').html(response);
+        });
     });
 
-    function loadCashbookTables(startDate, endDate) {
-        $("#cashbookTables").html(`<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i> Loading...</div>`);
-
-        let formattedStart = formatDate(startDate);
-        let formattedEnd = formatDate(endDate);
-
-        let incomeReq = $.post("ajaxscripts/tables/cashbook.php", {
-            transactionType: "Income",
-            startDate: formattedStart,
-            endDate: formattedEnd
+    // Load Report table when Report tab is shown
+    $('#report-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/tables/cashbookReport.php", function(response) {
+            $('#reportTable').html(response);
         });
-
-        let expenseReq = $.post("ajaxscripts/tables/cashbook.php", {
-            transactionType: "Expenditure",
-            startDate: formattedStart,
-            endDate: formattedEnd
-        });
-
-        $.when(incomeReq, expenseReq).done(function (incomeRes, expenseRes) {
-            let income = incomeRes[0].data || [];
-            let expense = expenseRes[0].data || [];
-            incomeGlobal = income;
-            expenseGlobal = expense;
-            renderCombinedTable(income, expense);
-        }).fail(function () {
-            $("#cashbookTables").html(`<div class="alert alert-danger text-center m-3">Failed to load data. Please try again.</div>`);
-            showErrorToast("Failed to load data.");
-        });
-    }
-
-    function renderCombinedTable(income, expense) {
-        let maxRows = Math.max(income.length, expense.length);
-        let incomeTotal = 0, expenseTotal = 0;
-
-        let html = `
-        <table class="accounting-table">
-            <thead>
-                <tr>
-                    <th colspan="3">Revenue</th>
-                    <th colspan="3">Expenditure</th>
-                </tr>
-                <tr>
-                    <th>Date</th><th>Entry</th><th>Amount</th>
-                    <th>Date</th><th>Entry</th><th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        for (let i = 0; i < maxRows; i++) {
-            const incomeRow = income[i] || {};
-            const expenseRow = expense[i] || {};
-
-            let incomeAmt = parseFloat(incomeRow.transactionAmount || 0);
-            let expenseAmt = parseFloat(expenseRow.transactionAmount || 0);
-            incomeTotal += incomeAmt;
-            expenseTotal += expenseAmt;
-
-            html += `
-            <tr>
-                <td>${incomeRow.transactionDate || ''}</td>
-                <td>${incomeRow.transactionName || ''}</td>
-                <td class="text-end">${incomeRow.transactionAmount ? incomeAmt.toFixed(2) : ''}</td>
-                <td>${expenseRow.transactionDate || ''}</td>
-                <td>${expenseRow.transactionName || ''}</td>
-                <td class="text-end">${expenseRow.transactionAmount ? expenseAmt.toFixed(2) : ''}</td>
-            </tr>`;
-        }
-
-        html += `
-            <tr style="font-weight: bold; background: #f8f9fa;">
-                <td colspan="2" class="text-end">Total Revenue:</td>
-                <td class="text-end">GHS ${incomeTotal.toFixed(2)}</td>
-                <td colspan="2" class="text-end">Total Expenditure:</td>
-                <td class="text-end">GHS ${expenseTotal.toFixed(2)}</td>
-            </tr>
-            </tbody>
-        </table>`;
-
-        $("#cashbookTables").html(html);
-    }
-
-    // Print Functionality
-    $("#printCashbook").click(function () {
-        let printContents = document.getElementById("cashbookTables").innerHTML;
-        let newWin = window.open('', '', 'width=900,height=700');
-        newWin.document.write('<html><head><title>Cashbook Report</title>');
-        newWin.document.write('<style>body{font-family:Arial;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #000;padding:8px;text-align:left;} th{background:#f1f1f1;}</style>');
-        newWin.document.write('</head><body>');
-        newWin.document.write('<h3>Cashbook Report</h3>');
-        newWin.document.write(printContents);
-        newWin.document.write('</body></html>');
-        newWin.document.close();
-        newWin.print();
     });
 
-    // Excel Download Functionality
-    $("#downloadExcelBtn").click(function () {
-        const wb = XLSX.utils.book_new();
+    $(document).on('click', '.viewTransaction_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewTransaction.php";
+        var successCallback = function(response) {
+            $('#viewTransactionForm').html(response);
+            $('#viewTransactionModal').modal('show');
+        };
+        saveForm(formData, url, successCallback);
+    });
 
-        const incomeSheet = XLSX.utils.json_to_sheet(incomeGlobal.map(r => ({
-            Entry: r.transactionName,
-            Date: r.transactionDate,
-            Amount: parseFloat(r.transactionAmount).toFixed(2)
-        })));
-
-        const expenseSheet = XLSX.utils.json_to_sheet(expenseGlobal.map(r => ({
-            Entry: r.transactionName,
-            Date: r.transactionDate,
-            Amount: parseFloat(r.transactionAmount).toFixed(2)
-        })));
-
-        XLSX.utils.book_append_sheet(wb, incomeSheet, "Income");
-        XLSX.utils.book_append_sheet(wb, expenseSheet, "Expenditure");
-
-        XLSX.writeFile(wb, "Cashbook_Report.xlsx");
+    $(document).on('click', '.editTransaction_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/editTransaction.php";
+        var successCallback = function(response) {
+            $('#editTransactionForm').html(response);
+            $('#editTransactionModal').modal('show');
+        };
+        saveForm(formData, url, successCallback);
     });
 </script>

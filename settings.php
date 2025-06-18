@@ -37,6 +37,11 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="currencies-tab" data-bs-toggle="tab" data-bs-target="#currencies" type="button" role="tab" aria-controls="currencies" aria-selected="false">
+                                    <i class="fas fa-history me-2"></i>Currencies
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab" aria-controls="logs" aria-selected="false">
                                     <i class="fas fa-history me-2"></i>Logs
                                 </button>
@@ -91,6 +96,13 @@
                                     <h5 class="font-weight-bolder mb-0">Change Password</h5>
                                 </div>
                                 <div id="changePasswordForm"></div>
+                            </div>
+                             <!-- Currencies Tab -->
+                            <div class="tab-pane fade" id="currencies" role="tabpanel" aria-labelledby="currencies-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Currencies</h5>
+                                </div>
+                                <div id="currenciesForm"></div>
                             </div>
                             <!-- Logs Tab -->
                             <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
@@ -398,6 +410,13 @@
     $('#change-password-tab').on('shown.bs.tab', function () {
         loadPage("ajaxscripts/forms/changePassword.php", function(response) {
             $('#changePasswordForm').html(response);
+        });
+    });
+
+     // Load Currencies form when Currencies tab is shown
+    $('#currencies-tab').on('shown.bs.tab', function () {
+        loadPage("ajaxscripts/forms/currencies.php", function(response) {
+            $('#currenciesForm').html(response);
         });
     });
 
