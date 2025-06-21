@@ -10,14 +10,14 @@
             <div class="col-12">
                 <div class="card shadow-sm border-radius-xl p-4">
                     <div class="card-header bg-white border-0">
-                        <ul class="nav nav-tabs premium-tabs" id="receiptTabs" role="tablist">
+                        <ul class="nav nav-tabs premium-tabs" id="paymentTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="receipts-tab" data-bs-toggle="tab" data-bs-target="#receipts" type="button" role="tab" aria-controls="receipts" aria-selected="true">Receipts
+                                <button class="nav-link active" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab" aria-controls="payments" aria-selected="true">Payments
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="addreceipt-tab" data-bs-toggle="tab" data-bs-target="#addreceipt" type="button" role="tab" aria-controls="addreceipt" aria-selected="true">
-                                    <i class="fas fa-plus me-2"></i>Add Receipt
+                                <button class="nav-link" id="addpayment-tab" data-bs-toggle="tab" data-bs-target="#addpayment" type="button" role="tab" aria-controls="addpayment" aria-selected="true">
+                                    <i class="fas fa-plus me-2"></i>Add Payment
                                 </button>
                             </li>                
                             <li class="nav-item" role="presentation">
@@ -28,17 +28,17 @@
                         </ul>
                     </div>
                     <div class="card-body">
-                        <div class="tab-content" id="receiptTabsContent">
-                            <!-- Add Receipt Tab -->
-                            <div class="tab-pane fade" id="addreceipt" role="tabpanel" aria-labelledby="addreceipt-tab">
+                        <div class="tab-content" id="paymentTabsContent">
+                            <!-- Add Payment Tab -->
+                            <div class="tab-pane fade" id="addpayment" role="tabpanel" aria-labelledby="addpayment-tab">
                                 <div class="mb-4">
                                     <div id="pageForm"></div>
                                 </div>
                             </div>
-                            <!-- Receipts Tab -->
-                            <div class="tab-pane fade show active" id="receipts" role="tabpanel" aria-labelledby="receipts-tab">
+                            <!-- Payments Tab -->
+                            <div class="tab-pane fade show active" id="payments" role="tabpanel" aria-labelledby="payments-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bolder mb-0">Farm Receipts</h5>
+                                    <h5 class="font-weight-bolder mb-0">Farm Payments</h5>
                                 </div>
                                 <div id="pageTable"></div>
                             </div>
@@ -53,24 +53,24 @@
         </div>
     </div>
 
-    <!-- View Receipt Modal -->
-    <div class="modal fade" id="viewReceiptModal" tabindex="-1" aria-labelledby="viewReceiptModalLabel" aria-hidden="true">
+    <!-- View Payment Modal -->
+    <div class="modal fade" id="viewPaymentModal" tabindex="-1" aria-labelledby="viewPaymentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
-                <div class="modal-body" id="viewReceiptContent"></div>
+                <div class="modal-body" id="viewPaymentContent"></div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Receipt Modal -->
-    <div class="modal fade" id="editReceiptModal" tabindex="-1" aria-labelledby="editReceiptModalLabel" aria-hidden="true">
+    <!-- Edit Payment Modal -->
+    <div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="editReceiptModalLabel">Edit Revenue</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editPaymentModalLabel">Edit Revenue</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="editReceiptContent"></div>
+                <div class="modal-body" id="editPaymentContent"></div>
             </div>
         </div>
     </div>
@@ -166,27 +166,27 @@
         });
 
         // Load content based on active tab
-        if (activeTab === 'receipts-tab') {
-           loadPage("ajaxscripts/tables/receipts.php", function(response) {
+        if (activeTab === 'payments-tab') {
+           loadPage("ajaxscripts/tables/payments.php", function(response) {
                 $('#pageTable').html(response);
             });
         }
-        if (!activeTab || activeTab === 'addreceipt-tab') {
-            loadPage("ajaxscripts/forms/addReceipt.php", function(response) {
+        if (!activeTab || activeTab === 'addpayment-tab') {
+            loadPage("ajaxscripts/forms/addpayment.php", function(response) {
                 $('#pageForm').html(response);
             });
         }
         if (activeTab === 'statistics-tab') {
-            loadPage("ajaxscripts/tables/incStatistics.php", function(response) {
+            loadPage("ajaxscripts/tables/expStatistics.php", function(response) {
                 $('#statisticsTable').html(response);
             });
         }
 
-        loadPage("ajaxscripts/tables/receipts.php", function(response) {
+        loadPage("ajaxscripts/tables/payments.php", function(response) {
             $('#pageTable').html(response);
         });
 
-        loadPage("ajaxscripts/tables/incStatistics.php", function(response) {
+        loadPage("ajaxscripts/tables/expStatistics.php", function(response) {
                 $('#statisticsTable').html(response);
             });
 

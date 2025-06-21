@@ -2,231 +2,269 @@
 include('../../config.php');
 include('../../includes/functions.php');
 
-// Get current and previous quarter
-$currentYear = date('Y'); // 2025
-$currentQuarter = ceil(date('n') / 3); // Q2
-$currentQuarterStr = $currentYear . '-Q' . $currentQuarter; // 2025-Q2
-$prevQuarterStr = $currentQuarter == 1 ? ($currentYear - 1) . '-Q4' : $currentYear . '-Q' . ($currentQuarter - 1); // 2025-Q1
+// Database connection (assuming $mysqli is already defined)
+global $mysqli;
 
-// Query for current quarter detailed income transactions
-$getCurrentDetails = $mysqli->query("
-    SELECT 
-        transactionName,
-        transactionCategory,
-        transactionDate,
-        transactionDescription,
-        transactionAmount
-    FROM 
-        transactions 
-    WHERE 
-        transactionType = 'Income' AND transStatus = 1
-        AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$currentQuarterStr'
-    ORDER BY 
-        transactionDate ASC
-");
+// Query for key metrics
+$totalQuery = $mysqli->query("SELECT COUNT(*) as count, SUM(ghsEquivalent) as total, AVG(ghsEquivalent) as avg FROM `cashbook_transactions` WHERE transactionType = 'Receipt'");
+$totalData = $totalQuery->fetch_assoc();
+$totalCount = $totalData['count'];
+$totalAmount = number_format($totalData['total'], 2);
+$avgAmount = number_format($totalData['avg'], 2);
 
-// Query for current quarter total income
-$getCurrentTotal = $mysqli->query("
-    SELECT 
-        SUM(transactionAmount) AS totalAmount
-    FROM 
-        transactions 
-    WHERE 
-        transactionType = 'Income' AND transStatus = 1
-        AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$currentQuarterStr'
-");
-$currentTotal = $getCurrentTotal->fetch_assoc()['totalAmount'] ?? 0;
+// Top nominal account
+$topAccountQuery = $mysqli->query("SELECT c.categoryName, SUM(t.ghsEquivalent) as total FROM `cashbook_transactions` t JOIN categories c ON t.nominalAccount = c.catId WHERE t.transactionType = 'Receipt' GROUP BY c.categoryName ORDER BY total DESC LIMIT 1");
+$topAccount = $topAccountQuery->fetch_assoc();
+$topAccountName = $topAccount ? $topAccount['categoryName'] : 'N/A';
 
-// Query for previous quarter total income
-$getPrevTotal = $mysqli->query("
-    SELECT 
-        SUM(transactionAmount) AS totalAmount
-    FROM 
-        transactions 
-    WHERE 
-        transactionType = 'Income' AND transStatus = 1
-        AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) = '$prevQuarterStr'
-");
-$prevTotal = $getPrevTotal->fetch_assoc()['totalAmount'] ?? 0;
+// Top produce
+$topProduceQuery = $mysqli->query("SELECT p.prodName, SUM(t.ghsEquivalent) as total FROM `cashbook_transactions` t JOIN producelist p ON t.produce = p.prodId WHERE t.transactionType = 'Receipt' GROUP BY p.prodName ORDER BY total DESC LIMIT 1");
+$topProduce = $topProduceQuery->fetch_assoc();
+$topProduceName = $topProduce ? $topProduce['prodName'] : 'N/A';
 
-// Query for chart data (both quarters, grouped by category)
-$getChartData = $mysqli->query("
-    SELECT 
-        transactionCategory,
-        CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) AS quarter,
-        SUM(transactionAmount) AS totalAmount 
-    FROM 
-        transactions 
-    WHERE 
-        transactionType = 'Income' AND transStatus = 1
-        AND CONCAT(YEAR(transactionDate), '-Q', QUARTER(transactionDate)) IN ('$currentQuarterStr', '$prevQuarterStr')
-    GROUP BY 
-        transactionCategory, quarter
-");
+// Unique produce count
+$uniqueProduceQuery = $mysqli->query("SELECT COUNT(DISTINCT t.produce) as unique_count FROM `cashbook_transactions` t WHERE t.transactionType = 'Receipt'");
+$uniqueProduce = $uniqueProduceQuery->fetch_assoc();
+$uniqueProduceCount = $uniqueProduce['unique_count'];
 
-// Preprocess details with category names
-$details = [];
-while ($row = $getCurrentDetails->fetch_assoc()) {
-    $row['categoryName'] = categoryName($row['transactionCategory']);
-    $details[] = $row;
+// Data for table (by nominal account and produce)
+$tableQuery = $mysqli->query("SELECT c.categoryName, p.prodName, COUNT(*) as count, SUM(t.ghsEquivalent) as total FROM `cashbook_transactions` t JOIN categories c ON t.nominalAccount = c.catId JOIN producelist p ON t.produce = p.prodId WHERE t.transactionType = 'Receipt' GROUP BY c.categoryName, p.prodName ORDER BY total DESC");
+$tableData = [];
+$rawPercentages = [];
+$totalReceipts = $totalData['total'] ?: 1; // Avoid division by zero
+while ($row = $tableQuery->fetch_assoc()) {
+    $row['rawPercentage'] = ($row['total'] / $totalReceipts) * 100;
+    $tableData[] = $row;
 }
 
-// Preprocess chart data
-$chartData = [];
-while ($row = $getChartData->fetch_assoc()) {
-    $row['categoryName'] = categoryName($row['transactionCategory']);
-    $chartData[$row['quarter']][] = $row;
+// Adjust percentages to sum to 100%
+$roundedPercentages = [];
+$sumRounded = 0;
+foreach ($tableData as $row) {
+    $rounded = round($row['rawPercentage'], 1);
+    $roundedPercentages[] = $rounded;
+    $sumRounded += $rounded;
+}
+$adjustment = 100 - $sumRounded;
+if ($adjustment != 0 && !empty($roundedPercentages)) {
+    $maxIndex = array_search(max($roundedPercentages), $roundedPercentages);
+    $roundedPercentages[$maxIndex] += $adjustment;
+}
+foreach ($tableData as $index => &$row) {
+    $row['displayPercentage'] = $roundedPercentages[$index];
 }
 
-$output = '<div class="bg-gradient-to-br">';
-$output .= '<div class="container mx-auto px-2 py-4 pt-0">'; 
-$output .= '<div class="bg-white rounded-xl p-4">'; 
-
-// Include dependencies
-$output .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">';
-$output .= '<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>';
-
-// Header
-$output .= '<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Revenue Report - ' . $currentQuarterStr . '</h1>';
-
-// Debug data
-$output .= '<!-- Debug: ' . $currentQuarterStr . ' has ' . count($details) . ' transactions -->';
-$output .= '<!-- Debug: Current Total from DB: ' . number_format($currentTotal, 2) . ', Previous Total from DB: ' . number_format($prevTotal, 2) . ' -->';
-
-// Table
-$output .= '<div class="overflow-x-auto">';
-$output .= '<table class="w-full text-left border-collapse">';
-$output .= '<thead class="bg-gray-200">';
-$output .= '<tr>';
-$output .= '<th class="py-2 px-3 text-sm font-semibold text-gray-700">Transaction Name</th>';
-$output .= '<th class="py-2 px-3 text-sm font-semibold text-gray-700">Category</th>';
-$output .= '<th class="py-2 px-3 text-sm font-semibold text-gray-700">Date</th>';
-$output .= '<th class="py-2 px-3 text-sm font-semibold text-gray-700">Description</th>';
-$output .= '<th class="py-2 px-3 text-sm font-semibold text-gray-700">Amount</th>';
-$output .= '</tr>';
-$output .= '</thead>';
-$output .= '<tbody>';
-
-$totalIncome = 0;
-foreach ($details as $resResults) {
-    $totalIncome += $resResults['transactionAmount'];
-    $output .= '<tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">';
-    $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['transactionName']) . '</td>';
-    $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['categoryName']) . '</td>';
-    $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['transactionDate']) . '</td>';
-    $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . htmlspecialchars($resResults['transactionDescription']) . '</td>';
-    $output .= '<td class="py-2 px-3 text-sm text-gray-600">' . number_format($resResults['transactionAmount'], 2) . '</td>';
-    $output .= '</tr>';
+// Data for line chart (monthly receipts for past 12 months)
+$lineChartQuery = $mysqli->query("SELECT DATE_FORMAT(transactionDate, '%Y-%m') as month, SUM(ghsEquivalent) as total FROM `cashbook_transactions` WHERE transactionType = 'Receipt' AND transactionDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month");
+$lineChartLabels = [];
+$lineChartData = [];
+while ($row = $lineChartQuery->fetch_assoc()) {
+    $lineChartLabels[] = $row['month'];
+    $lineChartData[] = (float)$row['total'];
 }
 
-$output .= '<tr class="bg-gray-100 font-semibold">';
-$output .= '<td colspan="4" class="py-2 px-3 text-sm text-gray-700">Total Income</td>';
-$output .= '<td class="py-2 px-3 text-sm text-gray-700">' . number_format($totalIncome, 2) . '</td>';
-$output .= '</tr>';
-$output .= '</tbody>';
-$output .= '</table>';
-$output .= '</div>';
-
-// Comparison note
-$output .= '<div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg p-3 mt-4 shadow-md">';
-$output .= '<p class="text-base font-semibold">Current Quarter (' . $currentQuarterStr . ') Total: ' . number_format($currentTotal, 2) . '</p>';
-$output .= '<p class="text-base font-semibold">Previous Quarter (' . $prevQuarterStr . ') Total: ' . number_format($prevTotal, 2) . '</p>';
-$output .= '<p class="text-base font-semibold">Change: ' . ($prevTotal > 0 ? number_format((($currentTotal - $prevTotal) / $prevTotal) * 100, 2) : '-') . '%</p>';
-$output .= '</div>';
-
-// Chart (moved to bottom with caption)
-$output .= '<div class="bg-gray-50 rounded-lg p-3 mt-4 shadow-sm">'; 
-$output .= '<h2 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Revenue Comparison</h2>';
-$output .= '<canvas id="comparisonChart" class="max-h-80"></canvas>';
-$output .= '</div>';
-
-$output .= '</div>'; // End card
-$output .= '</div>'; // End container
-$output .= '</div>'; // End background
-
-// JavaScript for chart
-$output .= '<script>';
-$output .= '(function() {';
-$output .= '    console.log("Script initialized for Revenue Report");';
-$output .= '    const chartData = ' . json_encode($chartData) . ';';
-
-// Chart
-$output .= '    try {';
-$output .= '        const ctx = document.getElementById("comparisonChart")?.getContext("2d");';
-$output .= '        if (ctx) {';
-$output .= '            console.log("Creating comparison chart");';
-$output .= '            const allCategories = [...new Set([].concat(...Object.values(chartData).map(q => q.map(item => item.categoryName))))];';
-$output .= '            const currentData = allCategories.map(cat => {';
-$output .= '                const item = chartData["' . $currentQuarterStr . '"]?.find(d => d.categoryName === cat);';
-$output .= '                return item ? item.totalAmount : 0;';
-$output .= '            });';
-$output .= '            const prevData = allCategories.map(cat => {';
-$output .= '                const item = chartData["' . $prevQuarterStr . '"]?.find(d => d.categoryName === cat);';
-$output .= '                return item ? item.totalAmount : 0;';
-$output .= '            });';
-$output .= '            new Chart(ctx, {';
-$output .= '                type: "bar",';
-$output .= '                data: {';
-$output .= '                    labels: allCategories,';
-$output .= '                    datasets: [';
-$output .= '                        {';
-$output .= '                            label: "' . $currentQuarterStr . '",';
-$output .= '                            data: currentData,';
-$output .= '                            backgroundColor: "rgba(59, 130, 246, 0.5)",';
-$output .= '                            borderColor: "rgba(59, 130, 246, 1)",';
-$output .= '                            borderWidth: 1';
-$output .= '                        },';
-$output .= '                        {';
-$output .= '                            label: "' . $prevQuarterStr . '",';
-$output .= '                            data: prevData,';
-$output .= '                            backgroundColor: "rgba(239, 68, 68, 0.5)",';
-$output .= '                            borderColor: "rgba(239, 68, 68, 1)",';
-$output .= '                            borderWidth: 1';
-$output .= '                        }';
-$output .= '                    ]';
-$output .= '                },';
-$output .= '                options: {';
-$output .= '                    responsive: true,';
-$output .= '                    scales: {';
-$output .= '                        y: {';
-$output .= '                            beginAtZero: true,';
-$output .= '                            title: { display: true, text: "Income (GHS)" }';
-$output .= '                        },';
-$output .= '                        x: {';
-$output .= '                            title: { display: true, text: "Category" }';
-$output .= '                        }';
-$output .= '                    },';
-$output .= '                    plugins: {';
-$output .= '                        legend: { display: true, position: "top" },';
-$output .= '                        tooltip: {';
-$output .= '                            callbacks: {';
-$output .= '                                label: function(context) {';
-$output .= '                                    const quarter = context.dataset.label;';
-$output .= '                                    const amount = context.raw;';
-$output .= '                                    return `${quarter} - ${context.label}: ${amount.toLocaleString("en-US", { style: "currency", currency: "GHS" })}`;';
-$output .= '                                }';
-$output .= '                            }';
-$output .= '                        }';
-$output .= '                    }';
-$output .= '                }';
-$output .= '            });';
-$output .= '        } else {';
-$output .= '            console.error("Canvas not found");';
-$output .= '        }';
-$output .= '    } catch (e) {';
-$output .= '        console.error("Error creating chart: ", e);';
-$output .= '    }';
-$output .= '})();';
-$output .= '</script>';
-
-if (empty($details)) {
-    $output .= '<div class="container mx-auto px-2 py-4 pt-0">';
-    $output .= '<div class="bg-white rounded-xl shadow-lg p-4 text-center">';
-    $output .= '<p class="text-base text-gray-600">No record found for ' . $currentQuarterStr . '</p>';
-    $output .= '</div>';
-    $output .= '</div>';
+// Data for pie chart (by nominal account)
+$pieChartQuery = $mysqli->query("SELECT c.categoryName, SUM(t.ghsEquivalent) as total FROM `cashbook_transactions` t JOIN categories c ON t.nominalAccount = c.catId WHERE t.transactionType = 'Receipt' GROUP BY c.categoryName");
+$pieChartLabels = [];
+$pieChartData = [];
+$pieChartColors = [];
+$colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
+$colorIndex = 0;
+while ($row = $pieChartQuery->fetch_assoc()) {
+    $pieChartLabels[] = $row['categoryName'];
+    $pieChartData[] = (float)$row['total'];
+    $pieChartColors[] = $colors[$colorIndex % count($colors)];
+    $colorIndex++;
 }
+?>
 
-$output .= '</div>'; 
+<div class="statistics-container">
+    <!-- Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-money-bill-wave text-primary fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Total Receipts</h6>
+                    <h4 class="text-primary">GHS <?php echo $totalAmount; ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-calculator text-success fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Average Receipt</h6>
+                    <h4 class="text-success">GHS <?php echo $avgAmount; ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-receipt text-info fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Transactions</h6>
+                    <h4 class="text-info"><?php echo $totalCount; ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-pie text-warning fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Top Account</h6>
+                    <h4 class="text-warning"><?php echo $topAccountName; ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-leaf text-success fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Top Produce</h6>
+                    <h4 class="text-success"><?php echo $topProduceName; ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4">
+            <div class="card shadow-sm border-radius-xl p-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-seedling text-primary fa-2x mb-2"></i>
+                    <h6 class="font-weight-bolder">Unique Produce</h6>
+                    <h4 class="text-primary"><?php echo $uniqueProduceCount; ?></h4>
+                </div>
+            </div>
+        </div>
+    </div>
 
-echo $output;
+    <!-- Graphs -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm border-radius-xl p-4">
+                <h5 class="font-weight-bolder mb-3">Receipts Over Time</h5>
+                <canvas id="receiptsLineChart"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm border-radius-xl p-4">
+                <h5 class="font-weight-bolder mb-3">Receipts by Nominal Account</h5>
+                <canvas id="receiptsPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm border-radius-xl p-4">
+        <h5 class="font-weight-bolder mb-3">Receipts Summary</h5>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nominal Account</th>
+                        <th>Produce</th>
+                        <th>Transactions</th>
+                        <th>Total (GHS)</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($tableData as $row): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['categoryName']); ?></td>
+                            <td><?php echo htmlspecialchars($row['prodName']); ?></td>
+                            <td><?php echo $row['count']; ?></td>
+                            <td>GHS <?php echo number_format($row['total'], 2); ?></td>
+                            <td><?php echo number_format($row['displayPercentage'], 1); ?>%</td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.statistics-container .card {
+    border: none;
+    transition: transform 0.2s ease;
+}
+.statistics-container .card:hover {
+    transform: translateY(-2px);
+}
+.statistics-container .table th, .statistics-container .table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+.statistics-container .table thead th {
+    background: #f8f9fa;
+    color: #343a40;
+    font-weight: 600;
+}
+@media (max-width: 767px) {
+    .statistics-container .card {
+        padding: 12px !important;
+    }
+    .statistics-container .table th, .statistics-container .table td {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Line Chart
+const lineChartCtx = document.getElementById('receiptsLineChart').getContext('2d');
+new Chart(lineChartCtx, {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($lineChartLabels); ?>,
+        datasets: [{
+            label: 'Receipts (GHS)',
+            data: <?php echo json_encode($lineChartData); ?>,
+            borderColor: '#1a2a44',
+            backgroundColor: 'rgba(26, 42, 68, 0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Amount (GHS)' } },
+            x: { title: { display: true, text: 'Month' } }
+        },
+        plugins: { legend: { display: true } }
+    }
+});
+
+// Pie Chart
+const pieChartCtx = document.getElementById('receiptsPieChart').getContext('2d');
+new Chart(pieChartCtx, {
+    type: 'pie',
+    data: {
+        labels: <?php echo json_encode($pieChartLabels); ?>,
+        datasets: [{
+            data: <?php echo json_encode($pieChartData); ?>,
+            backgroundColor: <?php echo json_encode($pieChartColors); ?>
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.raw || 0;
+                        let total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = ((value / total) * 100).toFixed(1);
+                        return `${label}: GHS ${value.toLocaleString()} (${percentage}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>

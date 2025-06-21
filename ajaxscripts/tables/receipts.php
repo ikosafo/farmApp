@@ -2,17 +2,17 @@
     <table class="table table-hover align-items-center mb-0" id="siteTable">
         <thead>
             <tr>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Receivable</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Date</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Category</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Amount</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Date</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Payee</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Produce</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Amount (In GHS)</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Nominal Account</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 </div>
-
 
 
 <script>
@@ -23,21 +23,51 @@
         serverSide: true,
         serverMethod: 'post',
         ajax: {
-            url: 'ajaxscripts/paginations/incomes.php'
+            url: 'ajaxscripts/paginations/receipts.php'
         },
         columns: [
-            { data: 'incomeName', className: 'text-sm' },
-            { data: 'incomeDate', className: 'text-sm' },
-            { data: 'incomeCategory', className: 'text-sm' },
-            { data: 'incomeAmount', className: 'text-sm' },
-            { data: 'incomeActions', className: 'text-sm' },
+            { data: 'date', className: 'text-sm' },
+            { data: 'payee', className: 'text-sm' },
+            { data: 'produce', className: 'text-sm' },
+            { data: 'amount', className: 'text-sm' },
+            { data: 'account', className: 'text-sm' },
+            { data: 'actions', className: 'text-sm' },
            
         ],
         language: {
-            emptyTable: "No incomes found",
+            emptyTable: "No receipts found",
             processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
         }
     });
+
+    
+    // Handle View Income
+    $(document).on('click', '.viewReceipt_btn', function() {
+        var theindex = $(this).attr('i_index');
+        var formData = { i_index: theindex };
+        var url = "ajaxscripts/forms/viewReceipt.php";
+        var successCallback = function(response) {
+            $('#viewReceiptContent').html(response);
+            $('#viewReceiptModal').modal('show');
+        };
+        saveForm(formData, url, successCallback);
+    });
+
+
+     // Handle Edit Receipt
+        $(document).on('click', '.editReceipt_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = { i_index: theindex };
+            var url = "ajaxscripts/forms/editReceipt.php";
+            var successCallback = function(response) {
+                $('#addreceipt-tab').tab('show');
+                $('#addreceipt-tab').html('<i class="fas fa-edit me-2"></i>Edit Receipt');
+                $('#pageForm').html(response);
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+
 
 
     $(document).off('click', '.deleteIncome_btn').on('click', '.deleteIncome_btn', function() {

@@ -349,186 +349,221 @@
 </style>
 
 <script>
-    // Simulated permission check (replace with actual logic, e.g., AJAX call or session check)
-    const hasLogPermission = false; // Set to false to simulate no permission
-
-    // Load Produce table on page load
-    loadPage("ajaxscripts/tables/produce.php", function(response) {
-        $('#pageTable').html(response);
-    });
-
-    // Load Produce form into modal
-    $('#addproduceModal').on('show.bs.modal', function () {
-        loadPage("ajaxscripts/forms/addproduce.php", function(response) {
-            $('#pageForm').html(response);
+    $(document).ready(function() {
+        // Store the active tab in localStorage
+        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+            localStorage.setItem('lastActiveTab', $(e.target).data('bs-target'));
         });
-    });
 
-    // Load Categories table when Categories tab is shown
-    $('#categories-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/tables/category.php", function(response) {
-            $('#categoryTable').html(response);
-        });
-    });
+        // Get the last active tab from localStorage
+        var lastActiveTab = localStorage.getItem('lastActiveTab');
 
-    // Load Product Categories table when Product Categories tab is shown
-    $('#prodcategories-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/tables/productCategory.php", function(response) {
-            $('#prodcategoryTable').html(response);
-        });
-    });
-
-    // Load Category form into modal
-    $('#addCategoryModal').on('show.bs.modal', function () {
-        loadPage("ajaxscripts/forms/addCategory.php", function(response) {
-            $('#categoryForm').html(response);
-        });
-    });
-
-    // Load Product Category form into modal
-    $('#addProdCategoryModal').on('show.bs.modal', function () {
-        loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
-            $('#prodcategoryForm').html(response);
-        });
-    });
-
-    // Load Users table when Users tab is shown
-    $('#users-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/tables/users.php", function(response) {
-            $('#userTable').html(response);
-        });
-    });
-
-    // Load User form into modal
-    $('#addUserModal').on('show.bs.modal', function () {
-        loadPage("ajaxscripts/forms/addUser.php", function(response) {
-            $('#userForm').html(response);
-        });
-    });
-
-    // Load Change Password form when Change Password tab is shown
-    $('#change-password-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/forms/changePassword.php", function(response) {
-            $('#changePasswordForm').html(response);
-        });
-    });
-
-     // Load Currencies form when Currencies tab is shown
-    $('#currencies-tab').on('shown.bs.tab', function () {
-        loadPage("ajaxscripts/forms/currencies.php", function(response) {
-            $('#currenciesForm').html(response);
-        });
-    });
-
-    // Load Logs table when Logs tab is shown, with permission check
-    $('#logs-tab').on('shown.bs.tab', function () {
-        if (hasLogPermission) {
-            loadPage("ajaxscripts/tables/logs.php", function(response) {
-                $('#logsTable').html(response);
-            });
-        } else {
-            $('#logsTable').html(`
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Access Denied:</strong> You do not have permission to view logs.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `);
+        if (lastActiveTab) {
+            // Find the tab button that corresponds to the stored tab ID and click it
+            var tabToActivate = $('.nav-tabs button[data-bs-target="' + lastActiveTab + '"]');
+            if (tabToActivate.length) {
+                tabToActivate.tab('show');
+            }
         }
-    });
 
-    // View Category
-    $(document).on('click', '.viewCategory_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewCategory.php";
-        var successCallback = function(response) {
-            $('#viewCategoryFormDiv').html(response);
-            $('#viewCategoryModal').modal('show').find('.modal-title').text('View Category');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Your existing code below...
+        // Simulated permission check (replace with actual logic, e.g., AJAX call or session check)
+        const hasLogPermission = false; // Set to false to simulate no permission
 
-    // View Product Category
-    $(document).on('click', '.viewProdCategory_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewProdCategory.php";
-        var successCallback = function(response) {
-            $('#viewProdCategoryFormDiv').html(response);
-            $('#viewProdCategoryModal').modal('show').find('.modal-title').text('View Category');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Produce table on page load
+        loadPage("ajaxscripts/tables/produce.php", function(response) {
+            $('#pageTable').html(response);
+        });
 
-    // View Produce
-    $(document).on('click', '.viewProduction_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewProduce.php";
-        var successCallback = function(response) {
-            $('#viewProduceFormDiv').html(response);
-            $('#viewProduceModal').modal('show').find('.modal-title').text('View Product');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Produce form into modal
+        $('#addproduceModal').on('show.bs.modal', function() {
+            loadPage("ajaxscripts/forms/addproduce.php", function(response) {
+                $('#pageForm').html(response);
+            });
+        });
 
-    // Edit Category
-    $(document).on('click', '.editCategory_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editCategory.php";
-        var successCallback = function(response) {
-            $('#editCategoryFormDiv').html(response);
-            $('#editCategoryModal').modal('show').find('.modal-title').text('Edit Category');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Categories table when Categories tab is shown
+        $('#categories-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/tables/category.php", function(response) {
+                $('#categoryTable').html(response);
+            });
+        });
 
-    // Edit Product Category
-    $(document).on('click', '.editProdCategory_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editProdCategory.php";
-        var successCallback = function(response) {
-            $('#editProdCategoryFormDiv').html(response);
-            $('#editProdCategoryModal').modal('show').find('.modal-title').text('Edit Category');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Product Categories table when Product Categories tab is shown
+        $('#prodcategories-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/tables/productCategory.php", function(response) {
+                $('#prodcategoryTable').html(response);
+            });
+        });
 
-    // Edit Produce
-    $(document).on('click', '.editProduction_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editProduce.php";
-        var successCallback = function(response) {
-            $('#editProduceFormDiv').html(response);
-            $('#editProduceModal').modal('show').find('.modal-title').text('Edit Product');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Category form into modal
+        $('#addCategoryModal').on('show.bs.modal', function() {
+            loadPage("ajaxscripts/forms/addCategory.php", function(response) {
+                $('#categoryForm').html(response);
+            });
+        });
 
-    // View User
-    $(document).on('click', '.viewUser_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/viewUser.php";
-        var successCallback = function(response) {
-            $('#viewUserFormDiv').html(response);
-            $('#viewUserModal').modal('show').find('.modal-title').text('View User');
-        };
-        saveForm(formData, url, successCallback);
-    });
+        // Load Product Category form into modal
+        $('#addProdCategoryModal').on('show.bs.modal', function() {
+            loadPage("ajaxscripts/forms/addProductCategory.php", function(response) {
+                $('#prodcategoryForm').html(response);
+            });
+        });
 
-    // Edit User
-    $(document).on('click', '.editUser_btn', function() {
-        var theindex = $(this).attr('i_index');
-        var formData = { i_index: theindex };
-        var url = "ajaxscripts/forms/editUser.php";
-        var successCallback = function(response) {
-            $('#editUserFormDiv').html(response);
-            $('#editUserModal').modal('show').find('.modal-title').text('Edit User');
-        };
-        saveForm(formData, url, successCallback);
+        // Load Users table when Users tab is shown
+        $('#users-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/tables/users.php", function(response) {
+                $('#userTable').html(response);
+            });
+        });
+
+        // Load User form into modal
+        $('#addUserModal').on('show.bs.modal', function() {
+            loadPage("ajaxscripts/forms/addUser.php", function(response) {
+                $('#userForm').html(response);
+            });
+        });
+
+        // Load Change Password form when Change Password tab is shown
+        $('#change-password-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/forms/changePassword.php", function(response) {
+                $('#changePasswordForm').html(response);
+            });
+        });
+
+        // Load Currencies form when Currencies tab is shown
+        $('#currencies-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/forms/currencies.php", function(response) {
+                $('#currenciesForm').html(response);
+            });
+        });
+
+        // Load Logs table when Logs tab is shown, with permission check
+        $('#logs-tab').on('shown.bs.tab', function() {
+            if (hasLogPermission) {
+                loadPage("ajaxscripts/tables/logs.php", function(response) {
+                    $('#logsTable').html(response);
+                });
+            } else {
+                $('#logsTable').html(`
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Access Denied:</strong> You do not have permission to view logs.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `);
+            }
+        });
+
+        // View Category
+        $(document).on('click', '.viewCategory_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/viewCategory.php";
+            var successCallback = function(response) {
+                $('#viewCategoryFormDiv').html(response);
+                $('#viewCategoryModal').modal('show').find('.modal-title').text('View Category');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // View Product Category
+        $(document).on('click', '.viewProdCategory_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/viewProdCategory.php";
+            var successCallback = function(response) {
+                $('#viewProdCategoryFormDiv').html(response);
+                $('#viewProdCategoryModal').modal('show').find('.modal-title').text('View Category');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // View Produce
+        $(document).on('click', '.viewProduction_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/viewProduce.php";
+            var successCallback = function(response) {
+                $('#viewProduceFormDiv').html(response);
+                $('#viewProduceModal').modal('show').find('.modal-title').text('View Product');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // Edit Category
+        $(document).on('click', '.editCategory_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/editCategory.php";
+            var successCallback = function(response) {
+                $('#editCategoryFormDiv').html(response);
+                $('#editCategoryModal').modal('show').find('.modal-title').text('Edit Category');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // Edit Product Category
+        $(document).on('click', '.editProdCategory_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/editProdCategory.php";
+            var successCallback = function(response) {
+                $('#editProdCategoryFormDiv').html(response);
+                $('#editProdCategoryModal').modal('show').find('.modal-title').text('Edit Category');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // Edit Produce
+        $(document).on('click', '.editProduction_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/editProduce.php";
+            var successCallback = function(response) {
+                $('#editProduceFormDiv').html(response);
+                $('#editProduceModal').modal('show').find('.modal-title').text('Edit Product');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // View User
+        $(document).on('click', '.viewUser_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/viewUser.php";
+            var successCallback = function(response) {
+                $('#viewUserFormDiv').html(response);
+                $('#viewUserModal').modal('show').find('.modal-title').text('View User');
+            };
+            saveForm(formData, url, successCallback);
+        });
+
+        // Edit User
+        $(document).on('click', '.editUser_btn', function() {
+            var theindex = $(this).attr('i_index');
+            var formData = {
+                i_index: theindex
+            };
+            var url = "ajaxscripts/forms/editUser.php";
+            var successCallback = function(response) {
+                $('#editUserFormDiv').html(response);
+                $('#editUserModal').modal('show').find('.modal-title').text('Edit User');
+            };
+            saveForm(formData, url, successCallback);
+        });
     });
 </script>

@@ -57,13 +57,24 @@ function manageExpenditure($id)
 }
 
 
-function manageIncome($id)
+function manageReceipt($id)
 {
-    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewIncome_btn" 
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewReceipt_btn" 
     data-toggle="tooltip" data-original-title="View Income" i_index="' . lock(lock($id)) . '">View</a> | 
-    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editIncome_btn" 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editReceipt_btn" 
     data-toggle="tooltip" data-original-title="Edit Income" i_index="' . lock(lock($id)) . '">Edit</a> | 
-    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteIncome_btn" 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteReceipt_btn" 
+    data-toggle="tooltip" data-original-title="Delete Income" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
+function managePayment($id)
+{
+    return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewPayment_btn" 
+    data-toggle="tooltip" data-original-title="View Income" i_index="' . lock(lock($id)) . '">View</a> | 
+    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editPayment_btn" 
+    data-toggle="tooltip" data-original-title="Edit Income" i_index="' . lock(lock($id)) . '">Edit</a> | 
+    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deletePayment_btn" 
     data-toggle="tooltip" data-original-title="Delete Income" i_index="' . lock(lock($id)) . '">Delete</a>';
 }
 
@@ -173,6 +184,20 @@ function categoryName($id) {
     }
     return null;
 }
+
+
+
+function produceName($id) {
+    global $mysqli;
+
+    $getProd = $mysqli->query("SELECT `prodName` FROM `producelist` WHERE `prodId` = '$id'");
+    if ($getProd && $getProd->num_rows > 0) {
+        $resProd = $getProd->fetch_assoc();
+        return $resProd['prodName'];
+    }
+    return null;
+}
+
 
 
 
