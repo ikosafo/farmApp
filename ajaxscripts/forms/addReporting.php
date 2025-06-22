@@ -8,8 +8,8 @@
                 <label for="reportCategory">Category</label>
                 <select id="reportCategory" class="form-select" required>
                     <option value="">Select Category</option>
-                    <option>Expenditure</option>
-                    <option>Income</option>
+                    <option>Payment</option>
+                    <option>Receipt</option>
                     <option>Trial Balance</option>
                     <option>Orders</option>
                 </select>

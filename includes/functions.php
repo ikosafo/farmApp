@@ -125,12 +125,26 @@ function manageIncCategories($id)
 
 function manageProdCategories($id)
 {
+    if (is_null($id) || empty($id)) {
+        return '<span class="text-danger">Invalid ID</span>';
+    }
+
+    $locked_id = lock($id);
+    if (is_null($locked_id)) {
+        return '<span class="text-danger">Error processing ID</span>';
+    }
+
+    $double_locked_id = lock($locked_id);
+    if (is_null($double_locked_id)) {
+        return '<span class="text-danger">Error processing ID</span>';
+    }
+
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewProdCategory_btn" 
-    data-toggle="tooltip" data-original-title="View Product Category" i_index="' . lock(lock($id)) . '">View</a> | 
-    <a href="javascript:;" class="text-secondary font-weight-bold text-xs editProdCategory_btn" 
-    data-toggle="tooltip" data-original-title="Edit Product Category" i_index="' . lock(lock($id)) . '">Edit</a> | 
-    <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteProdCategory" 
-    data-toggle="tooltip" data-original-title="Delete Product Category" i_index="' . lock(lock($id)) . '">Delete</a>';
+        data-toggle="tooltip" data-original-title="View Product Category" i_index="' . htmlspecialchars($double_locked_id) . '">View</a> | 
+        <a href="javascript:;" class="text-secondary font-weight-bold text-xs editProdCategory_btn" 
+        data-toggle="tooltip" data-original-title="Edit Product Category" i_index="' . htmlspecialchars($double_locked_id) . '">Edit</a> | 
+        <a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteProdCategory" 
+        data-toggle="tooltip" data-original-title="Delete Product Category" i_index="' . htmlspecialchars($double_locked_id) . '">Delete</a>';
 }
 
 
@@ -213,11 +227,28 @@ function incCategoryName($id) {
 function prodCategoryName($id) {
     global $mysqli;
 
-    $getInc = $mysqli->query("select `pcatName` from `prodcategory` where `pcatId` = '$id'");
-    $resInc = $getInc->fetch_assoc();
-    return $resInc['pcatName'];
-}
+    if (is_null($id) || empty($id) || !is_numeric($id)) {
+        return 'No Category ID';
+    }
 
+    $stmt = $mysqli->prepare("SELECT pcatName FROM prodcategory WHERE pcatId = ?");
+    if (!$stmt) {
+        return 'Database Error';
+    }
+
+    $stmt->bind_param('i', $id); 
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $resInc = $result->fetch_assoc();
+
+    if ($resInc && isset($resInc['pcatName'])) {
+        $stmt->close();
+        return $resInc['pcatName'];
+    }
+
+    $stmt->close();
+    return 'Category Not Found';
+}
 
 
 

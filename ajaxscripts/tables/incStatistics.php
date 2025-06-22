@@ -240,7 +240,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
                             <tbody>
                                 <?php foreach ($tableData as $row): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars(categoryName($row['categoryName'])); ?></td>
+                                        <td><?php echo htmlspecialchars(categoryName($row['categoryName']) ?? '-'); ?></td>
                                         <td><?php echo (int)$row['count']; ?></td>
                                         <td>GHS <?php echo number_format($row['total'], 2); ?></td>
                                         <td><?php echo number_format($row['displayPercentage'] ?? 0, 1); ?>%</td>

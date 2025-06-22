@@ -41,12 +41,14 @@ $data = array();
 
 
 while ($row = mysqli_fetch_assoc($empRecords)) {
+    $prodPrice = is_numeric($row['prodPrice']) ? (float)$row['prodPrice'] : 0.00;
+
     $data[] = array(
-        "produceName" => $row['prodName'],
-        "produceCategory" => prodCategoryName($row['prodCategory']),
-        "producePrice" => number_format(($row['prodPrice']), 2, '.', ','),
-		"produceQuantity" => $row['prodQuantity'].' ('.$row['quantityUnit'].')',	
-        "produceActions" => manageProduction($row['prodId'])
+        "produceName" => $row['prodName'] ?? '-', 
+        "produceCategory" => prodCategoryName($row['prodCategory'] ?? null), 
+        "producePrice" => number_format($prodPrice, 2, '.', ','), 
+        "produceQuantity" => ($row['prodQuantity'] ?? 0) . ' (' . ($row['quantityUnit'] ?? 'N/A') . ')', 
+        "produceActions" => manageProduction($row['prodId'] ?? null) 
     );
 }
 
