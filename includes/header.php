@@ -3,8 +3,8 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 $page_titles = [
     'index.php' => 'Dashboard',
-    'expenditure.php' => 'Expenditures',
-    'income.php' => 'Revenue',
+    'payment.php' => 'Payments',
+    'receipt.php' => 'Receipts',
     'cashbook.php' => 'Cash Book',
     'orders.php' => 'Deliveries/Supplies',
     'trialbalance.php' => 'Trial Balance',

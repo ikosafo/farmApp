@@ -6,7 +6,7 @@ include('../../includes/functions.php');
 $i_id = unlock(unlock($_POST['i_index']));
 
 // Prepare the SQL query using a prepared statement
-$updateQuery = "UPDATE `transactions` SET `transStatus` = 0 WHERE transId = ?";
+$updateQuery = "UPDATE `cashbook_transactions` SET `transStatus` = 0 WHERE transactionId = ?";
 
 // Prepare the statement
 if ($stmt = $mysqli->prepare($updateQuery)) {

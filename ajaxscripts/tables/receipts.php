@@ -70,11 +70,11 @@
 
 
 
-    $(document).off('click', '.deleteIncome_btn').on('click', '.deleteIncome_btn', function() {
+    $(document).off('click', '.deleteReceipt_btn').on('click', '.deleteReceipt_btn', function() {
         var theindex = $(this).attr('i_index');
         $.confirm({
-            title: 'Delete Income',
-            content: 'Are you sure you want to delete this income?',
+            title: 'Delete Receipt',
+            content: 'Are you sure you want to delete this receipt?',
             theme: 'modern',
             buttons: {
                 cancel: {
@@ -86,13 +86,13 @@
                     btnClass: 'btn-danger',
                     action: function() {
                         var formData = { i_index: theindex };
-                        var url = "ajaxscripts/queries/deleteIncome.php";
+                        var url = "ajaxscripts/queries/deleteReceipt.php";
                         var successCallback = function(response) {
-                            $.notify("Income deleted successfully!", {
+                            $.notify("Receipt deleted successfully!", {
                                 className: "success",
                                 position: "top right"
                             });
-                            loadPage("ajaxscripts/tables/income.php", function(response) {
+                            loadPage("ajaxscripts/tables/receipts.php", function(response) {
                                 $('#pageTable').html(response);
                             });
                         };
