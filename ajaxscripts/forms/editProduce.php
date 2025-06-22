@@ -15,21 +15,21 @@ if (!$resProd) {
 ?>
 
 <form autocomplete="off" id="farmProduceFormEdit">
-    <input type="hidden" id="prodIdEdit" name="prodIdEdit" value="<?php echo htmlspecialchars($resProd['prodId']); ?>">
+    <input type="hidden" id="prodIdEdit" name="prodIdEdit" value="<?php echo htmlspecialchars($resProd['prodId'] ?? ''); ?>">
     <div class="row g-4">
         <div class="col-12 col-md-6">
             <label for="productNameEdit" class="form-label">Product Name <span class="text-danger">*</span></label>
-            <input id="productNameEdit" name="productNameEdit" class="form-control border-radius-md" type="text" placeholder="Enter product name" value="<?php echo htmlspecialchars($resProd['prodName']); ?>" required>
+            <input id="productNameEdit" name="productNameEdit" class="form-control border-radius-md" type="text" placeholder="Enter product name" value="<?php echo htmlspecialchars($resProd['prodName'] ?? ''); ?>" required>
         </div>
         <div class="col-12 col-md-6">
             <label for="productCategoryEdit" class="form-label">Category <span class="text-danger">*</span></label>
             <select id="productCategoryEdit" name="productCategoryEdit" class="form-control border-radius-md" required>
-                <option value="" disabled>Select a category</option>
+                <option value="" disabled selected>Select a category</option>
                 <?php
                 $getCat = $mysqli->query("SELECT * FROM `prodcategory` WHERE `pcatStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    $selected = ($resCat['pcatId'] == $resProd['prodCategory']) ? 'selected' : '';
-                    echo "<option value='{$resCat['pcatId']}' $selected>" . htmlspecialchars($resCat['pcatName']) . "</option>";
+                    $selected = ($resCat['pcatId'] == ($resProd['prodCategory'] ?? '')) ? 'selected' : '';
+                    echo "<option value='{$resCat['pcatId']}' $selected>" . htmlspecialchars($resCat['pcatName'] ?? '') . "</option>";
                 }
                 ?>
             </select>
@@ -39,11 +39,11 @@ if (!$resProd) {
     <div class="row g-4">
         <div class="col-12 col-md-6">
             <label for="producePriceEdit" class="form-label">Price <span class="text-danger">*</span></label>
-            <input id="producePriceEdit" name="producePriceEdit" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" value="<?php echo htmlspecialchars($resProd['prodPrice']); ?>" required>
+            <input id="producePriceEdit" name="producePriceEdit" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" value="<?php echo htmlspecialchars($resProd['prodPrice'] ?? ''); ?>" required>
         </div>
         <div class="col-12 col-md-6">
             <label for="expiryDateEdit" class="form-label">Expiry Date <span class="text-danger">*</span></label>
-            <input id="expiryDateEdit" name="expiryDateEdit" class="form-control border-radius-md" type="text" placeholder="Select date" value="<?php echo htmlspecialchars($resProd['expirationDate']); ?>" required>
+            <input id="expiryDateEdit" name="expiryDateEdit" class="form-control border-radius-md" type="text" placeholder="Select date" value="<?php echo htmlspecialchars($resProd['expirationDate'] ?? ''); ?>" required>
         </div>
     </div>
 
@@ -51,13 +51,14 @@ if (!$resProd) {
         <div class="col-12 col-md-6">
             <label for="productQuantityEdit" class="form-label">Quantity <span class="text-danger">*</span></label>
             <div class="input-group">
-                <input id="productQuantityEdit" name="productQuantityEdit" class="form-control border-radius-md" type="number" step="1" min="1" placeholder="Enter quantity" value="<?php echo htmlspecialchars($resProd['prodQuantity']); ?>" required>
+                <input id="productQuantityEdit" name="productQuantityEdit" class="form-control border-radius-md" type="number" step="1" min="1" placeholder="Enter quantity" value="<?php echo htmlspecialchars($resProd['prodQuantity'] ?? ''); ?>" required>
                 <select id="quantityUnitEdit" name="quantityUnitEdit" class="form-control border-radius-md" required>
-                    <option value="" disabled>Select unit</option>
+                    <option value="" disabled selected>Select unit</option>
                     <?php
                     $units = ['kilo' => 'Kilo', 'gram' => 'Gram', 'milligram' => 'Milligram', 'acre' => 'Acre', 'hectare' => 'Hectare', 'bags' => 'Bag(s)'];
+                    $selectedUnit = $resProd['quantityUnit'] ?? '';
                     foreach ($units as $value => $label) {
-                        $selected = ($value == $resProd['quantityUnit']) ? 'selected' : '';
+                        $selected = ($value === $selectedUnit) ? 'selected' : '';
                         echo "<option value='$value' $selected>$label</option>";
                     }
                     ?>
@@ -66,7 +67,7 @@ if (!$resProd) {
         </div>
         <div class="col-12 col-md-6">
             <label for="productDescriptionEdit" class="form-label">Description</label>
-            <textarea id="productDescriptionEdit" name="productDescriptionEdit" class="form-control border-radius-md" rows="4" placeholder="Enter description"><?php echo htmlspecialchars($resProd['prodDescription']); ?></textarea>
+            <textarea id="productDescriptionEdit" name="productDescriptionEdit" class="form-control border-radius-md" rows="4" placeholder="Enter description"><?php echo htmlspecialchars($resProd['prodDescription'] ?? ''); ?></textarea>
         </div>
     </div>
 

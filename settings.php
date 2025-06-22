@@ -485,6 +485,7 @@
         // View Produce
         $(document).on('click', '.viewProduction_btn', function() {
             var theindex = $(this).attr('i_index');
+            //alert(theindex);
             var formData = {
                 i_index: theindex
             };
