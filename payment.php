@@ -172,7 +172,7 @@
             });
         }
         if (!activeTab || activeTab === 'addpayment-tab') {
-            loadPage("ajaxscripts/forms/addpayment.php", function(response) {
+            loadPage("ajaxscripts/forms/addPayment.php", function(response) {
                 $('#pageForm').html(response);
             });
         }
