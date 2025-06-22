@@ -3,13 +3,13 @@ include('./includes/sidebar.php');
 include('config.php');
 
 // Fetch key metrics
-// Total revenue
-$totalIncomeQuery = "SELECT SUM(transactionAmount) as totalIncome FROM transactions WHERE transactionType = 'Income' AND transStatus = 1";
+// Total receipt
+$totalIncomeQuery = "SELECT SUM(ghsEquivalent) as totalIncome FROM cashbook_transactions WHERE transactionType = 'Receipt' AND transStatus = 1";
 $totalIncomeResult = mysqli_query($mysqli, $totalIncomeQuery);
 $totalIncome = mysqli_fetch_assoc($totalIncomeResult)['totalIncome'] ?? 0.0;
 
 // Total Expenses
-$totalExpenseQuery = "SELECT SUM(transactionAmount) as totalExpense FROM transactions WHERE transactionType = 'Expenditure' AND transStatus = 1";
+$totalExpenseQuery = "SELECT SUM(ghsEquivalent) as totalExpense FROM cashbook_transactions WHERE transactionType = 'Payment' AND transStatus = 1";
 $totalExpenseResult = mysqli_query($mysqli, $totalExpenseQuery);
 $totalExpense = mysqli_fetch_assoc($totalExpenseResult)['totalExpense'] ?? 0.0;
 
@@ -29,11 +29,11 @@ $totalCategoriesResult = mysqli_query($mysqli, $totalCategoriesQuery);
 $totalCategories = mysqli_fetch_assoc($totalCategoriesResult)['totalCategories'] ?? 0;
 
 // Recent Orders
-$recentOrdersQuery = "SELECT `paymentStatus`,`customerName`, `totalAmount`, `orderStatus`,`deliveryDate` FROM `orders` ORDER BY `deliveryDate` DESC LIMIT 5";
+$recentOrdersQuery = "SELECT `paymentStatus`, `customerName`, `totalAmount`, `orderStatus`, `deliveryDate` FROM `orders` ORDER BY `deliveryDate` DESC LIMIT 5";
 $recentOrdersResult = mysqli_query($mysqli, $recentOrdersQuery);
 
 // Recent Transactions
-$recentTransactionsQuery = "SELECT transactionName, transactionAmount, transactionDate, transactionType FROM transactions ORDER BY transactionDate DESC LIMIT 5";
+$recentTransactionsQuery = "SELECT payeePayer AS transactionName, ghsEquivalent AS transactionAmount, transactionDate, transactionType FROM cashbook_transactions WHERE transStatus = 1 ORDER BY transactionDate DESC LIMIT 5";
 $recentTransactionsResult = mysqli_query($mysqli, $recentTransactionsQuery);
 
 // Sales Distribution for Pie Chart (from orders.orderDetails)
@@ -58,11 +58,11 @@ $topProducts = array_slice($productQuantities, 0, 6, true);
 $productNames = array_keys($topProducts);
 $quantities = array_values($topProducts);
 
-// Revenue vs Expenditure for Line Chart (last 6 months)
+// Receipt vs Payment for Line Chart (last 6 months)
 $monthsQuery = "SELECT DATE_FORMAT(transactionDate, '%b %Y') as month, 
-                SUM(CASE WHEN transactionType = 'Income' THEN transactionAmount ELSE 0 END) as income,
-                SUM(CASE WHEN transactionType = 'Expenditure' THEN transactionAmount ELSE 0 END) as expenditure
-                FROM transactions 
+                SUM(CASE WHEN transactionType = 'Receipt' THEN ghsEquivalent ELSE 0 END) as income,
+                SUM(CASE WHEN transactionType = 'Payment' THEN ghsEquivalent ELSE 0 END) as expenditure
+                FROM cashbook_transactions 
                 WHERE transStatus = 1 
                 AND transactionDate >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
                 GROUP BY DATE_FORMAT(transactionDate, '%b %Y'), DATE_FORMAT(transactionDate, '%Y-%m')
@@ -95,7 +95,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Revenue</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Receipt</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalIncome, 2, '.', ','); ?>
                                         <span style="font-size:10px;"> GHC </span>
@@ -117,7 +117,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Expenditure</p>
+                                    <p class="text-sm mb-0 text-capitalize" style="font-size:11px !important;">Total Payments</p>
                                     <h5 class="font-weight-bolder mb-0">
                                         <?php echo number_format($totalExpense, 2, '.', ','); ?>
                                         <span style="font-size:10px;"> GHC </span>
@@ -182,7 +182,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
             <div class="col-lg-6 mb-lg-0 mb-4">
                 <div class="card z-index-2">
                     <div class="card-header pb-0">
-                        <h6>Revenue vs Expenditure</h6>
+                        <h6>Receipt vs Payment</h6>
                     </div>
                     <div class="card-body p-3">
                         <div class="chart">
@@ -193,8 +193,6 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
             </div>
             <div class="col-lg-6">
                 <div class="card h-100">
-
-
                     <div class="card-header pb-0">
                         <h6>Recent Supplies / Deliveries</h6>
                         <p class="text-sm">
@@ -258,7 +256,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
                             <?php while ($transaction = mysqli_fetch_assoc($recentTransactionsResult)) { ?>
                                 <div class="timeline-block mb-3">
                                     <span class="timeline-step">
-                                        <i class="ni <?php echo $transaction['transactionType'] == 'Expenditure' ? 'ni-money-coins text-danger' : 'ni-money-coins text-success'; ?> text-gradient"></i>
+                                        <i class="ni <?php echo $transaction['transactionType'] == 'Payment' ? 'ni-money-coins text-danger' : 'ni-money-coins text-success'; ?> text-gradient"></i>
                                     </span>
                                     <div class="timeline-content">
                                         <h6 class="text-dark text-sm font-weight-bold mb-0"><?php echo htmlspecialchars($transaction['transactionName']); ?></h6>
@@ -298,19 +296,19 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
 <!-- Chart.js for visualizations -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Revenue vs Expenditure Chart
+// Receipt vs Payment Chart
 const ctxIncomeExpense = document.getElementById('chart-income-expense').getContext('2d');
 new Chart(ctxIncomeExpense, {
     type: 'line',
     data: {
         labels: <?php echo json_encode($monthLabels); ?>,
         datasets: [{
-            label: 'Revenue',
+            label: 'Receipt',
             data: <?php echo json_encode($incomeData); ?>,
             borderColor: 'rgba(75, 192, 192, 1)',
             fill: false
         }, {
-            label: 'Expenditure',
+            label: 'Payment',
             data: <?php echo json_encode($expenditureData); ?>,
             borderColor: 'rgba(255, 99, 132, 1)',
             fill: false

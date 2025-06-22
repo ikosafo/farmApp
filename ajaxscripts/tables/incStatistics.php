@@ -103,7 +103,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
 ?>
 
 
-    <style>
+    <!-- <style>
         .statistics-container .card {
             border: none;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -144,7 +144,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
                 font-size: 1.1rem;
             }
         }
-    </style>
+    </style> -->
 
 <div class="statistics-container">
     <div class="row g-4 mb-4">
@@ -260,7 +260,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
 // Line Chart
 const lineChartCtx = document.getElementById('receiptsLineChart').getContext('2d');
 new Chart(lineChartCtx, {
-    type: 'line',
+    type: 'bar',
     data: {
         labels: <?php echo json_encode($lineChartLabels); ?>,
         datasets: [{
