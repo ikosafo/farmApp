@@ -39,7 +39,7 @@ try {
     // Get POST parameters
     $startDate = $_POST['startDate'] ?? null;
     $endDate = $_POST['endDate'] ?? null;
-    $categoryName = $_POST['categoryName'] ?? null;
+    $catId = $_POST['catId'] ?? null;
 
     // Validate input
     if (!$startDate || !$endDate) {
@@ -59,7 +59,7 @@ try {
         t.ghsEquivalent,
         t.transactionType,
         c.categoryName AS nominalAccount,
-        t.balance
+        c.catId
     FROM cashbook_transactions t
     LEFT JOIN producelist p ON t.produce = p.prodId
     LEFT JOIN categories c ON t.nominalAccount = c.catId
@@ -68,9 +68,9 @@ try {
     // Add category filter if provided
     $params = [$startDate, $endDate];
     $types = 'ss';
-    if ($categoryName) {
-        $query .= " AND c.categoryName = ?";
-        $params[] = $categoryName;
+    if ($catId) {
+        $query .= " AND t.nominalAccount = ?";
+        $params[] = $catId;
         $types .= 's';
     }
 
@@ -86,7 +86,7 @@ try {
     $stmt->close();
 
     // Get categories for nominal account filter
-    $categories_query = "SELECT categoryName FROM categories ORDER BY categoryName";
+    $categories_query = "SELECT catId, categoryName FROM categories ORDER BY categoryName";
     $categories_result = $mysqli->query($categories_query);
     if (!$categories_result) {
         throw new Exception('Categories query failed: ' . $mysqli->error);
@@ -94,12 +94,40 @@ try {
     $categories = $categories_result->fetch_all(MYSQLI_ASSOC);
     $categories_result->free();
 
+    // Calculate category statistics directly from transactions
+    $categoryStats = [];
+    foreach ($categories as $cat) {
+        $catId = $cat['catId'];
+        $categoryName = $cat['categoryName'];
+        $income = 0;
+        $expenditure = 0;
+
+        foreach ($transactions as $t) {
+            if ($t['catId'] == $catId || (!$catId && !$t['catId'])) {
+                $ghsAmount = floatval($t['ghsEquivalent']) ?? 0;
+                if ($t['transactionType'] === 'Receipt') {
+                    $income += $ghsAmount;
+                } else {
+                    $expenditure += $ghsAmount;
+                }
+            }
+        }
+
+        $categoryStats[] = [
+            'catId' => $catId,
+            'categoryName' => $categoryName,
+            'totalIncome' => $income,
+            'totalExpenditure' => $expenditure
+        ];
+    }
+
     // Clean buffer and output JSON
     ob_end_clean();
     echo json_encode([
         'success' => true,
         'data' => $transactions,
-        'categories' => $categories
+        'categories' => $categories,
+        'categoryStats' => $categoryStats
     ], JSON_THROW_ON_ERROR);
 
 } catch (Exception $e) {

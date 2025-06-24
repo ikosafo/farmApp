@@ -1,4 +1,5 @@
 
+
 <!--   Core JS Files   -->
 <script src="assets/js/core/popper.min.js"></script>
 <script src="assets/js/core/bootstrap.min.js"></script>
@@ -27,6 +28,12 @@
 <script src="assets/js/select2.min.js"></script>
 <script src="assets/js/chart.min.js"></script>
 <script src="assets/js/flatpickr.js"></script>
+<script src="assets/js/feather.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        feather.replace();
+    });
+</script>
 
 </body>
 
