@@ -15,6 +15,10 @@ ini_set('error_log', __DIR__ . '/php_errors.log');
 error_reporting(E_ALL);
 error_log("Error reporting configured");
 
+// Set resource limits
+ini_set('memory_limit', '256M');
+ini_set('max_execution_time', 30);
+
 // Include database configuration
 try {
     include('../../config.php');
@@ -26,7 +30,7 @@ try {
     echo json_encode([
         'success' => false,
         'error' => 'Failed to include config.php: ' . $e->getMessage()
-    ], JSON_THROW_ON_ERROR);
+    ]);
     exit;
 }
 
@@ -42,6 +46,35 @@ try {
         throw new Exception("MySQLi connection failed: {$mysqli->connect_error}");
     }
     error_log("Database connected");
+
+    // Handle categories-only request
+    if (isset($_POST['fetchCategoriesOnly'])) {
+        $categories_query = "SELECT catId, categoryName FROM categories ORDER BY categoryName";
+        $categories_result = $mysqli->query($categories_query);
+        if (!$categories_result) {
+            throw new Exception('Categories query failed: ' . $mysqli->error);
+        }
+        $categories = $categories_result->fetch_all(MYSQLI_ASSOC);
+        $categories_result->free();
+        error_log("Categories fetched: " . count($categories));
+
+        // Sanitize category names
+        foreach ($categories as &$category) {
+            $category['categoryName'] = mb_convert_encoding($category['categoryName'] ?? '', 'UTF-8', 'UTF-8');
+        }
+        unset($category);
+
+        ob_end_clean();
+        error_log("Buffer cleaned");
+        $response = ['success' => true, 'categories' => $categories];
+        $json = json_encode($response);
+        if ($json === false) {
+            throw new Exception('JSON encoding failed: ' . json_last_error_msg());
+        }
+        error_log("JSON Response: $json");
+        echo $json;
+        exit;
+    }
 
     // Get POST parameters
     $startDate = $_POST['startDate'] ?? null;
@@ -111,6 +144,20 @@ try {
     $categories_result->free();
     error_log("Categories fetched: " . count($categories));
 
+    // Sanitize data
+    foreach ($transactions as &$transaction) {
+        $transaction['payeePayer'] = mb_convert_encoding($transaction['payeePayer'] ?? '', 'UTF-8', 'UTF-8');
+        $transaction['details'] = mb_convert_encoding($transaction['details'] ?? '', 'UTF-8', 'UTF-8');
+        $transaction['produce'] = mb_convert_encoding($transaction['produce'] ?? '', 'UTF-8', 'UTF-8');
+        $transaction['nominalAccount'] = mb_convert_encoding($transaction['nominalAccount'] ?? '', 'UTF-8', 'UTF-8');
+    }
+    unset($transaction);
+
+    foreach ($categories as &$category) {
+        $category['categoryName'] = mb_convert_encoding($category['categoryName'] ?? '', 'UTF-8', 'UTF-8');
+    }
+    unset($category);
+
     // Calculate category statistics
     $categoryStats = [];
     foreach ($categories as $cat) {
@@ -148,19 +195,32 @@ try {
         'categories' => $categories,
         'categoryStats' => $categoryStats
     ];
-    error_log("JSON Response: " . json_encode($response, JSON_THROW_ON_ERROR));
-    echo json_encode($response, JSON_THROW_ON_ERROR);
-    error_log("JSON output sent");
+    $json = json_encode($response);
+    if ($json === false) {
+        throw new Exception('JSON encoding failed: ' . json_last_error_msg());
+    }
+    error_log("JSON Response: $json");
+    echo $json;
     exit;
 
 } catch (Exception $e) {
     error_log("Error: " . $e->getMessage());
     ob_end_clean();
     http_response_code(500);
-    echo json_encode([
+    $response = [
         'success' => false,
         'error' => $e->getMessage()
-    ], JSON_THROW_ON_ERROR);
+    ];
+    $json = json_encode($response);
+    if ($json === false) {
+        $response = [
+            'success' => false,
+            'error' => 'JSON encoding failed: ' . json_last_error_msg()
+        ];
+        $json = json_encode($response);
+    }
+    error_log("Error JSON Response: $json");
+    echo $json;
     exit;
 }
 ?>
