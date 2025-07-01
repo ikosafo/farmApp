@@ -407,7 +407,7 @@ $rates = $query->fetch_assoc();
     </div>
 
     <div class="d-flex justify-content-center mt-4">
-        <button type="reset" class="btn btn-outline-secondary me-3 cancelEdit">Cancel</button>
+       <!--  <button type="reset" class="btn btn-outline-secondary me-3 cancelEdit">Cancel</button> -->
         <button type="button" id="editReceiptBtn" class="btn bg-gradient-primary">
             <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
             Update Receipt Record

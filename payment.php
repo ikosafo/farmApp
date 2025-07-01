@@ -187,8 +187,8 @@
         });
 
         loadPage("ajaxscripts/tables/expStatistics.php", function(response) {
-                $('#statisticsTable').html(response);
-            });
+            $('#statisticsTable').html(response);
+        });
 
        
 

@@ -5,7 +5,7 @@
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Date</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Payee</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Produce</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Amount (In GHS)</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Amount<br> (In GHS)</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Nominal Account</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
             </tr>

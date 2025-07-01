@@ -46,10 +46,10 @@ if (!$resInc) {
 <div class="row g-4">
     <div class="col-12 col-md-6">
         <div class="detail-label">Date</div>
-        <span class="detail-value"><?= $resInc['transactionDate'] != '' ? htmlspecialchars($resInc['transactionDate']) : '-' ?></span>
+        <span class="detail-value"><?= !empty($resInc['transactionDate']) && date_create($resInc['transactionDate']) ? date_format(date_create($resInc['transactionDate']), 'd-M-y') : '-' ?></span>
     </div>
     <div class="col-12 col-md-6">
-        <div class="detail-label">Payee</div>
+        <div class="detail-label">Payer</div>
         <span class="detail-value"><?= $resInc['payeePayer'] != '' ? htmlspecialchars($resInc['payeePayer']) : '-' ?></span>
     </div>
 </div>
@@ -78,31 +78,16 @@ if (!$resInc) {
 
 <div class="row g-4">
     <div class="col-12 col-md-6">
-        <div class="detail-label">Currency</div>
-        <span class="detail-value"><?= $resInc['currency'] != '' ? htmlspecialchars($resInc['currency']) : '-' ?></span>
-    </div>
-    <div class="col-12 col-md-6">
-        <div class="detail-label">Amount</div>
+        <div class="detail-label">Amount (GHS)</div>
         <span class="detail-value"><?= $resInc['amount'] != '' ? htmlspecialchars(number_format($resInc['amount'], 2)) : '-' ?></span>
     </div>
-</div>
-
-<div class="row g-4">
-    <div class="col-12 col-md-6">
-        <div class="detail-label">Exchange Rate</div>
-        <span class="detail-value"><?= $resInc['exchangeRate'] != '' ? htmlspecialchars(number_format($resInc['exchangeRate'], 2)) : '-' ?></span>
-    </div>
-    <div class="col-12 col-md-6">
-        <div class="detail-label">GHS Equivalent</div>
-        <span class="detail-value"><?= $resInc['ghsEquivalent'] != '' ? htmlspecialchars(number_format($resInc['ghsEquivalent'], 2)) : '-' ?></span>
-    </div>
-</div>
-
-<div class="row g-4">
     <div class="col-12 col-md-6">
         <div class="detail-label">Transaction Type</div>
         <span class="detail-value"><?= $resInc['transactionType'] != '' ? htmlspecialchars($resInc['transactionType']) : '-' ?></span>
     </div>
+</div>
+
+<div class="row g-4">
     <div class="col-12 col-md-6">
         <div class="detail-label">Updated At</div>
         <span class="detail-value"><?= $resInc['updatedAt'] != '' ? htmlspecialchars($resInc['updatedAt']) : '-' ?></span>

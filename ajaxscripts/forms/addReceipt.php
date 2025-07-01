@@ -1,9 +1,5 @@
 <?php
 include('../../config.php');
-
-// Fetch the current exchange rates
-$query = $mysqli->query("SELECT currencyghs, currencyusd, currencyeur FROM currencies LIMIT 1");
-$rates = $query->fetch_assoc();
 ?>
 
 <style>
@@ -165,7 +161,9 @@ $rates = $query->fetch_assoc();
 .custom-error-alert .btn-close {
     position: absolute;
     top: 0.75rem;
-    right: 1rem;
+   
+
+ right: 1rem;
     background: none;
     border: none;
     font-size: 0.875rem;
@@ -282,19 +280,19 @@ $rates = $query->fetch_assoc();
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="incomeDate" class="form-label">Date <span class="text-danger">*</span></label>
-            <input id="incomeDate" class="form-control border-radius-md flatpickrDate" type="text" placeholder="Select date" required>
+            <label for="expenditureDate" class="form-label">Date <span class="text-danger">*</span></label>
+            <input id="expenditureDate" class="form-control border-radius-md flatpickrDate" type="text" placeholder="Select date" required>
         </div>
         <div class="col-12 col-md-6">
-            <label for="incomePayee" class="form-label">Payee <span class="text-danger">*</span></label>
-            <input id="incomePayee" class="form-control border-radius-md" type="text" placeholder="Enter Payee" required>
+            <label for="expenditurePayer" class="form-label">Payee </label>
+            <input id="expenditurePayer" class="form-control border-radius-md" type="text" placeholder="Enter Payee" required>
         </div>
     </div>
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="incomeDescription" class="form-label">Details</label>
-            <textarea id="incomeDescription" class="form-control border-radius-md" rows="2" placeholder="Enter description"></textarea>
+            <label for="expenditureDescription" class="form-label">Details</label>
+            <textarea id="expenditureDescription" class="form-control border-radius-md" rows="2" placeholder="Enter description"></textarea>
         </div>
         <div class="col-12 col-md-6">
             <label for="farmProduce" class="form-label">Produce </label>
@@ -321,12 +319,12 @@ $rates = $query->fetch_assoc();
             <label for="invoiceNumber" class="form-label">Invoice No. </label>
             <input id="invoiceNumber" class="form-control border-radius-md" type="text" placeholder="Enter Invoice No." required>
         </div>
-         <div class="col-12 col-md-6">
-            <label for="incomeCategory" class="form-label">Nominal Account <span class="text-danger">*</span></label>
+        <div class="col-12 col-md-6">
+            <label for="expenditureCategory" class="form-label">Nominal Account <span class="text-danger">*</span></label>
             <div class="custom-select-wrapper">
-                <input type="hidden" id="incomeCategory" name="incomeCategory" required>
-                <input type="text" class="form-control border-radius-md dropdown-toggle" data-target="incomeCategoryList" placeholder="Select account" readonly>
-                <div id="incomeCategoryList" class="dropdown-list hidden">
+                <input type="hidden" id="expenditureCategory" name="expenditureCategory" required>
+                <input type="text" class="form-control border-radius-md dropdown-toggle" data-target="expenditureCategoryList" placeholder="Select account" readonly>
+                <div id="expenditureCategoryList" class="dropdown-list hidden">
                     <input type="text" class="dropdown-search" placeholder="Search account...">
                     <ul class="list-unstyled m-0">
                         <?php
@@ -342,35 +340,9 @@ $rates = $query->fetch_assoc();
     </div>
 
     <div class="row g-4">
-         <div class="col-12 col-md-6">
-            <label for="currency" class="form-label">Currency <span class="text-danger">*</span></label>
-            <div class="custom-select-wrapper">
-                <input type="hidden" id="currency" name="currency" required>
-                <input type="text" class="form-control border-radius-md dropdown-toggle" data-target="currencyList" placeholder="Select currency" readonly>
-                <div id="currencyList" class="dropdown-list hidden">
-                    <input type="text" class="dropdown-search" placeholder="Search currency...">
-                    <ul class="list-unstyled m-0">
-                        <li data-value="GHS">GHS</li>
-                        <li data-value="USD">USD</li>
-                        <li data-value="EUR">EUR</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <div class="col-12 col-md-6">
-            <label for="incomeAmount" class="form-label">Amount <span class="text-danger">*</span></label>
-            <input id="incomeAmount" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" required>
-        </div>
-    </div>
-
-    <div class="row g-4">
-         <div class="col-12 col-md-6">
-            <label for="exchangeRate" class="form-label">Exchange Rate </label>
-            <input id="exchangeRate" class="form-control border-radius-md" type="number" step="0.01" readonly required>
-        </div>
-        <div class="col-12 col-md-6">
-            <label for="ghsEquivalent" class="form-label">GHS Equivalent </label>
-            <input id="ghsEquivalent" class="form-control border-radius-md" type="text" readonly>
+            <label for="expenditureAmount" class="form-label">Amount (GHS) <span class="text-danger">*</span></label>
+            <input id="expenditureAmount" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount in GHS" required>
         </div>
     </div>
 
@@ -384,261 +356,223 @@ $rates = $query->fetch_assoc();
 </form>
 
 <script> 
-    $(document).ready(function() {
-        const exchangeRates = {
-            GHS: 1,
-            USD: <?= floatval($rates['currencyusd']) ?>,
-            EUR: <?= floatval($rates['currencyeur']) ?>
+$(document).ready(function() {
+    // Date picker
+    $("#expenditureDate").flatpickr({
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d"
+    });
+
+    // Initialize custom searchable dropdowns
+    function initializeDropdowns() {
+        document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+            const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+            const toggleInput = wrapper.querySelector('.dropdown-toggle');
+            const dropdownList = wrapper.querySelector('.dropdown-list');
+            const searchInput = wrapper.querySelector('.dropdown-search');
+            const optionsList = wrapper.querySelectorAll('.dropdown-list li');
+
+            // Determine dropdown position (above or below)
+            const setDropdownPosition = () => {
+                const rect = toggleInput.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const spaceBelow = viewportHeight - rect.bottom;
+                const isLongList = hiddenInput.id === 'farmProduce' || hiddenInput.id === 'expenditureCategory';
+                const dropdownHeight = Math.min(200, dropdownList.scrollHeight); 
+
+                if (isLongList || spaceBelow < dropdownHeight + 20) {
+                    dropdownList.classList.add('above');
+                    dropdownList.classList.remove('below');
+                } else {
+                    dropdownList.classList.add('below');
+                    dropdownList.classList.remove('above');
+                }
+            };
+
+            // Toggle dropdown on click
+            toggleInput.addEventListener('click', () => {
+                setDropdownPosition();
+                dropdownList.classList.toggle('active');
+                if (dropdownList.classList.contains('active')) {
+                    searchInput.focus();
+                }
+            });
+
+            // Filter options based on search
+            searchInput.addEventListener('input', () => {
+                const filter = searchInput.value.toLowerCase();
+                optionsList.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    option.style.display = text.includes(filter) ? 'block' : 'none';
+                });
+            });
+
+            // Select option
+            optionsList.forEach(option => {
+                option.addEventListener('click', () => {
+                    const value = option.getAttribute('data-value');
+                    const text = option.textContent;
+                    hiddenInput.value = value;
+                    toggleInput.value = text;
+                    dropdownList.classList.remove('active');
+                    searchInput.value = '';
+                    optionsList.forEach(opt => opt.style.display = 'block');
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', e => {
+                if (!wrapper.contains(e.target)) {
+                    dropdownList.classList.remove('active');
+                    searchInput.value = '';
+                    optionsList.forEach(opt => opt.style.display = 'block');
+                }
+            });
+
+            // Keyboard navigation
+            searchInput.addEventListener('keydown', e => {
+                const visibleOptions = Array.from(optionsList).filter(opt => opt.style.display !== 'none');
+                if (visibleOptions.length === 0) return;
+                let selectedIndex = visibleOptions.findIndex(opt => opt.classList.contains('focused'));
+                if (selectedIndex === -1) selectedIndex = 0;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = (selectedIndex + 1) % visibleOptions.length;
+                    visibleOptions.forEach(opt => opt.classList.remove('focused'));
+                    visibleOptions[selectedIndex].classList.add('focused');
+                    visibleOptions[selectedIndex].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = (selectedIndex - 1 + visibleOptions.length) % visibleOptions.length;
+                    visibleOptions.forEach(opt => opt.classList.remove('focused'));
+                    visibleOptions[selectedIndex].classList.add('focused');
+                    visibleOptions[selectedIndex].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                    e.preventDefault();
+                    const option = visibleOptions[selectedIndex];
+                    hiddenInput.value = option.getAttribute('data-value');
+                    toggleInput.value = option.textContent;
+                    dropdownList.classList.remove('active');
+                    searchInput.value = '';
+                    optionsList.forEach(opt => opt.style.display = 'block');
+                } else if (e.key === 'Escape') {
+                    dropdownList.classList.remove('active');
+                    searchInput.value = '';
+                    optionsList.forEach(opt => opt.style.display = 'block');
+                }
+            });
+        });
+    }
+
+    // Call initialization
+    initializeDropdowns();
+
+    // Custom error alert handling
+    function showErrorAlert(message) {
+        const errorAlert = document.getElementById('customErrorAlert');
+        const errorText = errorAlert.querySelector('.error-text');
+        errorText.textContent = message;
+        errorAlert.classList.add('show');
+    }
+
+    function hideErrorAlert() {
+        const errorAlert = document.getElementById('customErrorAlert');
+        errorAlert.classList.remove('show');
+    }
+
+    // Custom success alert handling
+    function showSuccessAlert(message) {
+        const successAlert = document.getElementById('customSuccessAlert');
+        const successText = successAlert.querySelector('.success-text');
+        successText.textContent = message;
+        successAlert.classList.add('show');
+    }
+
+    function hideSuccessAlert() {
+        const successAlert = document.getElementById('customSuccessAlert');
+        successAlert.classList.remove('show');
+    }
+
+    // Initialize close buttons for alerts
+    document.getElementById('customErrorAlert').querySelector('.btn-close').addEventListener('click', hideErrorAlert);
+    document.getElementById('customSuccessAlert').querySelector('.btn-close').addEventListener('click', hideSuccessAlert);
+
+    // Form submission
+    $("#saveIncome").click(function () {
+        var $button = $(this);
+        var $spinner = $button.find('.spinner-border');
+        $spinner.removeClass('d-none');
+
+        var formData = {
+            transactionDate: $("#expenditureDate").val(),
+            payeePayer: $("#expenditurePayer").val(),
+            details: $("#expenditureDescription").val(),
+            produce: $("#farmProduce").val(),
+            invoiceNo: $("#invoiceNumber").val(),
+            amount: $("#expenditureAmount").val(),
+            transactionType: "Receipt",
+            nominalAccount: $("#expenditureCategory").val()
         };
 
-        // Exchange rate calculation
-        $("#currency, #incomeAmount").on("input change", function () {
-            const currency = $("#currency").val();
-            const amount = parseFloat($("#incomeAmount").val()) || 0;
-            const rate = currency ? (exchangeRates[currency] || 1) : 1;
-            const ghsEquivalent = (currency === "GHS") ? amount : (amount * rate);
+        var url = "ajaxscripts/queries/addReceipt.php";
 
-            $("#exchangeRate").val(rate.toFixed(2));
-            $("#ghsEquivalent").val(ghsEquivalent.toFixed(2));
-        });
-
-        // Date picker
-        $("#incomeDate").flatpickr({
-            altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d"
-        });
-
-
-
-
-        // Initialize custom searchable dropdowns
-            function initializeDropdowns() {
-                document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
-                    const hiddenInput = wrapper.querySelector('input[type="hidden"]');
-                    const toggleInput = wrapper.querySelector('.dropdown-toggle');
-                    const dropdownList = wrapper.querySelector('.dropdown-list');
-                    const searchInput = wrapper.querySelector('.dropdown-search');
-                    const optionsList = wrapper.querySelectorAll('.dropdown-list li');
-
-                    // Determine dropdown position (above or below)
-                    const setDropdownPosition = () => {
-                        const rect = toggleInput.getBoundingClientRect();
-                        const viewportHeight = window.innerHeight;
-                        const spaceBelow = viewportHeight - rect.bottom;
-                        const isLongList = hiddenInput.id === 'farmProduce' || hiddenInput.id === 'incomeCategory';
-                        const dropdownHeight = Math.min(200, dropdownList.scrollHeight); 
-
-                        if (isLongList || spaceBelow < dropdownHeight + 20) {
-                            dropdownList.classList.add('above');
-                            dropdownList.classList.remove('below');
-                        } else {
-                            dropdownList.classList.add('below');
-                            dropdownList.classList.remove('above');
-                        }
-                    };
-
-                    // Toggle dropdown on click
-                    toggleInput.addEventListener('click', () => {
-                        setDropdownPosition();
-                        dropdownList.classList.toggle('active');
-                        if (dropdownList.classList.contains('active')) {
-                            searchInput.focus();
-                        }
-                    });
-
-                    // Filter options based on search
-                    searchInput.addEventListener('input', () => {
-                        const filter = searchInput.value.toLowerCase();
-                        optionsList.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            option.style.display = text.includes(filter) ? 'block' : 'none';
-                        });
-                    });
-
-                    // Select option
-                    optionsList.forEach(option => {
-                        option.addEventListener('click', () => {
-                            const value = option.getAttribute('data-value');
-                            const text = option.textContent;
-                            hiddenInput.value = value;
-                            toggleInput.value = text;
-                            dropdownList.classList.remove('active');
-                            searchInput.value = '';
-                            optionsList.forEach(opt => opt.style.display = 'block');
-                            // Trigger change event for exchange rate update
-                            if (hiddenInput.id === 'currency') {
-                                $(hiddenInput).trigger('change');
-                            }
-                        });
-                    });
-
-                    // Close dropdown when clicking outside
-                    document.addEventListener('click', e => {
-                        if (!wrapper.contains(e.target)) {
-                            dropdownList.classList.remove('active');
-                            searchInput.value = '';
-                            optionsList.forEach(opt => opt.style.display = 'block');
-                        }
-                    });
-
-                    // Keyboard navigation
-                    searchInput.addEventListener('keydown', e => {
-                        const visibleOptions = Array.from(optionsList).filter(opt => opt.style.display !== 'none');
-                        if (visibleOptions.length === 0) return;
-                        let selectedIndex = visibleOptions.findIndex(opt => opt.classList.contains('focused'));
-                        if (selectedIndex === -1) selectedIndex = 0;
-
-                        if (e.key === 'ArrowDown') {
-                            e.preventDefault();
-                            selectedIndex = (selectedIndex + 1) % visibleOptions.length;
-                            visibleOptions.forEach(opt => opt.classList.remove('focused'));
-                            visibleOptions[selectedIndex].classList.add('focused');
-                            visibleOptions[selectedIndex].scrollIntoView({ block: 'nearest' });
-                        } else if (e.key === 'ArrowUp') {
-                            e.preventDefault();
-                            selectedIndex = (selectedIndex - 1 + visibleOptions.length) % visibleOptions.length;
-                            visibleOptions.forEach(opt => opt.classList.remove('focused'));
-                            visibleOptions[selectedIndex].classList.add('focused');
-                            visibleOptions[selectedIndex].scrollIntoView({ block: 'nearest' });
-                        } else if (e.key === 'Enter' && selectedIndex >= 0) {
-                            e.preventDefault();
-                            const option = visibleOptions[selectedIndex];
-                            hiddenInput.value = option.getAttribute('data-value');
-                            toggleInput.value = option.textContent;
-                            dropdownList.classList.remove('active');
-                            searchInput.value = '';
-                            optionsList.forEach(opt => opt.style.display = 'block');
-                            if (hiddenInput.id === 'currency') {
-                                $(hiddenInput).trigger('change');
-                            }
-                        } else if (e.key === 'Escape') {
-                            dropdownList.classList.remove('active');
-                            searchInput.value = '';
-                            optionsList.forEach(opt => opt.style.display = 'block');
-                        }
-                    });
+        var successCallback = function (response) {
+            $spinner.addClass('d-none');
+            if (response === 'Success') {
+                showSuccessAlert("Receipt updated successfully!");
+                setTimeout(function() {
+                    $('#receipts-tab').tab('show');
+                }, 0);
+                loadPage("ajaxscripts/tables/receipts.php", function(response) {
+                    $('#pageTable').html(response);
                 });
-            }
-
-            // Call initialization
-            initializeDropdowns();
-
-
-
-        // Custom error alert handling
-            function showErrorAlert(message) {
-                const errorAlert = document.getElementById('customErrorAlert');
-                const errorText = errorAlert.querySelector('.error-text');
-                errorText.textContent = message;
-                errorAlert.classList.add('show');
-            }
-
-            function hideErrorAlert() {
-                const errorAlert = document.getElementById('customErrorAlert');
-                errorAlert.classList.remove('show');
-            }
-
-            // Custom success alert handling
-            function showSuccessAlert(message) {
-                const successAlert = document.getElementById('customSuccessAlert');
-                const successText = successAlert.querySelector('.success-text');
-                successText.textContent = message;
-                successAlert.classList.add('show');
-            }
-
-            function hideSuccessAlert() {
-                const successAlert = document.getElementById('customSuccessAlert');
-                successAlert.classList.remove('show');
-            }
-
-            // Initialize close buttons for alerts
-            document.getElementById('customErrorAlert').querySelector('.btn-close').addEventListener('click', hideErrorAlert);
-            document.getElementById('customSuccessAlert').querySelector('.btn-close').addEventListener('click', hideSuccessAlert);
-
-
-    
-        // Form submission
-        $("#saveIncome").click(function () {
-            var $button = $(this);
-            var $spinner = $button.find('.spinner-border');
-            $spinner.removeClass('d-none');
-
-            var formData = {
-                transactionDate: $("#incomeDate").val(),
-                payeePayer: $("#incomePayee").val(),
-                details: $("#incomeDescription").val(),
-                produce: $("#farmProduce").val(),
-                invoiceNo: $("#invoiceNumber").val(),
-                currency: $("#currency").val(),
-                amount: $("#incomeAmount").val(),
-                exchangeRate: $("#exchangeRate").val(),
-                ghsEquivalent: $("#ghsEquivalent").val(),
-                transactionType: "Receipt",
-                nominalAccount: $("#incomeCategory").val()
-            };
-
-            var url = "ajaxscripts/queries/addReceipt.php";
-
-            var successCallback = function (response) {
+                loadPage("ajaxscripts/forms/addReceipt.php", function(response) {
+                    $('#pageForm').html(response);
+                });
+                location.reload();
+            } else {
                 $spinner.addClass('d-none');
-                if (response === 'Success') {
-                    showSuccessAlert("Receipt updated successfully!");
-                    setTimeout(function() {
-                        $('#receipts-tab').tab('show');
-                    }, 0);
-                    loadPage("ajaxscripts/tables/receipts.php", function(response) {
-                        $('#pageTable').html(response);
-                    });
-                    loadPage("ajaxscripts/forms/addReceipt.php", function(response) {
-                        $('#pageForm').html(response);
-                    });
-                    location.reload();
-                } else {
-                    $spinner.addClass('d-none');
-                    showErrorAlert(response);
-                }
-            };
+                showErrorAlert(response);
+            }
+        };
 
-            var validateForm = function (formData) {
-                var error = '';
-                var firstEmptyField = null;
+        var validateForm = function (formData) {
+            var error = '';
+            var firstEmptyField = null;
 
-                if (!formData.transactionDate) {
-                    error += 'Please select a date\n';
-                    firstEmptyField = firstEmptyField || '#incomeDate';
-                }
-                if (!formData.payeePayer) {
-                    error += 'Please enter payee\n';
-                    firstEmptyField = firstEmptyField || '#incomePayee';
-                }
-                if (!formData.currency) {
-                    error += 'Please select currency\n';
-                    firstEmptyField = firstEmptyField || '#currency + .dropdown-toggle';
-                }
-                if (!formData.amount) {
-                    error += 'Please enter amount\n';
-                    firstEmptyField = firstEmptyField || '#incomeAmount';
-                }
-                if (!formData.nominalAccount) {
-                    error += 'Please select nominal account\n';
-                    firstEmptyField = firstEmptyField || '#incomeCategory + .dropdown-toggle';
-                }
-
-                return { error: error, firstEmptyField: firstEmptyField };
-            };
-
-            var validationResult = validateForm(formData); 
-            if (validationResult.error) {
-                $spinner.addClass('d-none');
-                showErrorAlert(validationResult.error); 
-                if (validationResult.firstEmptyField) {
-                    $(validationResult.firstEmptyField).focus();
-                }
-                return; 
+            if (!formData.transactionDate) {
+                error += 'Please select a date\n';
+                firstEmptyField = firstEmptyField || '#expenditureDate';
+            }
+            /* if (!formData.payeePayer) {
+                error += 'Please enter payer\n';
+                firstEmptyField = firstEmptyField || '#expenditurePayer';
+            } */
+            if (!formData.amount) {
+                error += 'Please enter amount\n';
+                firstEmptyField = firstEmptyField || '#expenditureAmount';
+            }
+            if (!formData.nominalAccount) {
+                error += 'Please select nominal account\n';
+                firstEmptyField = firstEmptyField || '#expenditureCategory + .dropdown-toggle';
             }
 
-            saveForm(formData, url, successCallback); 
-        });
-    })
+            return { error: error, firstEmptyField: firstEmptyField };
+        };
+
+        var validationResult = validateForm(formData); 
+        if (validationResult.error) {
+            $spinner.addClass('d-none');
+            showErrorAlert(validationResult.error); 
+            if (verificationResult.firstEmptyField) {
+                $(validationResult.firstEmptyField).focus();
+            }
+            return; 
+        }
+
+        saveForm(formData, url, successCallback); 
+    });
+});
 </script>

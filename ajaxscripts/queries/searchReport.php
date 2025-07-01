@@ -18,56 +18,56 @@ if (empty($reportCategory) || empty($reportStartDate) || empty($reportEndDate)) 
 // Determine query based on report category
 if ($reportCategory == 'Trial Balance') {
     $getResults = $mysqli->query("
-        SELECT 
+        SELECT
             transactionType,
             nominalAccount,
-            DATE_FORMAT(transactionDate, '%Y-%m') AS monthYear, 
-            SUM(ghsEquivalent) AS totalAmount 
-        FROM 
-            cashbook_transactions 
-        WHERE 
+            DATE_FORMAT(transactionDate, '%Y-%m') AS monthYear,
+            SUM(ghsEquivalent) AS totalAmount
+        FROM
+            cashbook_transactions
+        WHERE
             transactionDate BETWEEN '$reportStartDate' AND '$reportEndDate'
             AND transactionType IN ('Receipt', 'Payment')
-        GROUP BY 
+        GROUP BY
             transactionType, nominalAccount, monthYear
-        ORDER BY 
-            transactionType, monthYear ASC
+        ORDER BY
+            monthYear ASC, transactionType ASC, nominalAccount ASC
     ");
 
     $getResultsDetails = $mysqli->query("
-        SELECT 
+        SELECT
             transactionType,
             payeePayer AS transactionName,
             nominalAccount,
             transactionDate,
             details AS transactionDescription,
-            ghsEquivalent AS transactionAmount 
-        FROM 
-            cashbook_transactions 
-        WHERE 
+            ghsEquivalent AS transactionAmount
+        FROM
+            cashbook_transactions
+        WHERE
             transactionDate BETWEEN '$reportStartDate' AND '$reportEndDate'
             AND transactionType IN ('Receipt', 'Payment')
-        ORDER BY 
-            transactionType, transactionDate ASC
+        ORDER BY
+            transactionDate DESC, transactionType
     ");
 } elseif ($reportCategory == 'Orders') {
     $getResults = $mysqli->query("
-        SELECT 
-            DATE_FORMAT(createdAt, '%Y-%m') AS monthYear, 
-            SUM(totalAmount) AS totalAmount 
-        FROM 
-            orders 
-        WHERE 
+        SELECT
+            DATE_FORMAT(createdAt, '%Y-%m') AS monthYear,
+            SUM(totalAmount) AS totalAmount
+        FROM
+            orders
+        WHERE
             createdAt BETWEEN '$reportStartDate' AND '$reportEndDate'
             AND orderStatus != '0'
-        GROUP BY 
+        GROUP BY
             monthYear
-        ORDER BY 
+        ORDER BY
             monthYear ASC
     ");
 
     $getResultsDetails = $mysqli->query("
-        SELECT 
+        SELECT
             customerName,
             customerEmail,
             customerPhone,
@@ -78,48 +78,48 @@ if ($reportCategory == 'Trial Balance') {
             totalAmount,
             createdAt,
             orderStatus,
-            customerAddress 
-        FROM 
-            orders 
-        WHERE 
+            customerAddress
+        FROM
+            orders
+        WHERE
             createdAt BETWEEN '$reportStartDate' AND '$reportEndDate'
             AND orderStatus != '0'
-        ORDER BY 
+        ORDER BY
             createdAt ASC
     ");
 } else {
     $transactionType = ($reportCategory == 'Receipt') ? 'Receipt' : 'Payment';
-    
+
     $getResults = $mysqli->query("
-        SELECT 
+        SELECT
             nominalAccount,
-            DATE_FORMAT(transactionDate, '%Y-%m') AS monthYear, 
-            SUM(ghsEquivalent) AS totalAmount 
-        FROM 
-            cashbook_transactions 
-        WHERE 
+            DATE_FORMAT(transactionDate, '%Y-%m') AS monthYear,
+            SUM(ghsEquivalent) AS totalAmount
+        FROM
+            cashbook_transactions
+        WHERE
             transactionType = '$transactionType'
             AND transactionDate BETWEEN '$reportStartDate' AND '$reportEndDate'
-        GROUP BY 
+        GROUP BY
             nominalAccount, monthYear
-        ORDER BY 
-            monthYear ASC
+        ORDER BY
+            monthYear ASC, nominalAccount ASC
     ");
 
     $getResultsDetails = $mysqli->query("
-        SELECT 
+        SELECT
             payeePayer AS transactionName,
             nominalAccount,
             transactionDate,
             details AS transactionDescription,
-            ghsEquivalent AS transactionAmount 
-        FROM 
-            cashbook_transactions 
-        WHERE 
+            ghsEquivalent AS transactionAmount
+        FROM
+            cashbook_transactions
+        WHERE
             transactionType = '$transactionType'
             AND transactionDate BETWEEN '$reportStartDate' AND '$reportEndDate'
-        ORDER BY 
-            transactionDate ASC
+        ORDER BY
+            transactionDate DESC
     ");
 }
 
@@ -150,13 +150,13 @@ if ($reportCategory == 'Trial Balance') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payee/Payer</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
-    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 200px;">Description</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount (GHS)</th>';
 } elseif ($reportCategory == 'Orders') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer Name</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone</th>';
-    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Details</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 200px;">Delivery Details</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Method</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Date</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Status</th>';
@@ -166,7 +166,7 @@ if ($reportCategory == 'Trial Balance') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payee/Payer</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
-    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>';
+    $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 200px;">Description</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount (GHS)</th>';
 }
 $output .= '</tr></thead>';
@@ -176,19 +176,19 @@ $totalIncome = 0;
 $totalExpenditure = 0;
 $totalOrders = 0;
 
-while ($resResults = $getResultsDetails->fetch_assoc()) { 
+while ($resResults = $getResultsDetails->fetch_assoc()) {
     if ($reportCategory == 'Orders') {
         $totalOrders += $resResults['totalAmount'];
         $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['customerName'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['customerEmail'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['customerPhone'] ?? '') . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['orderDetails'] ?? '') . '</td>';
+        $output .= '<td style="width: 200px; white-space: normal; word-wrap: break-word;">' . htmlspecialchars($resResults['orderDetails'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['deliveryMethod'] ?? '') . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['deliveryDate'] ?? '') . '</td>';
+        $output .= '<td>' . (!empty($resResults['deliveryDate']) && date_create($resResults['deliveryDate']) ? date_format(date_create($resResults['deliveryDate']), 'd-M-y') : '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['paymentStatus'] ?? '') . '</td>';
         $output .= '<td>' . number_format($resResults['totalAmount'] ?? 0, 2) . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['createdAt'] ?? '') . '</td>';
+        $output .= '<td>' . (!empty($resResults['createdAt']) && date_create($resResults['createdAt']) ? date_format(date_create($resResults['createdAt']), 'd-M-y') : '') . '</td>';
         $output .= '</tr>';
     } elseif ($reportCategory == 'Trial Balance') {
         $amount = $resResults['transactionAmount'];
@@ -202,13 +202,13 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
         $output .= '<td>' . htmlspecialchars($resResults['transactionType'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionName'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['transactionDate'] ?? '') . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['transactionDescription'] ?? '') . '</td>';
+        $output .= '<td>' . (!empty($resResults['transactionDate']) && date_create($resResults['transactionDate']) ? date_format(date_create($resResults['transactionDate']), 'd-M-y') : '') . '</td>';
+        $output .= '<td style="width: 200px; white-space: normal; word-wrap: break-word;">' . htmlspecialchars($resResults['transactionDescription'] ?? '') . '</td>';
         $output .= '<td>' . number_format($resResults['transactionAmount'] ?? 0, 2) . '</td>';
         $output .= '</tr>';
     } else {
         $amount = $resResults['transactionAmount'];
-        if ($reportCategory == 'Income') {
+        if ($reportCategory == 'Receipt') {
             $totalIncome += $amount;
         } else {
             $totalExpenditure += $amount;
@@ -217,8 +217,8 @@ while ($resResults = $getResultsDetails->fetch_assoc()) {
         $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['transactionName'] ?? '') . '</td>';
         $output .= '<td>' . htmlspecialchars($categoryName) . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['transactionDate'] ?? '') . '</td>';
-        $output .= '<td>' . htmlspecialchars($resResults['transactionDescription'] ?? '') . '</td>';
+        $output .= '<td>' . (!empty($resResults['transactionDate']) && date_create($resResults['transactionDate']) ? date_format(date_create($resResults['transactionDate']), 'd-M-y') : '') . '</td>';
+        $output .= '<td style="width: 200px; white-space: normal; word-wrap: break-word;">' . htmlspecialchars($resResults['transactionDescription'] ?? '') . '</td>';
         $output .= '<td>' . number_format($resResults['transactionAmount'] ?? 0, 2) . '</td>';
         $output .= '</tr>';
     }
@@ -248,55 +248,29 @@ if (!empty($data)) {
     $output .= '    const data = ' . json_encode($data) . ';';
     $output .= '    let chartInstance = Chart.getChart("myChart");';
     $output .= '    if (chartInstance) chartInstance.destroy();';
-    
-    if ($reportCategory == 'Trial Balance') {
-        $output .= '    const types = [...new Set(data.map(item => item.transactionType))];';
-        $output .= '    const categories = [...new Set(data.map(item => item.categoryName))];';
-        $output .= '    const months = [...new Set(data.map(item => item.monthYear))];';
-        $output .= '    const generateColors = (num) => {';
-        $output .= '        const colors = [];';
-        $output .= '        for (let i = 0; i < num; i++) {';
-        $output .= '            colors.push(`rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`);';
-        $output .= '        }';
-        $output .= '        return colors;';
-        $output .= '    };';
-        $output .= '    const categoryColors = generateColors(categories.length);';
-        $output .= '    const datasets = categories.map((category, index) => {';
-        $output .= '        return {';
-        $output .= '            label: category,';
-        $output .= '            data: months.map(month => {';
-        $output .= '                const item = data.find(d => d.monthYear === month && d.categoryName === category);';
-        $output .= '                return item ? item.totalAmount : 0;';
-        $output .= '            }),';
-        $output .= '            backgroundColor: categoryColors[index],';
-        $output .= '            borderColor: categoryColors[index].replace("0.2", "1"),';
-        $output .= '            borderWidth: 1';
-        $output .= '        };';
-        $output .= '    });';
-    } else {
-        $output .= '    const categories = [...new Set(data.map(item => item.categoryName))];';
-        $output .= '    const months = [...new Set(data.map(item => item.monthYear))];';
-        $output .= '    const generateColors = (num) => {';
-        $output .= '        const colors = [];';
-        $output .= '        for (let i = 0; i < num; i++) {';
-        $output .= '            colors.push(`rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`);';
-        $output .= '        }';
-        $output .= '        return colors;';
-        $output .= '    };';
-        $output .= '    const categoryColors = generateColors(categories.length);';
-        $output .= '    const datasets = categories.map((category, index) => {';
-        $output .= '        return {';
-        $output .= '            label: category,';
-        $output .= '            data: months.map(month => {';
-        $output .= '                const item = data.find(d => d.monthYear === month && d.categoryName === category);';
-        $output .= '                return item ? item.totalAmount : 0;';
-        $output .= '            }),';
-        $output .= '            backgroundColor: categoryColors[index],';
-        $output .= '            borderColor: categoryColors[index].replace("0.2", "1"),';
-        $output .= '            borderWidth: 1';
-        $output .= '        };';
-        $output .= '    });';
-    }
+
+    $output .= '    const categories = [...new Set(data.map(item => item.categoryName))];';
+    $output .= '    const months = [...new Set(data.map(item => item.monthYear))];';
+    $output .= '    const generateColors = (num) => {';
+    $output .= '        const colors = [];';
+    $output .= '        for (let i = 0; i < num; i++) {';
+    $output .= '            colors.push(`rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`);';
+    $output .= '        }';
+    $output .= '        return colors;';
+    $output .= '    };';
+    $output .= '    const categoryColors = generateColors(categories.length);';
+    $output .= '    const datasets = categories.map((category, index) => {';
+    $output .= '        return {';
+    $output .= '            label: category,';
+    $output .= '            data: months.map(month => {';
+    $output .= '                const item = data.find(d => d.monthYear === month && d.categoryName === category);';
+    $output .= '                return item ? item.totalAmount : 0;';
+    $output .= '            }),';
+    $output .= '            backgroundColor: categoryColors[index],';
+    $output .= '            borderColor: categoryColors[index].replace("0.2", "1"),';
+    $output .= '            borderWidth: 1';
+    $output .= '        };';
+    $output .= '    });';
 
     $output .= '    if (ctx) {';
     $output .= '        new Chart(ctx, {';
@@ -378,7 +352,7 @@ if (mysqli_num_rows($getResultsDetails) > 0) {
     $output .= '</button>';
     $output .= '</div>';
 } else {
-    $output .= '<span style="text-align-center-align: center;">No record found</span>';
+    $output .= '<span style="text-align: center;">No record found</span>';
 }
 
 $output .= '</div>';
