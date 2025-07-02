@@ -50,7 +50,7 @@ if ($reportCategory == 'Trial Balance') {
         ORDER BY
             transactionDate DESC, transactionType
     ");
-} elseif ($reportCategory == 'Orders') {
+} elseif ($reportCategory == 'Deliveries') {
     $getResults = $mysqli->query("
         SELECT
             DATE_FORMAT(createdAt, '%Y-%m') AS monthYear,
@@ -128,7 +128,7 @@ $data = [];
 while ($row = $getResults->fetch_assoc()) {
     if ($reportCategory == 'Trial Balance') {
         $row['categoryName'] = categoryName($row['nominalAccount'] ?? 'Unknown') ?? 'Unknown';
-    } elseif ($reportCategory == 'Orders') {
+    } elseif ($reportCategory == 'Deliveries') {
         $row['categoryName'] = $row['monthYear'];
     } else {
         $row['categoryName'] = categoryName($row['nominalAccount'] ?? 'Unknown') ?? 'Unknown';
@@ -152,7 +152,7 @@ if ($reportCategory == 'Trial Balance') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="width: 200px;">Description</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount (GHS)</th>';
-} elseif ($reportCategory == 'Orders') {
+} elseif ($reportCategory == 'Deliveries') {
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer Name</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>';
     $output .= '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone</th>';
@@ -177,7 +177,7 @@ $totalExpenditure = 0;
 $totalOrders = 0;
 
 while ($resResults = $getResultsDetails->fetch_assoc()) {
-    if ($reportCategory == 'Orders') {
+    if ($reportCategory == 'Deliveries') {
         $totalOrders += $resResults['totalAmount'];
         $output .= '<tr>';
         $output .= '<td>' . htmlspecialchars($resResults['customerName'] ?? '') . '</td>';
@@ -232,8 +232,8 @@ if ($reportCategory == 'Trial Balance') {
     $output .= '<tr class="font-weight-bold"><td colspan="4">Total Revenue</td><td>' . number_format($totalIncome, 2) . '</td></tr>';
 } elseif ($reportCategory == 'Payment') {
     $output .= '<tr class="font-weight-bold"><td colspan="4">Total Expenditure</td><td>' . number_format($totalExpenditure, 2) . '</td></tr>';
-} elseif ($reportCategory == 'Orders') {
-    $output .= '<tr class="font-weight-bold"><td colspan="8">Total Orders</td><td>' . number_format($totalOrders, 2) . '</td></tr>';
+} elseif ($reportCategory == 'Deliveries') {
+    $output .= '<tr class="font-weight-bold"><td colspan="8">Total Deliveries/Supplies</td><td>' . number_format($totalOrders, 2) . '</td></tr>';
 }
 
 $output .= '</tbody>';

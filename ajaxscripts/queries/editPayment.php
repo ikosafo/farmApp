@@ -11,13 +11,13 @@ $produce = isset($_POST['produce']) ? $_POST['produce'] : '';
 $invoiceNo = isset($_POST['invoiceNo']) ? $_POST['invoiceNo'] : '';
 $currency = isset($_POST['currency']) ? $_POST['currency'] : '';
 $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
-$exchangeRate = isset($_POST['exchangeRate']) ? floatval($_POST['exchangeRate']) : 1.0;
-$ghsEquivalent = isset($_POST['ghsEquivalent']) ? floatval($_POST['ghsEquivalent']) : 0;
+$exchangeRate = '1.00';
+$ghsEquivalent = $amount;
 $transactionType = "Payment"; 
 $nominalAccount = isset($_POST['nominalAccount']) ? $_POST['nominalAccount'] : '';
 
 // Server-side validation
-if (empty($transactionDate) || empty($payeePayer) || empty($currency) || empty($amount) || empty($nominalAccount) || empty($transactionId)) {
+if (empty($transactionDate) || empty($amount) || empty($nominalAccount) || empty($transactionId)) {
     echo "Error: All required fields must be filled.";
     $mysqli->close();
     exit;

@@ -29,34 +29,29 @@ $totalCategoriesResult = mysqli_query($mysqli, $totalCategoriesQuery);
 $totalCategories = mysqli_fetch_assoc($totalCategoriesResult)['totalCategories'] ?? 0;
 
 // Recent Orders
-$recentOrdersQuery = "SELECT `paymentStatus`, `customerName`, `totalAmount`, `orderStatus`, `deliveryDate` FROM `orders` ORDER BY `deliveryDate` DESC LIMIT 5";
+$recentOrdersQuery = "SELECT `paymentStatus`, `customerName`, `totalAmount`, `orderStatus`, `deliveryDate` FROM `orders` WHERE `orderStatus` = 1 ORDER BY `deliveryDate` DESC LIMIT 5";
 $recentOrdersResult = mysqli_query($mysqli, $recentOrdersQuery);
 
 // Recent Transactions
 $recentTransactionsQuery = "SELECT payeePayer AS transactionName, ghsEquivalent AS transactionAmount, transactionDate, transactionType FROM cashbook_transactions WHERE transStatus = 1 ORDER BY transactionDate DESC LIMIT 5";
 $recentTransactionsResult = mysqli_query($mysqli, $recentTransactionsQuery);
 
-// Sales Distribution for Pie Chart (from orders.orderDetails)
-$salesQuery = "SELECT orderDetails FROM orders WHERE orderStatus = 1";
-$salesResult = mysqli_query($mysqli, $salesQuery);
-$productQuantities = [];
-while ($row = mysqli_fetch_assoc($salesResult)) {
-    $orderDetails = json_decode($row['orderDetails'], true);
-    if (is_array($orderDetails)) {
-        foreach ($orderDetails as $product => $quantity) {
-            if (isset($productQuantities[$product])) {
-                $productQuantities[$product] += $quantity;
-            } else {
-                $productQuantities[$product] = $quantity;
-            }
-        }
-    }
+// Category Distribution for Pie Chart (from cashbook_transactions)
+$categoryQuery = "SELECT transactionType as category, SUM(ghsEquivalent) as totalAmount 
+                  FROM cashbook_transactions 
+                  WHERE transStatus = 1 
+                  GROUP BY transactionType 
+                  ORDER BY totalAmount DESC 
+                  LIMIT 6";
+$categoryResult = mysqli_query($mysqli, $categoryQuery);
+$categoryNames = [];
+$categoryAmounts = [];
+while ($row = mysqli_fetch_assoc($categoryResult)) {
+    $categoryNames[] = $row['category'];
+    $categoryAmounts[] = $row['totalAmount'];
 }
-// Sort by quantity descending and limit to top 6 for chart readability
-arsort($productQuantities);
-$topProducts = array_slice($productQuantities, 0, 6, true);
-$productNames = array_keys($topProducts);
-$quantities = array_values($topProducts);
+
+// Note: If you have a specific category field in cashbook_transactions, replace 'transactionType' with your actual category field name in the query above.
 
 // Receipt vs Payment for Line Chart (last 6 months)
 $monthsQuery = "SELECT DATE_FORMAT(transactionDate, '%b %Y') as month, 
@@ -240,7 +235,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
             </div>
         </div>
 
-        <!-- Transactions and Sales Distribution -->
+        <!-- Transactions and Category Distribution -->
         <div class="row mt-4">
             <div class="col-lg-4 mb-lg-0 mb-4">
                 <div class="card">
@@ -273,15 +268,15 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
             <div class="col-lg-8">
                 <div class="card z-index-2">
                     <div class="card-header pb-0">
-                        <h6>Sales Distribution</h6>
+                        <h6>Transactional Distribution</h6>
                         <p class="text-sm">
                             <i class="fa fa-arrow-up text-success"></i>
-                            <span class="font-weight-bold">Quantity distribution of sold products</span>
+                            <span class="font-weight-bold">Amount distribution by transaction category</span>
                         </p>
                     </div>
                     <div class="card-body p-3">
                         <div class="chart">
-                            <canvas id="chart-sales-distribution" class="chart-canvas" height="300"></canvas>
+                            <canvas id="chart-category-distribution" class="chart-canvas" height="300"></canvas>
                         </div>
                     </div>
                 </div>
@@ -324,14 +319,14 @@ new Chart(ctxIncomeExpense, {
     }
 });
 
-// Sales Distribution Chart
-const ctxSalesDistribution = document.getElementById('chart-sales-distribution').getContext('2d');
-new Chart(ctxSalesDistribution, {
+// Category Distribution Chart
+const ctxCategoryDistribution = document.getElementById('chart-category-distribution').getContext('2d');
+new Chart(ctxCategoryDistribution, {
     type: 'pie',
     data: {
-        labels: <?php echo json_encode($productNames); ?>,
+        labels: <?php echo json_encode($categoryNames); ?>,
         datasets: [{
-            data: <?php echo json_encode($quantities); ?>,
+            data: <?php echo json_encode($categoryAmounts); ?>,
             backgroundColor: [
                 'rgba(75, 192, 192, 0.8)',
                 'rgba(255, 99, 132, 0.8)',

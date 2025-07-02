@@ -19,10 +19,6 @@ if (!$resInc) {
     echo "<div class='alert alert-danger'>No transaction found with ID: $i_id</div>";
     exit;
 }
-
-// Fetch current exchange rates
-$query = $mysqli->query("SELECT currencyghs, currencyusd, currencyeur FROM currencies LIMIT 1");
-$rates = $query->fetch_assoc();
 ?>
 
 <style>
@@ -71,7 +67,7 @@ $rates = $query->fetch_assoc();
     border-radius: 0.25rem;
     max-height: 200px;
     overflow-y: auto;
-    z-index: 1050; /* Higher z-index to appear above other elements */
+    z-index: 1050;
     display: none;
     margin-bottom: 0.25rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
@@ -296,7 +292,7 @@ $rates = $query->fetch_assoc();
             <input id="incomeDateEdit" class="form-control border-radius-md" type="text" placeholder="Select date" value="<?= displayValue($resInc['transactionDate']) ?>" required>
         </div>
         <div class="col-12 col-md-6">
-            <label for="incomePayeeEdit" class="form-label">Payee <span class="text-danger">*</span></label>
+            <label for="incomePayeeEdit" class="form-label">Payee </label>
             <input id="incomePayeeEdit" class="form-control border-radius-md" type="text" placeholder="Enter Payee" value="<?= displayValue($resInc['payeePayer']) ?>" required>
         </div>
     </div>
@@ -311,15 +307,19 @@ $rates = $query->fetch_assoc();
             <div class="custom-select-wrapper">
                 <input type="hidden" id="farmProduceEdit" name="farmProduceEdit" value="<?= displayValue($resInc['produce']) ?>">
                 <input type="text" class="form-control border-radius-md dropdown-toggle" data-target="farmProduceEditList" placeholder="Select produce" value="<?php
-                    if ($resInc['produce']) {
+                    if (!empty($resInc['produce'])) {
                         $stmt = $mysqli->prepare("SELECT prodName FROM producelist WHERE prodId = ? AND prodStatus = 1");
                         $stmt->bind_param('i', $resInc['produce']);
                         $stmt->execute();
                         $result = $stmt->get_result()->fetch_assoc();
-                        echo displayValue($result['prodName']);
+                        if ($result) {
+                            echo displayValue($result['prodName']);
+                        } else {
+                            echo '';
+                        }
                         $stmt->close();
                     } else {
-                        echo '-';
+                        echo '';
                     }
                 ?>" readonly>
                 <div id="farmProduceEditList" class="dropdown-list hidden">
@@ -375,39 +375,13 @@ $rates = $query->fetch_assoc();
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="currencyEdit" class="form-label">Currency <span class="text-danger">*</span></label>
-            <div class="custom-select-wrapper">
-                <input type="hidden" id="currencyEdit" name="currencyEdit" value="<?= displayValue($resInc['currency']) ?>">
-                <input type="text" class="form-control border-radius-md dropdown-toggle" data-target="currencyListEdit" placeholder="Select currency" value="<?= displayValue($resInc['currency']) ?>" readonly>
-                <div id="currencyListEdit" class="dropdown-list hidden">
-                    <input type="text" class="dropdown-search" placeholder="Search currency...">
-                    <ul class="list-unstyled m-0">
-                        <li data-value="GHS">GHS</li>
-                        <li data-value="USD">USD</li>
-                        <li data-value="EUR">EUR</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
             <label for="incomeAmountEdit" class="form-label">Amount <span class="text-danger">*</span></label>
             <input id="incomeAmountEdit" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" value="<?= displayValue($resInc['amount']) ?>" required>
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-12 col-md-6">
-            <label for="exchangeRateEdit" class="form-label">Exchange Rate</label>
-            <input id="exchangeRateEdit" class="form-control border-radius-md" type="number" step="0.01" value="<?= displayValue($resInc['exchangeRate']) ?>" readonly required>
-        </div>
-        <div class="col-12 col-md-6">
-            <label for="ghsEquivalentEdit" class="form-label">GHS Equivalent</label>
-            <input id="ghsEquivalentEdit" class="form-control border-radius-md" type="text" value="<?= displayValue($resInc['ghsEquivalent']) ?>" readonly>
-        </div>
-    </div>
-
     <div class="d-flex justify-content-center mt-4">
-       <!--  <button type="reset" class="btn btn-outline-secondary me-3 cancelEdit">Cancel</button> -->
+        <button type="reset" class="btn btn-outline-secondary me-3 cancelEdit">Cancel</button>
         <button type="button" id="editReceiptBtn" class="btn bg-gradient-primary">
             <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
             Update Receipt Record
@@ -417,22 +391,6 @@ $rates = $query->fetch_assoc();
 
 <script>
 $(document).ready(function() {
-    const exchangeRates = {
-        GHS: 1,
-        USD: <?= floatval($rates['currencyusd']) ?>,
-        EUR: <?= floatval($rates['currencyeur']) ?>
-    };
-
-    // Exchange rate calculation
-    $("#currencyEdit, #incomeAmountEdit").on("input change", function () {
-        const currency = $("#currencyEdit").val();
-        const amount = parseFloat($("#incomeAmountEdit").val()) || 0;
-        const rate = currency ? (exchangeRates[currency] || 1) : 1;
-        const ghsEquivalent = (currency === "GHS") ? amount : (amount * rate);
-       
-        $("#exchangeRateEdit").val(rate.toFixed(2));
-        $("#ghsEquivalentEdit").val(ghsEquivalent.toFixed(2));
-    });
 
     // Date picker
     $("#incomeDateEdit").flatpickr({
@@ -532,11 +490,6 @@ $(document).ready(function() {
                 dropdownList.classList.remove('active');
                 searchInput.value = '';
                 dropdownList.querySelectorAll('li').forEach(opt => opt.style.display = 'block');
-
-                // Trigger change event for exchange rate update
-                if (hiddenInput.id === 'currencyEdit') {
-                    $(hiddenInput).trigger('change');
-                }
             }
         });
 
@@ -575,10 +528,6 @@ $(document).ready(function() {
                 dropdownList.classList.remove('active');
                 searchInput.value = '';
                 dropdownList.querySelectorAll('li').forEach(opt => opt.style.display = 'block');
-
-                if (hiddenInput.id === 'currencyEdit') {
-                    $(hiddenInput).trigger('change');
-                }
             } else if (e.key === 'Escape') {
                 dropdownList.classList.remove('active');
                 searchInput.value = '';
@@ -624,6 +573,20 @@ $(document).ready(function() {
     document.getElementById('customErrorAlert').querySelector('.btn-close').addEventListener('click', hideErrorAlert);
     document.getElementById('customSuccessAlert').querySelector('.btn-close').addEventListener('click', hideSuccessAlert);
 
+
+    // Cancel button to load addReceipt form
+    $(".cancelEdit").click(function () {
+        //$('#receipts-tab').tab('show');
+        /* loadPage("ajaxscripts/tables/receipts.php", function(response) {
+            $('#pageTable').html(response);
+        }); */
+         $('#addreceipt-tab').html('<i class="fas fa-plus me-2"></i>Add Receipt');
+        loadPage("ajaxscripts/forms/addReceipt.php", function(response) {
+            $('#pageForm').html(response);
+        });
+    });
+
+
     // Form submission
     $("#editReceiptBtn").click(function () {
         var $button = $(this);
@@ -636,10 +599,7 @@ $(document).ready(function() {
             details: $("#incomeDescriptionEdit").val(),
             produce: $("#farmProduceEdit").val(),
             invoiceNo: $("#invoiceNumberEdit").val(),
-            currency: $("#currencyEdit").val(),
             amount: $("#incomeAmountEdit").val(),
-            exchangeRate: $("#exchangeRateEdit").val(),
-            ghsEquivalent: $("#ghsEquivalentEdit").val(),
             transactionType: "Receipt",
             nominalAccount: $("#incomeCategoryEdit").val(),
             transactionId: '<?php echo $i_id ?>'
@@ -675,14 +635,10 @@ $(document).ready(function() {
                 error += 'Please select a date\n';
                 firstEmptyField = firstEmptyField || '#incomeDateEdit';
             }
-            if (!formData.payeePayer) {
+            /* if (!formData.payeePayer) {
                 error += 'Please enter payee\n';
                 firstEmptyField = firstEmptyField || '#incomePayeeEdit';
-            }
-            if (!formData.currency) {
-                error += 'Please select currency\n';
-                firstEmptyField = firstEmptyField || '#currencyEdit + .dropdown-toggle';
-            }
+            } */
             if (!formData.amount) {
                 error += 'Please enter amount\n';
                 firstEmptyField = firstEmptyField || '#incomeAmountEdit';

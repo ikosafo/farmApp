@@ -11,7 +11,7 @@
                     <option>Payment</option>
                     <option>Receipt</option>
                     <option>Trial Balance</option>
-                    <option>Orders</option>
+                    <option>Deliveries</option>
                 </select>
             </div>
 

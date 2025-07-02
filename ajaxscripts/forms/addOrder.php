@@ -32,7 +32,7 @@
                 <input id="fullName" class="form-control" type="text" placeholder="Enter full name" required>
             </div>
             <div class="col-12 col-md-6">
-                <label for="email" class="form-label">Email Address </label>
+                <label for="email" class="form-label">Email Address</label>
                 <input id="email" class="form-control" type="email" placeholder="Enter email address">
             </div>
             <div class="col-12 col-md-6">
@@ -40,13 +40,13 @@
                 <input id="phoneNumber" class="form-control" maxlength="10" type="tel" onkeypress="return isNumber(event)" placeholder="Enter phone number" required>
             </div>
             <div class="col-12 col-md-6">
-                <label for="address" class="form-label">Home Address</label>
-                <input id="address" class="form-control" type="text" placeholder="Enter address" required>
+                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                <input id="address" class="form-control" type="text" placeholder="Enter delivery or supply address" required>
             </div>
         </div>
 
-        <!-- Section: Delivery Details -->
-        <h5 class="form-section-title mt-5">2. Delivery Details</h5>
+        <!-- Section: Order Details -->
+        <h5 class="form-section-title mt-5">2. Order Details</h5>
         <div id="orderItemsContainer">
             <div class="row g-4 order-item align-items-end">
                 <div class="col-md-4">
@@ -85,41 +85,33 @@
             </button>
         </div>
 
-        <!-- Section: Delivery/Pickup -->
-        <h5 class="form-section-title mt-5">3. Delivery / Pickup</h5>
+        <!-- Section: Fulfillment Method -->
+        <h5 class="form-section-title mt-5">3. Fulfillment Method</h5>
         <div class="row g-4">
             <div class="col-md-6">
-                <label class="form-label">Fulfillment Method <span class="text-danger">*</span></label>
+                <label class="form-label">Fulfillment Type <span class="text-danger">*</span></label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="fulfillmentMethod" value="Delivery" id="delivery" checked required>
-                    <label class="form-check-label" for="delivery">Delivery</label>
+                    <label class="form-check-label" for="delivery">Delivery to Customer</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="fulfillmentMethod" value="Farm Pickup" id="pickup">
-                    <label class="form-check-label" for="pickup">Farm Pickup</label>
+                    <input class="form-check-input" type="radio" name="fulfillmentMethod" value="Supply" id="supply">
+                    <label class="form-check-label" for="supply">Supply Pickup at Farm</label>
                 </div>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Delivery Date <span class="text-danger">*</span></label>
-                <input type="text" id="preferredDate" class="form-control flatpickr" placeholder="Choose date" required>
+                <label class="form-label">Preferred Date <span class="text-danger">*</span></label>
+                <input type="text" id="preferredDate" class="form-control flatpickr" placeholder="Choose delivery or pickup date" required>
             </div>
         </div>
 
         <!-- Section: Payment -->
         <h5 class="form-section-title mt-5">4. Payment</h5>
         <div class="row g-4">
-            <!-- <div class="col-md-6">
-                <label class="form-label">Payment Method <span class="text-danger">*</span></label>
-                <select id="paymentMethod" class="form-select" name="paymentMethod" required>
-                    <option value="" disabled selected>Select payment method</option>
-                    <option value="Card">Credit or Debit Card/Mobile Money/Bank Transfer</option>
-                    <option value="Cash">Cash on Delivery/Pickup</option>
-                </select>
-            </div> -->
             <div class="col-md-6">
                 <label class="form-label">Payment Status <span class="text-danger">*</span></label>
                 <select id="paymentStatus" class="form-select" name="paymentStatus" required>
-                    <option value="" disabled selected>Select Payment Status</option>
+                    <option value="" disabled selected>Select payment status</option>
                     <option value="Part Payment">Part Payment</option>
                     <option value="Full Payment">Full Payment</option>
                     <option value="Overpaid">Overpaid</option>
@@ -216,7 +208,7 @@ $(document).ready(function () {
         updateItemCalculations($item);
     });
 
-    // Add Delivery Item
+    // Add Order Item
     $('#addOrderItem').click(function () {
         const $item = $('#orderItemsContainer .order-item:first').clone(true);
         $item.find('.product-select').val('');
@@ -285,8 +277,8 @@ $(document).ready(function () {
             let error = '';
             if (!data.fullName) error += 'Please enter full name\n';
             if (data.email && !validateEmail(data.email)) error += 'Please enter a valid email address\n';
-            if (!data.fulfillmentMethod) error += 'Please select fulfillment method\n';
-            if (!data.preferredDate) error += 'Please select delivery date\n';
+            if (!data.fulfillmentMethod) error += 'Please select fulfillment type\n';
+            if (!data.preferredDate) error += 'Please select delivery or pickup date\n';
             if (!data.paymentStatus) error += 'Please select payment status\n';
             if (data.products.length === 0) error += 'Please add at least one product\n';
             return error;
@@ -304,7 +296,7 @@ $(document).ready(function () {
         const successCallback = function(response) {
             $submitBtn.find('.spinner-border').addClass('d-none');
             if (response === 'Success') {
-                $.notify('Delivery information saved successfully', { className: 'success', position: 'top right' });
+                $.notify('Order information saved successfully', { className: 'success', position: 'top right' });
                 $('#addOrderForm')[0].reset();
                 const $firstItem = $('#orderItemsContainer .order-item:first').clone(true);
                 $firstItem.find('.product-select').val('');

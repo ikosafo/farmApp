@@ -34,7 +34,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="addOrderModalLabel">Add Delivery</h5>
+                    <h5 class="modal-title font-weight-bolder" id="addOrderModalLabel">Add Delivery/Supply</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="pageForm"></div>
