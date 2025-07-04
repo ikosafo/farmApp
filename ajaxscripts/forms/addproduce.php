@@ -11,9 +11,9 @@
             <select id="productCategory" class="form-control border-radius-md" name="productCategory" required>
                 <option value="" disabled selected>Select a category</option>
                 <?php
-                $getCat = $mysqli->query("SELECT * FROM `prodcategory` WHERE `pcatStatus` = 1");
+                $getCat = $mysqli->query("SELECT * FROM `categories` WHERE `categoryStatus` = 1");
                 while ($resCat = $getCat->fetch_assoc()) {
-                    echo "<option value='{$resCat['pcatId']}'>{$resCat['pcatName']}</option>";
+                    echo "<option value='{$resCat['catid']}'>{$resCat['categoryName']}</option>";
                 }
                 ?>
             </select>

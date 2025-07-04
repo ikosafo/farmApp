@@ -36,9 +36,14 @@
                                     <i class="fas fa-key me-2"></i>Password
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <!-- <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="currencies-tab" data-bs-toggle="tab" data-bs-target="#currencies" type="button" role="tab" aria-controls="currencies" aria-selected="false">
                                     <i class="fas fa-history me-2"></i>Currencies
+                                </button>
+                            </li> -->
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="seasons-tab" data-bs-toggle="tab" data-bs-target="#seasons" type="button" role="tab" aria-controls="logs" aria-selected="false">
+                                    <i class="fas fa-cloud-rain me-2"></i>Seasons
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -98,11 +103,20 @@
                                 <div id="changePasswordForm"></div>
                             </div>
                              <!-- Currencies Tab -->
-                            <div class="tab-pane fade" id="currencies" role="tabpanel" aria-labelledby="currencies-tab">
+                            <!-- <div class="tab-pane fade" id="currencies" role="tabpanel" aria-labelledby="currencies-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="font-weight-bolder mb-0">Currencies</h5>
                                 </div>
                                 <div id="currenciesForm"></div>
+                            </div> -->
+                            <div class="tab-pane fade" id="seasons" role="tabpanel" aria-labelledby="seasons-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Seasons</h5>
+                                    <button class="btn bg-gradient-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addseasonModal">
+                                        <i class="fas fa-plus me-2"></i>Add Season
+                                    </button>
+                                </div>
+                                <div id="seasonsTable"></div>
                             </div>
                             <!-- Logs Tab -->
                             <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
@@ -127,6 +141,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="pageForm"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addseasonModal" tabindex="-1" aria-labelledby="addseasonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-radius-xl">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bolder" id="addseasonModalLabel">Add Season</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="seasonForm"></div>
             </div>
         </div>
     </div>
@@ -382,10 +409,24 @@
             });
         });
 
+
+         $('#addseasonModal').on('show.bs.modal', function() {
+            loadPage("ajaxscripts/forms/addseason.php", function(response) {
+                $('#seasonForm').html(response);
+            });
+        });
+
         // Load Categories table when Categories tab is shown
         $('#categories-tab').on('shown.bs.tab', function() {
             loadPage("ajaxscripts/tables/category.php", function(response) {
                 $('#categoryTable').html(response);
+            });
+        });
+
+
+         $('#seasons-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/tables/seasons.php", function(response) {
+                $('#seasonsTable').html(response);
             });
         });
 
@@ -432,9 +473,15 @@
         });
 
         // Load Currencies form when Currencies tab is shown
-        $('#currencies-tab').on('shown.bs.tab', function() {
+        /* $('#currencies-tab').on('shown.bs.tab', function() {
             loadPage("ajaxscripts/forms/currencies.php", function(response) {
                 $('#currenciesForm').html(response);
+            });
+        }); */
+
+        $('#seasons-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/forms/addseason.php", function(response) {
+                $('#seasonsForm').html(response);
             });
         });
 
