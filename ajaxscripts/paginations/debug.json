@@ -1,87 +1,87 @@
 {
     "draw": 1,
-    "recordsTotal": "598",
-    "recordsFiltered": "598",
+    "recordsTotal": "103",
+    "recordsFiltered": "103",
     "data": [
         {
-            "date": "07-Jun-25",
-            "payer": "Jehoshaphat",
-            "produce": "Cattle",
-            "amount": "600.00",
-            "account": "Miscellaneous Expenses",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhTbkpOVmtwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhTbkpOVmtwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhTbkpOVmtwUlZrUkJPUT09\">Delete<\/a>"
-        },
-        {
-            "date": "06-Jun-25",
-            "payer": "Ago",
+            "date": "22-May-25",
+            "payee": "Tractor rental",
             "produce": "",
-            "amount": "1560.00",
-            "account": "Cost - Building",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhUbkpPVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhUbkpPVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhUbkpPVlVwUlZrUkJPUT09\">Delete<\/a>"
+            "amount": "17000.00",
+            "account": "Sales - Tractor Rental",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhUbkpOVnpWUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhUbkpOVnpWUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhUbkpOVnpWUlZrUkJPUT09\">Delete<\/a>"
         },
         {
-            "date": "05-Jun-25",
-            "payer": "DVLA\/VISAL",
+            "date": "22-May-25",
+            "payee": "Phidor Farms",
+            "produce": "Rice",
+            "amount": "60000.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhUbkpOVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhUbkpOVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhUbkpOVlVwUlZrUkJPUT09\">Delete<\/a>"
+        },
+        {
+            "date": "03-May-25",
+            "payee": "fafali",
             "produce": "",
-            "amount": "1236.00",
-            "account": "Insurance",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXlTbkpPVmtwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXlTbkpPVmtwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXlTbkpPVmtwUlZrUkJPUT09\">Delete<\/a>"
+            "amount": "1750.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXlTbkpOVkU1UlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXlTbkpOVkU1UlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXlTbkpOVkU1UlZrUkJPUT09\">Delete<\/a>"
         },
         {
-            "date": "05-Jun-25",
-            "payer": "Godwin",
+            "date": "18-Apr-25",
+            "payee": "Tractor rental",
+            "produce": "",
+            "amount": "3200.00",
+            "account": "Sales - Tractor Rental",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXlTblJXYlRWUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXlTblJXYlRWUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXlTblJXYlRWUlZrUkJPUT09\">Delete<\/a>"
+        },
+        {
+            "date": "11-Apr-25",
+            "payee": "Genny",
             "produce": "Rice",
-            "amount": "160.00",
-            "account": "Temp Labour",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhTblJXYlRWUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhTblJXYlRWUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhTblJXYlRWUlZrUkJPUT09\">Delete<\/a>"
+            "amount": "1700.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhWbkpOVkU1UlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhWbkpOVkU1UlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhWbkpOVkU1UlZrUkJPUT09\">Delete<\/a>"
         },
         {
-            "date": "03-Jun-25",
-            "payer": "Godwin",
+            "date": "11-Apr-25",
+            "payee": "Charles Aboa",
             "produce": "Rice",
-            "amount": "160.00",
-            "account": "Temp Labour",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXlUbkpOVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXlUbkpOVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXlUbkpOVlVwUlZrUkJPUT09\">Delete<\/a>"
+            "amount": "8900.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhWbkpOVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhWbkpOVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhWbkpOVlVwUlZrUkJPUT09\">Delete<\/a>"
         },
         {
-            "date": "03-Jun-25",
-            "payer": "Jehoshaphat",
+            "date": "11-Apr-25",
+            "payee": "Adotei",
+            "produce": "Rice",
+            "amount": "1800.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhWblJXYkVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhWblJXYkVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhWblJXYkVwUlZrUkJPUT09\">Delete<\/a>"
+        },
+        {
+            "date": "11-Apr-25",
+            "payee": "School Driver",
+            "produce": "Rice",
+            "amount": "400.00",
+            "account": "Sales - Rice",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhWbkpOVnpWUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhWbkpOVnpWUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhWbkpOVnpWUlZrUkJPUT09\">Delete<\/a>"
+        },
+        {
+            "date": "10-Apr-25",
+            "payee": "Palace Mall",
             "produce": "Zucchini Squash",
-            "amount": "3920.00",
-            "account": "Seeds",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhTbkpPVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhTbkpPVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhTbkpPVlVwUlZrUkJPUT09\">Delete<\/a>"
+            "amount": "272.00",
+            "account": "Sales - Cucumber",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhXbkpOVmtwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhXbkpOVmtwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhXbkpOVmtwUlZrUkJPUT09\">Delete<\/a>"
         },
         {
-            "date": "03-Jun-25",
-            "payer": "Jehoshaphat",
-            "produce": "",
-            "amount": "400.00",
-            "account": "Miscellaneous Expenses",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXlUblJXYTBwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXlUblJXYTBwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXlUblJXYTBwUlZrUkJPUT09\">Delete<\/a>"
-        },
-        {
-            "date": "03-Jun-25",
-            "payer": "Jehoshaphat",
-            "produce": "",
-            "amount": "400.00",
-            "account": "Farm Expenses",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhUblJXYkVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhUblJXYkVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhUblJXYkVwUlZrUkJPUT09\">Delete<\/a>"
-        },
-        {
-            "date": "29-May-25",
-            "payer": "Godwin",
-            "produce": "Rice",
-            "amount": "1000.00",
-            "account": "Rice",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhTblJXYTBwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhTblJXYTBwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhTblJXYTBwUlZrUkJPUT09\">Delete<\/a>"
-        },
-        {
-            "date": "25-May-25",
-            "payer": "Godwin",
-            "produce": "Rice",
-            "amount": "800.00",
-            "account": "Rice",
-            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10amVHUXhSbkpPVlVwUlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editPayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10amVHUXhSbkpPVlVwUlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deletePayment_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10amVHUXhSbkpPVlVwUlZrUkJPUT09\">Delete<\/a>"
+            "date": "10-Apr-25",
+            "payee": "Max Mart",
+            "produce": "Zucchini Squash",
+            "amount": "280.00",
+            "account": "Sales - Cucumber",
+            "actions": "<a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs viewReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"View Income\" i_index=\"Vm10a05GVXhXbkpOVkU1UlZrUkJPUT09\">View<\/a> | \r\n    <a href=\"javascript:;\" class=\"text-secondary font-weight-bold text-xs editReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Edit Income\" i_index=\"Vm10a05GVXhXbkpOVkU1UlZrUkJPUT09\">Edit<\/a> | \r\n    <a href=\"javascript:;\" data-type=\"confirm\" class=\"text-secondary font-weight-bold text-xs deleteReceipt_btn\" \r\n    data-toggle=\"tooltip\" data-original-title=\"Delete Income\" i_index=\"Vm10a05GVXhXbkpOVkU1UlZrUkJPUT09\">Delete<\/a>"
         }
     ]
 }

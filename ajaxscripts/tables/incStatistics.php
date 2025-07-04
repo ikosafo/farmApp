@@ -78,12 +78,12 @@ foreach ($tableData as $index => &$row) {
 }
 unset($row);
 
-// Pie Chart Data
-$lineChartQuery = $mysqli->query("SELECT DATE_FORMAT(transactionDate, '%Y-%m') as month, SUM(ghsEquivalent) as total FROM `cashbook_transactions` WHERE transactionType = 'Receipt' AND transStatus = 1 AND transactionDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month");
+// Receipts Over Time Chart Data
+$lineChartQuery = $mysqli->query("SELECT DATE_FORMAT(transactionDate, '%b-%Y') as month_label, DATE_FORMAT(transactionDate, '%Y-%m') as month_sort_key, SUM(ghsEquivalent) as total FROM `cashbook_transactions` WHERE transactionType = 'Receipt' AND transStatus = 1 AND transactionDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY month_label, month_sort_key ORDER BY month_sort_key DESC");
 $lineChartLabels = [];
 $lineChartData = [];
 while ($row = $lineChartQuery->fetch_assoc()) {
-    $lineChartLabels[] = $row['month'];
+    $lineChartLabels[] = $row['month_label'];
     $lineChartData[] = (float)$row['total'];
 }
 
@@ -92,7 +92,7 @@ $pieChartQuery = $mysqli->query("SELECT c.categoryName, SUM(t.ghsEquivalent) as 
 $pieChartLabels = [];
 $pieChartData = [];
 $pieChartColors = [];
-$colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
+$colors = ['#5E81AC', '#88C0D0', '#A3BE8C', '#D08770', '#BF616A', '#EBCB8B', '#B48EAD', '#81A1C1'];
 $colorIndex = 0;
 while ($row = $pieChartQuery->fetch_assoc()) {
     $pieChartLabels[] = $row['categoryName'];
@@ -102,153 +102,290 @@ while ($row = $pieChartQuery->fetch_assoc()) {
 }
 ?>
 
+<style>
+    .statistics-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        --primary-color: #5E81AC;
+        --secondary-color: #4C566A;
+        --accent-color: #88C0D0;
+        --background-color: #ECEFF4;
+        --card-bg: #FFFFFF;
+        --text-color: #2E3440;
+        --muted-text: #4C566A;
+    }
 
-    <!-- <style>
+    .statistics-container .card {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: visible;
+        position: relative;
+    }
+
+    .statistics-container .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .statistics-container .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: #FFFFFF;
+        padding: 0.75rem;
+        border-radius: 0.75rem 0.75rem 0 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .statistics-container .card-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: visible;
+    }
+
+    .statistics-container .card-body i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        transition: transform 0.3s ease;
+    }
+
+    .statistics-container .card:hover .card-body i {
+        transform: scale(1.1);
+    }
+
+    .statistics-container .card h6 {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--muted-text);
+        margin-bottom: 0.4rem;
+    }
+
+    .statistics-container .card h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin: 0;
+        word-wrap: break-word;
+    }
+
+    .statistics-container .table-responsive {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .statistics-container .table {
+        margin-bottom: 0;
+        background: var(--card-bg);
+        width: 100%;
+        table-layout: auto;
+    }
+
+    .statistics-container .table thead th {
+        background: var(--primary-color);
+        color: #FFFFFF;
+        font-weight: 500;
+        border: none;
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .statistics-container .table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .statistics-container .table tbody tr:hover {
+        background: rgba(94, 129, 172, 0.05);
+    }
+
+    .statistics-container .table td,
+    .statistics-container .table th {
+        padding: 0.6rem;
+        vertical-align: middle;
+        color: var(--text-color);
+        border-color: rgba(0, 0, 0, 0.05);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .statistics-container .table td:first-child,
+    .statistics-container .table th:first-child {
+        white-space: normal;
+        min-width: 150px;
+    }
+
+    .statistics-container .chart-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .statistics-container .canvas {
+        min-height: 250px;
+        max-width: 100%;
+        width: 100%;
+        position: relative;
+        z-index: 10;
+    }
+
+    .statistics-container .search-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 767px) {
         .statistics-container .card {
-            border: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 0.75rem;
         }
-        .statistics-container .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+        .statistics-container .card h4 {
+            font-size: 1rem;
         }
-        .statistics-container .table th, .statistics-container .table td {
-            padding: 12px 15px;
-            vertical-align: middle;
+        .statistics-container .card h6 {
+            font-size: 0.7rem;
         }
-        .statistics-container .table thead th {
-            background: #f8f9fa;
-            color: #343a40;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
+        .statistics-container .card-body {
+            padding: 1rem;
         }
-        .border-radius-xl {
-            border-radius: 0.75rem;
+        .statistics-container .table td,
+        .statistics-container .table th {
+            font-size: 0.75rem;
+            padding: 0.5rem;
         }
-        .card h4 {
-            word-wrap: break-word;
+        .statistics-container .table td:first-child,
+        .statistics-container .table th:first-child {
+            min-width: 100px;
         }
-        #receiptsLineChart, #receiptsPieChart {
-            min-height: 300px;
-            width: 100%;
-        }
-        @media (max-width: 767px) {
-            .statistics-container .card {
-                padding: 12px !important;
-            }
-            .statistics-container .table th, .statistics-container .table td {
-                font-size: 0.85rem;
-                padding: 8px;
-            }
-            h4 {
-                font-size: 1.1rem;
-            }
-        }
-    </style> -->
+    }
+</style>
 
 <div class="statistics-container">
     <div class="row g-4 mb-4">
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-money-bill-wave text-primary fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Total Receipts</h6>
-                    <h4 class="text-primary mb-0">GHS <?php echo $totalAmount; ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h6>Total Receipts</h6>
+                    <h4>GHS <?php echo $totalAmount; ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-calculator text-success fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Average Receipt</h6>
-                    <h4 class="text-success mb-0">GHS <?php echo $avgAmount; ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-calculator"></i>
+                    <h6>Average Receipt</h6>
+                    <h4>GHS <?php echo $avgAmount; ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-receipt text-info fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Transactions</h6>
-                    <h4 class="text-info mb-0"><?php echo $totalCount; ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-receipt"></i>
+                    <h6>Transactions</h6>
+                    <h4><?php echo $totalCount; ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-chart-pie text-warning fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Top Account</h6>
-                    <h4 class="text-warning mb-0"><?php echo htmlspecialchars(categoryName($topAccountName)); ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-chart-pie"></i>
+                    <h6>Top Account</h6>
+                    <h4><?php echo htmlspecialchars(categoryName($topAccountName)); ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-user-tie text-primary fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Top Payee</h6>
-                    <h4 class="text-primary mb-0"><?php echo htmlspecialchars($topPayeeName); ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-user-tie"></i>
+                    <h6>Top Payee</h6>
+                    <h4><?php echo htmlspecialchars($topPayeeName); ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-4">
-            <div class="card shadow-sm border-radius-xl p-3 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-leaf text-success fa-2x mb-2"></i>
-                    <h6 class="font-weight-bolder">Top Produce</h6>
-                    <h4 class="text-success mb-0"><?php echo htmlspecialchars(produceName($topProduceName)); ?></h4>
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-leaf"></i>
+                    <h6>Top Produce</h6>
+                    <h4><?php echo htmlspecialchars(produceName($topProduceName)); ?></h4>
                 </div>
             </div>
         </div>
     </div>
 
-     <!-- Graphs -->
     <div class="row g-4 mb-4">
         <div class="col-12 col-lg-6">
-            <div class="card shadow-sm border-radius-xl p-4">
-                <h5 class="font-weight-bolder mb-3">Receipts Over Time</h5>
-                <canvas id="receiptsLineChart"></canvas>
+            <div class="card">
+                <div class="card-header">Receipts Over Time</div>
+                <div class="card-body">
+                    <div class="chart-wrapper">
+                        <canvas id="receiptsLineChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-12 col-lg-6">
-            <div class="card shadow-sm border-radius-xl p-4">
-                <h5 class="font-weight-bolder mb-3">Receipts by Nominal Account</h5>
-                <canvas id="receiptsPieChart"></canvas>
+            <div class="card">
+                <div class="card-header">Receipts by Nominal Account</div>
+                <div class="card-body">
+                    <div class="chart-wrapper">
+                        <canvas id="receiptsPieChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
         <div class="col-12">
-            <div class="card shadow-sm border-radius-xl p-4">
-                <h5 class="font-weight-bolder mb-3">Receipts Summary</h5>
-                <div class="table-responsive">
-                    <?php if (empty($tableData)): ?>
-                        <p class="text-center text-muted">No receipt data available.</p>
-                    <?php else: ?>
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nominal Account</th>
-                                    <th>Transactions</th>
-                                    <th>Total (GHS)</th>
-                                    <th>Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($tableData as $row): ?>
+            <div class="">
+                <!-- <div class="card-header">Receipts Summary</div> -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <?php if (empty($tableData)): ?>
+                            <p class="text-center text-muted m-3">No receipt data available.</p>
+                        <?php else: ?>
+                            <table class="table table-hover mb-0" id="receiptsSummaryTable">
+                                <thead>
                                     <tr>
-                                        <td><?php echo htmlspecialchars(categoryName($row['categoryName']) ?? '-'); ?></td>
-                                        <td><?php echo (int)$row['count']; ?></td>
-                                        <td>GHS <?php echo number_format($row['total'], 2); ?></td>
-                                        <td><?php echo number_format($row['displayPercentage'] ?? 0, 1); ?>%</td>
+                                        <th>Nominal Account</th>
+                                        <th>Transactions</th>
+                                        <th>Total (GHS)</th>
+                                        <th>Percentage</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php endif; ?>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($tableData as $row): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars(categoryName($row['categoryName']) ?? '-'); ?></td>
+                                            <td><?php echo (int)$row['count']; ?></td>
+                                            <td>GHS <?php echo number_format($row['total'], 2); ?></td>
+                                            <td><?php echo number_format($row['displayPercentage'] ?? 0, 1); ?>%</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -257,7 +394,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// Line Chart
+// Line Chart (Bar Graph)
 const lineChartCtx = document.getElementById('receiptsLineChart').getContext('2d');
 new Chart(lineChartCtx, {
     type: 'bar',
@@ -266,19 +403,56 @@ new Chart(lineChartCtx, {
         datasets: [{
             label: 'Receipts (GHS)',
             data: <?php echo json_encode($lineChartData); ?>,
-            borderColor: '#1a2a44',
-            backgroundColor: 'rgba(26, 42, 68, 0.2)',
-            fill: true,
-            tension: 0.3
+            backgroundColor: 'rgba(94, 129, 172, 0.8)',
+            borderColor: 'rgba(94, 129, 172, 1)',
+            borderWidth: 1,
+            barPercentage: 0.8,
+            categoryPercentage: 0.9
         }]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Amount (GHS)' } },
-            x: { title: { display: true, text: 'Month' } }
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Amount (GHS)', color: '#2E3440', font: { size: 12 } },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+            },
+            x: {
+                title: { display: true, text: 'Month', color: '#2E3440', font: { size: 12 } },
+                grid: { display: false }
+            }
         },
-        plugins: { legend: { display: true } }
+        plugins: {
+            legend: { labels: { color: '#2E3440', font: { size: 12 } } },
+            tooltip: {
+                enabled: true,
+                backgroundColor: '#FFFFFF',
+                titleColor: '#2E3440',
+                bodyColor: '#2E3440',
+                borderColor: '#5E81AC',
+                borderWidth: 1,
+                mode: 'index',
+                intersect: false,
+                position: 'nearest',
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        let value = context.raw || 0;
+                        return `${label}: GHS ${value.toLocaleString()}`;
+                    }
+                }
+            }
+        },
+        animation: {
+            duration: 1000,
+            easing: 'easeOutQuart'
+        },
+        hover: {
+            mode: 'index',
+            intersect: false
+        }
     }
 });
 
@@ -290,14 +464,24 @@ new Chart(pieChartCtx, {
         labels: <?php echo json_encode($pieChartLabels); ?>,
         datasets: [{
             data: <?php echo json_encode($pieChartData); ?>,
-            backgroundColor: <?php echo json_encode($pieChartColors); ?>
+            backgroundColor: <?php echo json_encode($pieChartColors); ?>,
+            borderColor: '#FFFFFF',
+            borderWidth: 2
         }]
     },
     options: {
         responsive: true,
         plugins: {
-            legend: { position: 'top' },
+            legend: {
+                position: 'top',
+                labels: { color: '#2E3440', font: { size: 12 } }
+            },
             tooltip: {
+                backgroundColor: '#FFFFFF',
+                titleColor: '#2E3440',
+                bodyColor: '#2E3440',
+                borderColor: '#5E81AC',
+                borderWidth: 1,
                 callbacks: {
                     label: function(context) {
                         let label = context.label || '';
@@ -308,6 +492,10 @@ new Chart(pieChartCtx, {
                     }
                 }
             }
+        },
+        animation: {
+            duration: 1000,
+            easing: 'easeOutQuart'
         }
     }
 });
