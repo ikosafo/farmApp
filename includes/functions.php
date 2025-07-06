@@ -79,6 +79,13 @@ function managePayment($id)
 }
 
 
+function manageSeason($id)
+{
+    return '<a href="javascript:;" data-type="confirm" class="text-secondary font-weight-bold text-xs deleteSeasonBtn" 
+    data-toggle="tooltip" data-original-title="Delete Season" i_index="' . lock(lock($id)) . '">Delete</a>';
+}
+
+
 function manageProduction($id)
 {
     return '<a href="javascript:;" class="text-secondary font-weight-bold text-xs viewProduction_btn" 
