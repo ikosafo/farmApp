@@ -389,7 +389,7 @@ function produceName($id) {
             if (!seasonId) {
                 return showErrorToast("Please select a season.");
             }
-            startDate = new Date('2000-01-01'); // Default range for season
+            startDate = new Date('2000-01-01');
             endDate = new Date();
         }
 
@@ -520,6 +520,7 @@ function produceName($id) {
         });
 
         const netBalance = totalIncome - totalExpenditure;
+        const netBalanceColor = netBalance >= 0 ? '#2ecc71' : '#e74c3c'; // Green for positive, red for negative
 
         const html = `
             <div class="col-md-12 mb-3">
@@ -527,15 +528,15 @@ function produceName($id) {
                     <div class="row">
                         <div class="col-md-4">
                             <h6>Total Income (GHS)</h6>
-                            <p class="income">${totalIncome.toFixed(2)}</p>
+                            <p class="income" style="color: #2596be;">${totalIncome.toFixed(2)}</p>
                         </div>
                         <div class="col-md-4">
                             <h6>Total Expenditure (GHS)</h6>
-                            <p class="expenditure">${totalExpenditure.toFixed(2)}</p>
+                            <p class="expenditure" style="color: #e28743;">${totalExpenditure.toFixed(2)}</p>
                         </div>
                         <div class="col-md-4">
                             <h6>Net Balance (GHS)</h6>
-                            <p class="net-balance">${netBalance.toFixed(2)}</p>
+                            <p class="net-balance" style="color: ${netBalanceColor};">${netBalance.toFixed(2)}</p>
                         </div>
                     </div>
                 </div>
@@ -554,8 +555,8 @@ function produceName($id) {
                     <div class="col-md-4 mb-3">
                         <div class="stats-card" data-category-id="${stats.catId}">
                             <h6>${stats.categoryName}</h6>
-                            <p class="income">Income: ${stats.totalIncome.toFixed(2)}</p>
-                            <p class="expenditure">Expenditure: ${stats.totalExpenditure.toFixed(2)}</p>
+                            <p class="income" style="color: #2596be;">Income: ${stats.totalIncome.toFixed(2)}</p>
+                            <p class="expenditure" style="color: #e28743;">Expenditure: ${stats.totalExpenditure.toFixed(2)}</p>
                         </div>
                     </div>`;
             });
@@ -722,7 +723,7 @@ function produceName($id) {
                     .stats-card, .totals-card { border: 1px solid #d1d5db; padding: 10px; margin-bottom: 10px; text-align: center; }
                     .income { color: #2ecc71; }
                     .expenditure { color: #e74c3c; }
-                    .net-balance { color: #3498db; }
+                    .net-balance { color: ${netBalance >= 0 ? '#2ecc71' : '#e74c3c'}; }
                 </style>
             </head>
             <body>

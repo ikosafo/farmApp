@@ -42,8 +42,13 @@
                                 </button>
                             </li> -->
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="seasons-tab" data-bs-toggle="tab" data-bs-target="#seasons" type="button" role="tab" aria-controls="logs" aria-selected="false">
+                                <button class="nav-link" id="seasons-tab" data-bs-toggle="tab" data-bs-target="#seasons" type="button" role="tab" aria-controls="seasons" aria-selected="false">
                                     <i class="fas fa-cloud-rain me-2"></i>Seasons
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="mergecat-tab" data-bs-toggle="tab" data-bs-target="#mergecat" type="button" role="tab" aria-controls="mergecat" aria-selected="false">
+                                    <i class="fas fa-compress-alt me-2"></i>Merge Categories
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -117,6 +122,12 @@
                                     </button>
                                 </div>
                                 <div id="seasonsTable"></div>
+                            </div>
+                            <div class="tab-pane fade" id="mergecat" role="tabpanel" aria-labelledby="mergecat-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bolder mb-0">Merge</h5>
+                                </div>
+                                <div id="mergecatForm"></div>
                             </div>
                             <!-- Logs Tab -->
                             <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
@@ -424,9 +435,16 @@
         });
 
 
-         $('#seasons-tab').on('shown.bs.tab', function() {
+        $('#seasons-tab').on('shown.bs.tab', function() {
             loadPage("ajaxscripts/tables/seasons.php", function(response) {
                 $('#seasonsTable').html(response);
+            });
+        });
+
+
+        $('#mergecat-tab').on('shown.bs.tab', function() {
+            loadPage("ajaxscripts/forms/mergecat.php", function(response) {
+                $('#mergecatForm').html(response);
             });
         });
 
