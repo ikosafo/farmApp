@@ -1,4 +1,6 @@
-<?php include('./includes/sidebar.php');
+<?php
+include('./includes/sidebar.php');
+include('config.php');
 
 function produceName($id) {
     global $mysqli;
@@ -39,6 +41,10 @@ function produceName($id) {
                                 <input class="form-check-input" type="radio" name="dateRangeType" id="predefinedRange" value="predefined">
                                 <label class="form-check-label" for="predefinedRange">Predefined Range</label>
                             </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="dateRangeType" id="seasonRange" value="season">
+                                <label class="form-check-label" for="seasonRange">By Season</label>
+                            </div>
                         </div>
                         <div id="filterForm" style="display: none;">
                             <div class="row mb-4">
@@ -66,6 +72,28 @@ function produceName($id) {
                                 <div class="col-md-3" id="nominalAccountContainer" style="display: none;">
                                     <label for="nominalAccountFilter" class="form-label mb-1">Nominal Account</label>
                                     <select id="nominalAccountFilter" class="form-control border-radius-md">
+                                        <option value="">Select All</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" id="produceAccountContainer" style="display: none;">
+                                    <label for="produceAccountFilter" class="form-label mb-1">Produce</label>
+                                    <select id="produceAccountFilter" class="form-control border-radius-md">
+                                        <option value="">Select All</option>
+                                        <?php
+                                        $getProduce = $mysqli->query("SELECT * FROM `producelist` WHERE `prodStatus` = 1");
+                                        $produceOptions = '';
+                                        if ($getProduce && $getProduce->num_rows > 0) {
+                                            while ($resProduce = $getProduce->fetch_assoc()) {
+                                                $produceOptions .= '<option value="' . $resProduce['prodId'] . '">' . $resProduce['prodName'] . '</option>';
+                                            }
+                                            echo $produceOptions;
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" id="seasonAccountContainer" style="display: none;">
+                                    <label for="seasonAccountFilter" class="form-label mb-1">Season</label>
+                                    <select id="seasonAccountFilter" class="form-control border-radius-md">
                                         <option value="">Select All</option>
                                     </select>
                                 </div>
@@ -210,6 +238,8 @@ function produceName($id) {
     const endDateContainer = document.getElementById('endDateContainer');
     const predefinedDateRangeContainer = document.getElementById('predefinedDateRangeContainer');
     const nominalAccountContainer = document.getElementById('nominalAccountContainer');
+    const produceAccountContainer = document.getElementById('produceAccountContainer');
+    const seasonAccountContainer = document.getElementById('seasonAccountContainer');
     const searchButtonContainer = document.getElementById('searchButtonContainer');
     let transactionsGlobal = [];
     let selectedCategoryId = null;
@@ -276,12 +306,16 @@ function produceName($id) {
             startDateContainer.style.display = this.value === 'custom' ? 'block' : 'none';
             endDateContainer.style.display = this.value === 'custom' ? 'block' : 'none';
             predefinedDateRangeContainer.style.display = this.value === 'predefined' ? 'block' : 'none';
-            nominalAccountContainer.style.display = 'block';
+            nominalAccountContainer.style.display = this.value === 'season' ? 'none' : 'block';
+            produceAccountContainer.style.display = 'block';
+            seasonAccountContainer.style.display = this.value === 'season' ? 'block' : 'none';
             searchButtonContainer.style.display = 'block';
             predefinedDateRange.disabled = this.value !== 'predefined';
             startDatePicker.setDate(null);
             endDatePicker.setDate(null);
             predefinedDateRange.value = '';
+            document.getElementById('produceAccountFilter').value = '';
+            document.getElementById('seasonAccountFilter').innerHTML = '<option value="">Select All</option>';
             fetchCategories();
         });
     });
@@ -339,7 +373,7 @@ function produceName($id) {
             if (endDate < startDate) {
                 return showErrorToast("End date cannot be before start date.");
             }
-        } else {
+        } else if (dateRangeType === 'predefined') {
             const range = predefinedDateRange.value;
             if (!range) {
                 return showErrorToast("Please select a predefined range.");
@@ -350,6 +384,13 @@ function produceName($id) {
             }
             startDate = dates.startDate;
             endDate = dates.endDate;
+        } else if (dateRangeType === 'season') {
+            const seasonId = document.getElementById('seasonAccountFilter').value;
+            if (!seasonId) {
+                return showErrorToast("Please select a season.");
+            }
+            startDate = new Date('2000-01-01'); // Default range for season
+            endDate = new Date();
         }
 
         loadCashbookTables(startDate, endDate);
@@ -361,13 +402,15 @@ function produceName($id) {
 
         const formattedStart = formatDate(startDate);
         const formattedEnd = formatDate(endDate);
+        const produceId = document.getElementById('produceAccountFilter').value || '';
+        const seasonId = document.getElementById('seasonAccountFilter').value || '';
 
         fetch('ajaxscripts/tables/cashbook.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `startDate=${formattedStart}&endDate=${formattedEnd}&catId=${selectedCategoryId || ''}`
+            body: `startDate=${formattedStart}&endDate=${formattedEnd}&catId=${selectedCategoryId || ''}&produceId=${produceId}&seasonId=${seasonId}`
         })
         .then(response => {
             if (!response.ok) {
@@ -404,7 +447,7 @@ function produceName($id) {
     function populateNominalAccountFilter(categories) {
         const nominalSelect = document.getElementById('nominalAccountFilter');
         const currentValue = selectedCategoryId || '';
-        nominalSelect.innerHTML = '<option value="">Select All</option>' + 
+        nominalSelect.innerHTML = '<option value="">Select All</option>' +
             categories.map(cat => `<option value="${cat.catId}" ${cat.catId === currentValue ? 'selected' : ''}>${cat.categoryName}</option>`).join('');
 
         nominalSelect.addEventListener('change', function() {
@@ -412,6 +455,53 @@ function produceName($id) {
             if (startDatePicker.selectedDates[0] && endDatePicker.selectedDates[0]) {
                 loadCashbookTables(startDatePicker.selectedDates[0], endDatePicker.selectedDates[0]);
             }
+        });
+    }
+
+    document.getElementById('produceAccountFilter').addEventListener('change', function() {
+        const produceId = this.value;
+        const seasonAccountContainer = document.getElementById('seasonAccountContainer');
+        const seasonAccountFilter = document.getElementById('seasonAccountFilter');
+
+        if (produceId) {
+            seasonAccountContainer.style.display = 'block';
+            fetchSeasons(produceId);
+        } else {
+            seasonAccountContainer.style.display = 'none';
+            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
+        }
+    });
+
+    function fetchSeasons(produceId) {
+        const seasonAccountFilter = document.getElementById('seasonAccountFilter');
+        seasonAccountFilter.innerHTML = '<option value="">Loading...</option>';
+
+        fetch('ajaxscripts/queries/fetch_seasons.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `produceId=${encodeURIComponent(produceId)}`
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
+            if (data.success && data.seasons.length > 0) {
+                data.seasons.forEach(season => {
+                    seasonAccountFilter.innerHTML += `<option value="${season.seasonId}">${season.seasonName}</option>`;
+                });
+            } else {
+                showErrorToast(data.error || 'No seasons available for this produce.');
+            }
+        })
+        .catch(error => {
+            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
+            showErrorToast('Failed to load seasons: ' + error.message);
         });
     }
 
@@ -487,7 +577,7 @@ function produceName($id) {
 
     function renderChart() {
         const chartContainer = document.getElementById('chartContainer');
-        let filteredStats = selectedCategoryId 
+        let filteredStats = selectedCategoryId
             ? categoryStats.filter(s => s.catId === selectedCategoryId)
             : categoryStats;
 
@@ -651,7 +741,6 @@ function produceName($id) {
     document.getElementById('downloadExcelBtn').addEventListener('click', function() {
         const wb = XLSX.utils.book_new();
 
-        // Transactions Sheet
         const groupedByDate = transactionsGlobal.reduce((acc, row) => {
             const date = row.transactionDate;
             if (!acc[date]) {
@@ -683,7 +772,6 @@ function produceName($id) {
         const ws = XLSX.utils.json_to_sheet(wsData);
         XLSX.utils.book_append_sheet(wb, ws, "Transactions");
 
-        // Category Stats Sheet
         const statsData = categoryStats.map(stats => ({
             Category: stats.categoryName,
             'Total Income (GHS)': stats.totalIncome.toFixed(2),
@@ -693,7 +781,6 @@ function produceName($id) {
         const statsWs = XLSX.utils.json_to_sheet(statsData);
         XLSX.utils.book_append_sheet(wb, statsWs, "Category Stats");
 
-        // Totals Sheet
         let totalIncome = 0;
         let totalExpenditure = 0;
         transactionsGlobal.forEach(txn => {
