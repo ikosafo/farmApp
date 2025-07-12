@@ -18,99 +18,225 @@ if (empty($_SESSION['csrf_token'])) {
   <title>FarmApp - Login</title>
 
   <!-- Fonts and icons -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  
+  <!-- Existing CSS dependencies -->
   <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link id="pagestyle" href="assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
-  <script src="assets/js/jquery-3.7.1.min.js"></script>
-  <script src="assets/js/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="assets/css/dataTables.dataTables.min.css" />
   <link rel="stylesheet" href="assets/css/template.css" />
   <link rel="stylesheet" href="assets/css/jquery-confirm.min.css" />
   <link rel="stylesheet" href="assets/css/select2.min.css" />
   <link rel="stylesheet" href="assets/css/print.min.css" />
   <link rel="stylesheet" href="assets/css/flatpickr.min.css" />
-  <script src="assets/js/feather.min.js"></script>
-  <script src="assets/js/print.min.js"></script>
 
   <style>
-    html, body {
-      height: 100%;
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #f0f4f3 0%, #e1e8d8 100%);
+      height: 100vh;
       margin: 0;
       overflow: hidden;
     }
 
-    .main-content,
-    .page-header,
-    .container,
-    .row {
-      height: 100vh;
-      overflow: hidden;
+    .login-container {
+      background-image: url('assets/img/login.jpg');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid #d4e4c3;
+    }
+
+    .login-card h3 {
+      color: #2d6a4f;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .login-card p {
+      color: #4a7043;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+      border: 1px solid #a3bffa;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.2);
+      outline: none;
+    }
+
+    .btn-farm {
+      background: linear-gradient(to right, #2d6a4f, #40916c);
+      color: white;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-farm:hover {
+      background: linear-gradient(to right, #1e453e, #2d6a4f);
+      transform: translateY(-2px);
+    }
+
+    .form-check-input:checked {
+      background-color: #2d6a4f;
+      border-color: #2d6a4f;
+    }
+
+    .forgot-link {
+      color: #40916c;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover {
+      color: #2d6a4f;
+      text-decoration: underline;
+    }
+
+    .footer {
+      background: transparent;
+      color: #4a7043;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    /* Toast Notification Styles */
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000 !important;
+      max-width: 400px;
+      width: 90%;
+      display: block !important;
+    }
+
+    .toast {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .toast:hover {
+      transform: scale(1.02);
+    }
+
+    .toast.success {
+      border-left: 4px solid #2d6a4f;
+    }
+
+    .toast.error {
+      border-left: 4px solid #dc2626;
+    }
+
+    .toast .toast-icon {
+      margin-right: 0.75rem;
+      font-size: 1.25rem;
+      color: #2d6a4f; /* Success icon color */
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .toast.error .toast-icon {
+      color: #dc2626; /* Error icon color */
+    }
+
+    .toast .toast-message {
+      color: #1f2937;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .login-card {
+        margin: 1rem;
+      }
+      .toast-container {
+        top: 0.5rem;
+        width: calc(100% - 1rem);
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="main-content mt-0">
-    <section>
-      <div class="page-header">
-        <div class="container py-5">
-          <div class="row">
-            <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
-              <div class="card card-plain mt-4">
-                <div class="card-header pb-0 text-left bg-transparent">
-                  <h3 class="font-weight-bolder text-info text-gradient">Farm App</h3>
-                  <p class="mb-0">Sign in with your username and password</p>
-                </div>
-                <div class="card-body">
-                  <form id="loginForm">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                    <label>Username</label>
-                    <div class="mb-3">
-                      <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
-                    </div>
-                    <label>Password</label>
-                    <div class="mb-3">
-                      <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-                    </div>
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" checked>
-                      <label class="form-check-label" for="rememberMe">Remember me</label>
-                    </div>
-                    <div class="text-center">
-                      <button type="button" id="loginBtn" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
-                    </div>
-                  </form>
-                </div>
-                <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                  <p class="mb-4 text-sm mx-auto">
-                    Forgot credentials?
-                    <a href="forgotPassword" class="text-info text-gradient font-weight-bold">Click here</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
-                <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6"
-                     style="background-image:url('assets/img/curved-images/curved6.jpg')"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <main class="login-container">
+    <div class="login-card">
+      <div class="mb-4">
+        <h3>FarmApp</h3>
+        <p>Sign in to manage your farm</p>
       </div>
-    </section>
+      <form id="loginForm">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <input type="text" name="username" id="username" class="form-control w-full mt-1" placeholder="Enter your username" required>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" name="password" id="password" class="form-control w-full mt-1" placeholder="Enter your password" required>
+        </div>
+        <div class="text-center">
+          <button type="button" id="loginBtn" class="btn-farm w-full">Sign In</button>
+        </div>
+      </form>
+      <div class="text-center mt-4">
+        <p class="text-sm text-gray-600">
+          Forgot credentials?
+          <a href="forgotPassword" class="forgot-link">Click here</a>
+        </p>
+      </div>
+    </div>
   </main>
 
-  <footer class="footer py-5">
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="footer">
     <div class="container">
       <div class="row">
-        <div class="col-8 mx-auto text-center mt-1">
-          <p class="mb-0 text-secondary">
-            Copyright © <script>document.write(new Date().getFullYear())</script>
+        <div class="col-12 text-center">
+          <!-- <p class="mb-0">
+            &copy; <script>document.write(new Date().getFullYear())</script>
             Powered By FarmApp.
-          </p>
+          </p> -->
         </div>
       </div>
     </div>
@@ -121,73 +247,15 @@ if (empty($_SESSION['csrf_token'])) {
   <script src="assets/js/core/bootstrap.min.js"></script>
   <script src="assets/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="assets/js/jquery-3.7.1.min.js"></script>
+  <script src="assets/js/jquery-ui.min.js"></script>
+  <script src="assets/js/feather.min.js"></script>
+  <script src="assets/js/print.min.js"></script>
   <script src="assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
   <script src="assets/js/jquery.blockUI.js"></script>
-  <script src="assets/js/notify.js"></script>
   <script src="includes/scripts.js"></script>
+  <script src="ajaxscripts/scripts/login.js"></script>
 
-  <script>
-    $(document).ready(function () {
-      // Prevent back navigation
-      history.pushState(null, null, location.href);
-      window.onpopstate = function () {
-        history.go(1);
-      };
-
-      $('#loginBtn').click(function (e) {
-        e.preventDefault();
-
-        let username = $('#username').val().trim();
-        let password = $('#password').val().trim();
-
-        if (username === '') {
-          $.notify("Username is required", { className: "error", position: "top center" });
-          $('#username').focus();
-          return;
-        }
-
-        if (password === '') {
-          $.notify("Password is required", { className: "error", position: "top center" });
-          $('#password').focus();
-          return;
-        }
-
-        let formData = $('#loginForm').serialize();
-
-        $.ajax({
-          type: 'POST',
-          url: 'ajaxscripts/queries/login.php',
-          data: formData,
-          beforeSend: function () {
-            $.blockUI({ message: '<h4>Please wait...</h4>' });
-          },
-          success: function (response) {
-            //alert(response.message);
-            $.unblockUI();
-            try {
-             
-              if (response.success) {
-                $.notify("Login successful", { className: "success", position: "top center" });
-                setTimeout(() => {
-                  window.location.href = response.redirect || "index.php";
-                }, 1000);
-              } else {
-                $.notify(response.message, { className: "error", position: "top center" });
-              }
-            } catch (err) {
-              $.notify(response.message, { className: "error", position: "top center" });
-              console.error("JSON Parse Error:", err, "Response:", response);
-            }
-          },
-          error: function (xhr, status, error) {
-            $.unblockUI();
-            $.notify("Network error. Please try again.", { className: "error", position: "top center" });
-            console.error("AJAX Error:", status, error);
-          }
-        });
-      });
-    });
-  </script>
 </body>
 
 </html>
