@@ -107,9 +107,9 @@ while ($row = $pieChartQuery->fetch_assoc()) {
         max-width: 1400px;
         margin: 2rem auto;
         padding: 0 1.5rem;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: 'Poppins', sans-serif;
         line-height: 1.6;
-        --primary-color: #5E81AC;
+        --primary-color: #40916c;
         --secondary-color: #4C566A;
         --accent-color: #88C0D0;
         --background-color: #ECEFF4;
@@ -134,7 +134,7 @@ while ($row = $pieChartQuery->fetch_assoc()) {
     }
 
     .statistics-container .card-header {
-        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        background: #40916c;
         color: #FFFFFF;
         padding: 0.75rem;
         border-radius: 0.75rem 0.75rem 0 0;

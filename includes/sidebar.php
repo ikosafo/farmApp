@@ -16,12 +16,13 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
     <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <title>FarmApp</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <!-- Import Poppins Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
-    <link href="assets/css/nucleo-svg" rel="stylesheet" />
+    <link href="assets/css/nucleo-svg.css" rel="stylesheet" />
     <link id="pagestyle" href="assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
     <script src="assets/js/jquery-3.7.1.min.js"></script>
     <script src="assets/js/jquery-ui.min.js"></script>
@@ -35,9 +36,13 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
     <script src="assets/js/print.min.js"></script>
     <script src="includes/scripts.js"></script>
     <style>
+        /* Apply Poppins font globally */
+        * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
         body {
             background: linear-gradient(to bottom, #f0f4f3 0%, #e1e8d8 100%);
-            font-family: 'Poppins', sans-serif;
         }
 
         .sidenav {
@@ -47,6 +52,8 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
 
         .navbar-brand {
             color: #2d6a4f;
+            font-weight: 600;
+            font-size: 1.2rem;
         }
 
         .horizontal.dark {
@@ -55,6 +62,8 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
 
         .nav-link {
             color: #1f2937;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .nav-link.active {
@@ -66,9 +75,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #d4e4c3;
             width: 36px !important;
-            /* Slightly reduced to balance with larger icons */
             height: 36px !important;
-            /* Slightly reduced to balance with larger icons */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -76,106 +83,37 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
 
         .nav-item h6 {
             color: #4a7043;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         .btn.bg-gradient-primary {
             background: linear-gradient(to right, #2d6a4f, #40916c);
             color: white;
+            font-weight: 500;
         }
 
         .text-secondary {
             color: #4a7043 !important;
         }
 
-        .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
+        .navbar-vertical .navbar-nav > .nav-item .nav-link.active .icon {
             background-image: linear-gradient(310deg, #ffffff, #ffffff);
         }
 
-        /* Increase Feather icon size significantly */
         .feather {
             width: 24px !important;
-            /* Larger icon size */
             height: 24px !important;
-            /* Larger icon size */
         }
 
-        /* Modal styling */
-        .maintenance-modal .modal-content {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(to bottom, #f0f4f3 0%, #e1e8d8 100%);
-        }
-
-        .maintenance-modal .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
-            justify-content: center;
-            /* Center the title */
-        }
-
-        .maintenance-modal .modal-title {
-            color: #2d6a4f;
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .maintenance-modal .modal-body {
-            text-align: center;
-            padding-top: 1rem;
-            padding-bottom: 2rem;
-            color: #1f2937;
-            font-size: 1.1rem;
-        }
-
-        .maintenance-modal .modal-footer {
-            border-top: none;
-            justify-content: center;
-            padding-top: 0;
-        }
-
-        .maintenance-modal .btn-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #888;
-            opacity: 1;
-            padding: 0;
-            margin: 0;
-        }
-
-        .maintenance-modal .btn-close:hover {
-            color: #555;
-        }
-
-        .modal-backdrop.show {
-            opacity: 0.6;
-            /* Make the backdrop a bit darker */
-        }
-
-        /* Ensure modal appears on top */
-        .maintenance-modal {
-            z-index: 1050 !important;
-        }
-
-        .modal-backdrop {
-            z-index: 1040 !important;
-        }
-
-        /* FIX: Main content overlap */
-        /* This rule pushes the main content area to make space for the fixed sidebar */
         .main-content {
-            margin-left: 17rem; /* Default sidebar width for soft-ui-dashboard */
-            transition: margin-left .2s ease-in-out;
+            margin-left: 17rem;
+            transition: margin-left 0.2s ease-in-out;
         }
 
-        /* Responsive adjustment for when the sidebar might collapse or become an overlay */
-        @media (max-width: 1200px) { /* This breakpoint corresponds to where the Soft UI dashboard sidebar often changes behavior (e.g., becomes collapsible or overlays) */
+        @media (max-width: 1200px) {
             .main-content {
-                margin-left: 0 !important; /* On smaller screens, the sidebar often overlays, so main content doesn't need a static margin */
+                margin-left: 0 !important;
             }
         }
     </style>
@@ -195,7 +133,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == "/index.php" ? "active" : ""); ?>" href="/">
-                        <div class="icon icon-shape icon-sm shadow border utc-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i data-feather="home"></i>
                         </div>
                         <span class="nav-link-text ms-1">Dashboard</span>
@@ -211,7 +149,7 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == "/receipt.php" ? "active" : ""); ?>" href="receipt">
-                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <div class="icon icon shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i data-feather="file-text"></i>
                         </div>
                         <span class="nav-link-text ms-1">Receipts</span>
@@ -223,6 +161,14 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                             <i data-feather="book"></i>
                         </div>
                         <span class="nav-link-text ms-1">Cash Book</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == "/produceStats.php" ? "active" : ""); ?>" href="produceStats">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i data-feather="pie-chart"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Produce Statistics</span>
                     </a>
                 </li>
                 <li class="nav-item mt-3">
@@ -262,49 +208,10 @@ if (!isset($_SESSION['uId']) || empty($_SESSION['uId'])) {
                 </li>
             </ul>
         </div>
-        <script>
-            // Initialize Feather icons
-            feather.replace();
-
-            // JavaScript for the maintenance modal
-            document.addEventListener('DOMContentLoaded', function() {
-                const navLinks = document.querySelectorAll('.nav-link');
-                const dashboardLinkHref = '/'; // Assuming your dashboard is at the root '/'
-
-                navLinks.forEach(link => {
-                    // Check if the link's href is not exactly the dashboard link
-                    // Also ensure the link is not the logout link, as it has a specific action
-                    if (link.getAttribute('href') !== dashboardLinkHref && link.getAttribute('href') !== 'logout') {
-                        link.addEventListener('click', function(event) {
-                            event.preventDefault(); // Stop the navigation
-                            $('#maintenanceModal').modal('show'); // Show the modal using jQuery
-                        });
-                    }
-                });
-            });
-        </script>
     </aside>
 
-    <div class="modal fade maintenance-modal" id="maintenanceModal" tabindex="-1" aria-labelledby="maintenanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="maintenanceModalLabel">
-                        <i data-feather="tool" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"></i>
-                        Maintenance in Progress
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>We're currently performing some important updates and maintenance.</p>
-                    <p>Some features are temporarily unavailable to ensure a smooth and improved experience.</p>
-                    <p>Thank you for your patience!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn bg-gradient-primary" data-bs-dismiss="modal">Got It!</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

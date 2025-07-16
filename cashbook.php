@@ -1,16 +1,6 @@
 <?php
 include('./includes/sidebar.php');
 include('config.php');
-
-function produceName($id) {
-    global $mysqli;
-    $getProd = $mysqli->query("SELECT `prodName` FROM `producelist` WHERE `prodId` = '$id'");
-    if ($getProd && $getProd->num_rows > 0) {
-        $resProd = $getProd->fetch_assoc();
-        return $resProd['prodName'];
-    }
-    return null;
-}
 ?>
 
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
@@ -41,10 +31,6 @@ function produceName($id) {
                                 <input class="form-check-input" type="radio" name="dateRangeType" id="predefinedRange" value="predefined">
                                 <label class="form-check-label" for="predefinedRange">Predefined Range</label>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="dateRangeType" id="seasonRange" value="season">
-                                <label class="form-check-label" for="seasonRange">By Season</label>
-                            </div>
                         </div>
                         <div id="filterForm" style="display: none;">
                             <div class="row mb-4">
@@ -72,28 +58,6 @@ function produceName($id) {
                                 <div class="col-md-3" id="nominalAccountContainer" style="display: none;">
                                     <label for="nominalAccountFilter" class="form-label mb-1">Nominal Account</label>
                                     <select id="nominalAccountFilter" class="form-control border-radius-md">
-                                        <option value="">Select All</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3" id="produceAccountContainer" style="display: none;">
-                                    <label for="produceAccountFilter" class="form-label mb-1">Produce</label>
-                                    <select id="produceAccountFilter" class="form-control border-radius-md">
-                                        <option value="">Select All</option>
-                                        <?php
-                                        $getProduce = $mysqli->query("SELECT * FROM `producelist` WHERE `prodStatus` = 1");
-                                        $produceOptions = '';
-                                        if ($getProduce && $getProduce->num_rows > 0) {
-                                            while ($resProduce = $getProduce->fetch_assoc()) {
-                                                $produceOptions .= '<option value="' . $resProduce['prodId'] . '">' . $resProduce['prodName'] . '</option>';
-                                            }
-                                            echo $produceOptions;
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-3" id="seasonAccountContainer" style="display: none;">
-                                    <label for="seasonAccountFilter" class="form-label mb-1">Season</label>
-                                    <select id="seasonAccountFilter" class="form-control border-radius-md">
                                         <option value="">Select All</option>
                                     </select>
                                 </div>
@@ -129,6 +93,10 @@ function produceName($id) {
 
 <!-- STYLES -->
 <style>
+    body {
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 0.9rem;
+    }
     .accounting-table {
         width: 100%;
         border-collapse: collapse;
@@ -136,6 +104,7 @@ function produceName($id) {
         margin-top: 10px;
         background: #fff;
         border: 1px solid #d1d5db;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .accounting-table th,
@@ -144,6 +113,7 @@ function produceName($id) {
         text-align: left;
         vertical-align: middle;
         border: 1px solid #d1d5db;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .accounting-table th {
@@ -153,6 +123,7 @@ function produceName($id) {
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 0.5px;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .accounting-table tbody tr {
@@ -166,6 +137,7 @@ function produceName($id) {
     .accounting-table tbody td {
         color: #1f2937;
         font-weight: 400;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .table-container {
@@ -181,6 +153,7 @@ function produceName($id) {
         text-align: center;
         font-size: 0.9rem;
         cursor: pointer;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .stats-card:hover {
@@ -191,12 +164,14 @@ function produceName($id) {
         font-size: 0.85rem;
         margin-bottom: 10px;
         color: #1f2937;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .stats-card p, .totals-card p {
         font-size: 1rem;
         font-weight: 600;
         margin: 0;
+        font-family: 'Poppins', sans-serif !important;
     }
 
     .income {
@@ -209,6 +184,22 @@ function produceName($id) {
 
     .net-balance {
         color: #3498db;
+    }
+
+    .form-check-label, .form-label {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+    .form-control, .btn {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+    .toast, .toast-body {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+    h3, h5 {
+        font-family: 'Poppins', sans-serif !important;
     }
 </style>
 
@@ -238,8 +229,6 @@ function produceName($id) {
     const endDateContainer = document.getElementById('endDateContainer');
     const predefinedDateRangeContainer = document.getElementById('predefinedDateRangeContainer');
     const nominalAccountContainer = document.getElementById('nominalAccountContainer');
-    const produceAccountContainer = document.getElementById('produceAccountContainer');
-    const seasonAccountContainer = document.getElementById('seasonAccountContainer');
     const searchButtonContainer = document.getElementById('searchButtonContainer');
     let transactionsGlobal = [];
     let selectedCategoryId = null;
@@ -306,16 +295,12 @@ function produceName($id) {
             startDateContainer.style.display = this.value === 'custom' ? 'block' : 'none';
             endDateContainer.style.display = this.value === 'custom' ? 'block' : 'none';
             predefinedDateRangeContainer.style.display = this.value === 'predefined' ? 'block' : 'none';
-            nominalAccountContainer.style.display = this.value === 'season' ? 'none' : 'block';
-            produceAccountContainer.style.display = 'block';
-            seasonAccountContainer.style.display = this.value === 'season' ? 'block' : 'none';
+            nominalAccountContainer.style.display = 'block';
             searchButtonContainer.style.display = 'block';
             predefinedDateRange.disabled = this.value !== 'predefined';
             startDatePicker.setDate(null);
             endDatePicker.setDate(null);
             predefinedDateRange.value = '';
-            document.getElementById('produceAccountFilter').value = '';
-            document.getElementById('seasonAccountFilter').innerHTML = '<option value="">Select All</option>';
             fetchCategories();
         });
     });
@@ -384,13 +369,6 @@ function produceName($id) {
             }
             startDate = dates.startDate;
             endDate = dates.endDate;
-        } else if (dateRangeType === 'season') {
-            const seasonId = document.getElementById('seasonAccountFilter').value;
-            if (!seasonId) {
-                return showErrorToast("Please select a season.");
-            }
-            startDate = new Date('2000-01-01');
-            endDate = new Date();
         }
 
         loadCashbookTables(startDate, endDate);
@@ -402,15 +380,13 @@ function produceName($id) {
 
         const formattedStart = formatDate(startDate);
         const formattedEnd = formatDate(endDate);
-        const produceId = document.getElementById('produceAccountFilter').value || '';
-        const seasonId = document.getElementById('seasonAccountFilter').value || '';
 
         fetch('ajaxscripts/tables/cashbook.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `startDate=${formattedStart}&endDate=${formattedEnd}&catId=${selectedCategoryId || ''}&produceId=${produceId}&seasonId=${seasonId}`
+            body: `startDate=${formattedStart}&endDate=${formattedEnd}&catId=${selectedCategoryId || ''}`
         })
         .then(response => {
             if (!response.ok) {
@@ -455,53 +431,6 @@ function produceName($id) {
             if (startDatePicker.selectedDates[0] && endDatePicker.selectedDates[0]) {
                 loadCashbookTables(startDatePicker.selectedDates[0], endDatePicker.selectedDates[0]);
             }
-        });
-    }
-
-    document.getElementById('produceAccountFilter').addEventListener('change', function() {
-        const produceId = this.value;
-        const seasonAccountContainer = document.getElementById('seasonAccountContainer');
-        const seasonAccountFilter = document.getElementById('seasonAccountFilter');
-
-        if (produceId) {
-            seasonAccountContainer.style.display = 'block';
-            fetchSeasons(produceId);
-        } else {
-            seasonAccountContainer.style.display = 'none';
-            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
-        }
-    });
-
-    function fetchSeasons(produceId) {
-        const seasonAccountFilter = document.getElementById('seasonAccountFilter');
-        seasonAccountFilter.innerHTML = '<option value="">Loading...</option>';
-
-        fetch('ajaxscripts/queries/fetch_seasons.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `produceId=${encodeURIComponent(produceId)}`
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
-            if (data.success && data.seasons.length > 0) {
-                data.seasons.forEach(season => {
-                    seasonAccountFilter.innerHTML += `<option value="${season.seasonId}">${season.seasonName}</option>`;
-                });
-            } else {
-                showErrorToast(data.error || 'No seasons available for this produce.');
-            }
-        })
-        .catch(error => {
-            seasonAccountFilter.innerHTML = '<option value="">Select All</option>';
-            showErrorToast('Failed to load seasons: ' + error.message);
         });
     }
 
@@ -624,17 +553,35 @@ function produceName($id) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Amount (GHS)'
+                            text: 'Amount (GHS)',
+                            font: {
+                                family: 'Poppins'
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            font: {
+                                family: 'Poppins'
+                            }
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Poppins'
+                            }
+                        }
                     },
                     title: {
                         display: true,
-                        text: selectedCategoryId ? `Income vs Expenditure for ${categoriesMap[selectedCategoryId]}` : 'Income vs Expenditure by Category'
+                        text: selectedCategoryId ? `Income vs Expenditure for ${categoriesMap[selectedCategoryId]}` : 'Income vs Expenditure by Category',
+                        font: {
+                            family: 'Poppins'
+                        }
                     }
                 }
             }
@@ -660,16 +607,14 @@ function produceName($id) {
                 <thead>
                     <tr>
                         <th style="width: 90px;" rowspan="2">Date</th>
-                        <th style="width: 200px;" colspan="4">Income (Receipts)</th>
-                        <th style="width: 200px;" colspan="4">Expenditure (Payments)</th>
+                        <th style="width: 200px;" colspan="3">Income (Receipts)</th>
+                        <th style="width: 200px;" colspan="3">Expenditure (Payments)</th>
                     </tr>
                     <tr>
                         <th style="width: 150px;">Payee & Details</th>
-                        <th style="width: 100px;">Produce</th>
                         <th style="width: 100px;">Currency & Amount</th>
                         <th style="width: 100px;">GHS Equivalent</th>
                         <th style="width: 150px;">Payee & Details</th>
-                        <th style="width: 100px;">Produce</th>
                         <th style="width: 100px;">Currency & Amount</th>
                         <th style="width: 100px;">GHS Equivalent</th>
                     </tr>
@@ -687,11 +632,9 @@ function produceName($id) {
                 <tr>
                     <td>${date || ''}</td>
                     <td>${incomePayeeDetails}</td>
-                    <td>${income ? income.produce || '' : ''}</td>
                     <td>${incomeCurrencyAmount}</td>
                     <td>${income && income.ghsEquivalent ? parseFloat(income.ghsEquivalent).toFixed(2) : ''}</td>
                     <td>${expenditurePayeeDetails}</td>
-                    <td>${expenditure ? expenditure.produce || '' : ''}</td>
                     <td>${expenditureCurrencyAmount}</td>
                     <td>${expenditure && expenditure.ghsEquivalent ? parseFloat(expenditure.ghsEquivalent).toFixed(2) : ''}</td>
                 </tr>`;
@@ -715,7 +658,7 @@ function produceName($id) {
             <head>
                 <title>Cashbook Report</title>
                 <style>
-                    body { font-family: Arial, sans-serif; font-size: 10pt; }
+                    body { font-family: 'Poppins', sans-serif; font-size: 10pt; }
                     table { border-collapse: collapse; width: 100%; }
                     th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
                     th { background: #e5e7eb; color: #1f2937; font-weight: 600; font-size: 9pt; }
@@ -760,11 +703,9 @@ function produceName($id) {
             return {
                 Date: date,
                 'Income Payee & Details': income ? `${income.payeePayer || ''}${income.payeePayer && income.details ? ' - ' : ''}${income.details || ''}` : '',
-                'Income Produce': income ? income.produce || '' : '',
                 'Income Currency & Amount': income ? `${income.currency || ''}${income.currency && income.amount ? ': ' : ''}${income.amount ? parseFloat(income.amount).toFixed(2) : ''}` : '',
                 'Income GHS Equivalent': income && income.ghsEquivalent ? parseFloat(income.ghsEquivalent).toFixed(2) : '',
                 'Expenditure Payee & Details': expenditure ? `${expenditure.payeePayer || ''}${expenditure.payeePayer && expenditure.details ? ' - ' : ''}${expenditure.details || ''}` : '',
-                'Expenditure Produce': expenditure ? expenditure.produce || '' : '',
                 'Expenditure Currency & Amount': expenditure ? `${expenditure.currency || ''}${expenditure.currency && expenditure.amount ? ': ' : ''}${expenditure.amount ? parseFloat(expenditure.amount).toFixed(2) : ''}` : '',
                 'Expenditure GHS Equivalent': expenditure && expenditure.ghsEquivalent ? parseFloat(expenditure.ghsEquivalent).toFixed(2) : ''
             };

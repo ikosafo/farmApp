@@ -54,7 +54,7 @@ $header_title = isset($page_titles[$current_page]) ? $page_titles[$current_page]
                 <li class="nav-item d-flex align-items-center">
                     <a href="/logout" class="nav-link logout-btn">
                         <i data-feather="log-out" class="feather-icon"></i>
-                        <span class="d-sm-inline d-none">Log Out</span>
+                        <span class="d-sm-inline d-none text-dark">Log Out</span>
                     </a>
                 </li>
             </ul>
@@ -207,6 +207,7 @@ $header_title = isset($page_titles[$current_page]) ? $page_titles[$current_page]
         height: 24px !important;
     }
 
+
     /* Responsive Adjustments */
     @media (max-width: 767px) {
         .navbar-main {
@@ -323,6 +324,11 @@ $header_title = isset($page_titles[$current_page]) ? $page_titles[$current_page]
     .sidenav {
         background: rgba(255, 255, 255, 0.95) !important;
         border: 1px solid #d4e4c3 !important;
+    }
+
+    .logout-btn .feather-icon {
+        stroke: #1f2937 !important; 
+        color: #1f2937 !important; 
     }
 </style>
 

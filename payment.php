@@ -80,6 +80,9 @@
 <?php include('./includes/footer.php'); ?>
 
 <style>
+    .card .card-body {
+        font-family: 'Poppins', sans-serif !important;
+    }
     .premium-tabs {
         display: flex;
         flex-wrap: wrap;

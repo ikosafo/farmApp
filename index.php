@@ -113,7 +113,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
         }
 
         /* Icon Styling */
-        .icon-shape {
+        .statistics-div .icon-shape {
             width: 40px;
             height: 40px;
             background: linear-gradient(90deg, #2d6a4f, #40916c);
@@ -246,7 +246,7 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
             }
 
             .numbers h5 {
-                font-size: 0.9rem; /* Even smaller for very small screens */
+                font-size: 0.9rem; 
             }
             .numbers h5 span {
                 font-size: 0.6rem;
@@ -257,12 +257,12 @@ while ($row = mysqli_fetch_assoc($monthsResult)) {
                 height: 28px;
             }
             .chart {
-                height: 200px; /* Even smaller height on extra small mobile */
+                height: 200px; 
             }
         }
     </style>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid statistics-div py-4">
         <div class="row">
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
                 <div class="card">
