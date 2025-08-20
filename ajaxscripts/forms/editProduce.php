@@ -22,32 +22,16 @@ if (!$resProd) {
             <input id="productNameEdit" name="productNameEdit" class="form-control border-radius-md" type="text" placeholder="Enter product name" value="<?php echo htmlspecialchars($resProd['prodName'] ?? ''); ?>" required>
         </div>
         <div class="col-12 col-md-6">
-            <label for="productCategoryEdit" class="form-label">Category <span class="text-danger">*</span></label>
-            <select id="productCategoryEdit" name="productCategoryEdit" class="form-control border-radius-md" required>
-                <option value="" disabled selected>Select a category</option>
-                <?php
-                $getCat = $mysqli->query("SELECT * FROM `prodcategory` WHERE `pcatStatus` = 1");
-                while ($resCat = $getCat->fetch_assoc()) {
-                    $selected = ($resCat['pcatId'] == ($resProd['prodCategory'] ?? '')) ? 'selected' : '';
-                    echo "<option value='{$resCat['pcatId']}' $selected>" . htmlspecialchars($resCat['pcatName'] ?? '') . "</option>";
-                }
-                ?>
-            </select>
-        </div>
+            <label for="producePriceEdit" class="form-label">Price <span class="text-danger">*</span></label>
+            <input id="producePriceEdit" name="producePriceEdit" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" value="<?php echo htmlspecialchars($resProd['prodPrice'] ?? ''); ?>" required>
+        </div>     
     </div>
 
     <div class="row g-4">
-        <div class="col-12 col-md-6">
-            <label for="producePriceEdit" class="form-label">Price <span class="text-danger">*</span></label>
-            <input id="producePriceEdit" name="producePriceEdit" class="form-control border-radius-md" type="number" min="0" step="0.01" placeholder="Enter amount" value="<?php echo htmlspecialchars($resProd['prodPrice'] ?? ''); ?>" required>
-        </div>
         <div class="col-12 col-md-6">
             <label for="expiryDateEdit" class="form-label">Expiry Date <span class="text-danger">*</span></label>
             <input id="expiryDateEdit" name="expiryDateEdit" class="form-control border-radius-md" type="text" placeholder="Select date" value="<?php echo htmlspecialchars($resProd['expirationDate'] ?? ''); ?>" required>
         </div>
-    </div>
-
-    <div class="row g-4">
         <div class="col-12 col-md-6">
             <label for="productQuantityEdit" class="form-label">Quantity <span class="text-danger">*</span></label>
             <div class="input-group">
@@ -65,6 +49,9 @@ if (!$resProd) {
                 </select>
             </div>
         </div>
+    </div>
+
+    <div class="row g-4">
         <div class="col-12 col-md-6">
             <label for="productDescriptionEdit" class="form-label">Description</label>
             <textarea id="productDescriptionEdit" name="productDescriptionEdit" class="form-control border-radius-md" rows="4" placeholder="Enter description"><?php echo htmlspecialchars($resProd['prodDescription'] ?? ''); ?></textarea>
@@ -100,7 +87,6 @@ $(document).ready(function() {
             prodId: $("#prodIdEdit").val(),
             productName: $("#productNameEdit").val(),
             productDescription: $("#productDescriptionEdit").val(),
-            produceCategory: $("#productCategoryEdit").val(),
             productPrice: $("#producePriceEdit").val(),
             productExpiration: $("#expiryDateEdit").val(),
             productQuantity: $("#productQuantityEdit").val(),
@@ -131,9 +117,8 @@ $(document).ready(function() {
         var validateForm = function (formData) {
             var error = '';
             if (!formData.productName) error += 'Please enter product name\n';
-            if (!formData.produceCategory) error += 'Please select category\n';
             if (!formData.productPrice) error += 'Please enter price\n';
-            if (!formData.productExpiration) error += 'Please select expiry date\n';
+            /* if (!formData.productExpiration) error += 'Please select expiry date\n'; */
             if (!formData.productQuantity) error += 'Please enter quantity\n';
             if (!formData.quantityUnit) error += 'Please select quantity unit\n';
             return error;

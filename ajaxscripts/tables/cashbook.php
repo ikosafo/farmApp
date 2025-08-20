@@ -30,7 +30,7 @@ try {
     error_log("Database connected");
 
     if (isset($_POST['fetchCategoriesOnly'])) {
-        $categories_query = "SELECT catId, categoryName FROM categories ORDER BY categoryName";
+        $categories_query = "SELECT catId, categoryName FROM categories WHERE categoryStatus = 1 ORDER BY categoryName";
         $categories_result = $mysqli->query($categories_query);
         if (!$categories_result) {
             throw new Exception('Categories query failed: ' . $mysqli->error);
@@ -163,7 +163,7 @@ try {
     $stmt->close();
     error_log("Transactions fetched: " . count($transactions));
 
-    $categories_query = "SELECT catId, categoryName FROM categories ORDER BY categoryName";
+    $categories_query = "SELECT catId, categoryName FROM categories WHERE categoryStatus = 1 ORDER BY categoryName";
     $categories_result = $mysqli->query($categories_query);
     if (!$categories_result) {
         throw new Exception('Categories query failed: ' . $mysqli->error);

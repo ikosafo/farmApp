@@ -4,7 +4,6 @@ include('../../includes/functions.php');
 
 if (!isset($_POST['prodId']) || 
     !isset($_POST['productName']) || 
-    !isset($_POST['produceCategory']) || 
     !isset($_POST['productPrice']) || 
     !isset($_POST['productExpiration']) || 
     !isset($_POST['productQuantity']) || 
@@ -16,7 +15,7 @@ if (!isset($_POST['prodId']) ||
 $prodId = $_POST['prodId'];
 $productName = $_POST['productName'];
 $productDescription = isset($_POST['productDescription']) ? $_POST['productDescription'] : '';
-$produceCategory = $_POST['produceCategory'];
+$produceCategory = '';
 $productPrice = $_POST['productPrice'];
 $productQuantity = $_POST['productQuantity'];
 $productExpiration = $_POST['productExpiration'];

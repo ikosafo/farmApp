@@ -495,19 +495,6 @@ include('config.php');
     }
 
     function renderTable(data) {
-        const groupedByDate = Array.isArray(data) ? data.reduce((acc, row) => {
-            const date = row.transactionDate;
-            if (!acc[date]) {
-                acc[date] = { income: null, expenditure: null };
-            }
-            if (row.transactionType === 'Receipt') {
-                acc[date].income = row;
-            } else {
-                acc[date].expenditure = row;
-            }
-            return acc;
-        }, {}) : {};
-
         let html = `
             <table class="accounting-table">
                 <thead>
@@ -527,24 +514,48 @@ include('config.php');
                 </thead>
                 <tbody>`;
 
-        if (Object.keys(groupedByDate).length > 0) {
-            Object.keys(groupedByDate).sort().forEach(date => {
-                const { income, expenditure } = groupedByDate[date];
-                const incomePayeeDetails = income ? `${income.payeePayer || ''}${income.payeePayer && income.details ? ' - ' : ''}${income.details || ''}` : '';
-                const incomeCurrencyAmount = income ? `${income.currency || ''}${income.currency && income.amount ? ': ' : ''}${income.amount ? parseFloat(income.amount).toFixed(2) : ''}` : '';
-                const expenditurePayeeDetails = expenditure ? `${expenditure.payeePayer || ''}${expenditure.payeePayer && expenditure.details ? ' - ' : ''}${expenditure.details || ''}` : '';
-                const expenditureCurrencyAmount = expenditure ? `${expenditure.currency || ''}${expenditure.currency && expenditure.amount ? ': ' : ''}${expenditure.amount ? parseFloat(expenditure.amount).toFixed(2) : ''}` : '';
+        if (Array.isArray(data) && data.length > 0) {
+            // Group transactions by date, allowing multiple transactions per date
+            const groupedByDate = data.reduce((acc, row) => {
+                const date = row.transactionDate;
+                if (!acc[date]) {
+                    acc[date] = { incomes: [], expenditures: [] };
+                }
+                if (row.transactionType === 'Receipt') {
+                    acc[date].incomes.push(row);
+                } else {
+                    acc[date].expenditures.push(row);
+                }
+                return acc;
+            }, {});
 
-                html += `
-                    <tr>
-                        <td>${date || ''}</td>
-                        <td>${incomePayeeDetails}</td>
-                        <td>${incomeCurrencyAmount}</td>
-                        <td>${income && income.ghsEquivalent ? parseFloat(income.ghsEquivalent).toFixed(2) : ''}</td>
-                        <td>${expenditurePayeeDetails}</td>
-                        <td>${expenditureCurrencyAmount}</td>
-                        <td>${expenditure && expenditure.ghsEquivalent ? parseFloat(expenditure.ghsEquivalent).toFixed(2) : ''}</td>
-                    </tr>`;
+            // Iterate through each date and pair incomes with expenditures
+            Object.keys(groupedByDate).sort().forEach(date => {
+                const { incomes, expenditures } = groupedByDate[date];
+                const maxRows = Math.max(incomes.length, expenditures.length);
+
+                for (let i = 0; i < maxRows; i++) {
+                    const income = incomes[i] || null;
+                    const expenditure = expenditures[i] || null;
+
+                    const incomePayeeDetails = income ? `${income.payeePayer || ''}${income.payeePayer && income.details ? ' - ' : ''}${income.details || ''}` : '';
+                    const incomeCurrencyAmount = income ? `${income.currency || ''}${income.currency && income.amount ? ': ' : ''}${income.amount ? parseFloat(income.amount).toFixed(2) : ''}` : '';
+                    const incomeGhsEquivalent = income && income.ghsEquivalent ? parseFloat(income.ghsEquivalent).toFixed(2) : '';
+                    const expenditurePayeeDetails = expenditure ? `${expenditure.payeePayer || ''}${expenditure.payeePayer && expenditure.details ? ' - ' : ''}${expenditure.details || ''}` : '';
+                    const expenditureCurrencyAmount = expenditure ? `${expenditure.currency || ''}${expenditure.currency && expenditure.amount ? ': ' : ''}${expenditure.amount ? parseFloat(expenditure.amount).toFixed(2) : ''}` : '';
+                    const expenditureGhsEquivalent = expenditure && expenditure.ghsEquivalent ? parseFloat(expenditure.ghsEquivalent).toFixed(2) : '';
+
+                    html += `
+                        <tr>
+                            <td>${i === 0 ? date : ''}</td>
+                            <td>${incomePayeeDetails}</td>
+                            <td>${incomeCurrencyAmount}</td>
+                            <td>${incomeGhsEquivalent}</td>
+                            <td>${expenditurePayeeDetails}</td>
+                            <td>${expenditureCurrencyAmount}</td>
+                            <td>${expenditureGhsEquivalent}</td>
+                        </tr>`;
+                }
             });
         } else {
             html += `<tr><td colspan="7" class="text-center">No transactions available.</td></tr>`;

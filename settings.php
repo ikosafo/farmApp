@@ -16,14 +16,14 @@
                                     <i class="fas fa-money-bill-wave me-2"></i>Produce
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <!-- <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="prodcategories-tab" data-bs-toggle="tab" data-bs-target="#prodcategories" type="button" role="tab" aria-controls="prodcategories" aria-selected="false">
                                     <i class="fas fa-layer-group me-2"></i>Product Categories
                                 </button>
-                            </li>
+                            </li> -->
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="false">
-                                    <i class="fas fa-tags me-2"></i>General Categories
+                                    <i class="fas fa-tags me-2"></i>Categories
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -226,7 +226,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="viewProduceModalLabel">View Product</h5>
+                    <h5 class="modal-title font-weight-bolder" id="viewProduceModalLabel">View Produce</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewProduceFormDiv"></div>
@@ -265,7 +265,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-radius-xl">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title font-weight-bolder" id="editProduceModalLabel">Edit Product</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editProduceModalLabel">Edit Produce</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="editProduceFormDiv"></div>
@@ -557,7 +557,7 @@
             var url = "ajaxscripts/forms/viewProduce.php";
             var successCallback = function(response) {
                 $('#viewProduceFormDiv').html(response);
-                $('#viewProduceModal').modal('show').find('.modal-title').text('View Product');
+                $('#viewProduceModal').modal('show').find('.modal-title').text('View Produce');
             };
             saveForm(formData, url, successCallback);
         });
@@ -599,7 +599,7 @@
             var url = "ajaxscripts/forms/editProduce.php";
             var successCallback = function(response) {
                 $('#editProduceFormDiv').html(response);
-                $('#editProduceModal').modal('show').find('.modal-title').text('Edit Product');
+                $('#editProduceModal').modal('show').find('.modal-title').text('Edit Produce');
             };
             saveForm(formData, url, successCallback);
         });

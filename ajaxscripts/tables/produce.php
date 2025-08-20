@@ -3,9 +3,9 @@
         <thead>
             <tr>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Produce Name</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Category</th>
+                <!-- <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Category</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Price</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Quantity</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Quantity</th> -->
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Actions</th>
             </tr>
         </thead>
@@ -39,9 +39,9 @@
         },
         columns: [
             { data: 'produceName', className: 'text-sm' },
-            { data: 'produceCategory', className: 'text-sm' },
+           /*  { data: 'produceCategory', className: 'text-sm' },
             { data: 'producePrice', className: 'text-sm' },
-            { data: 'produceQuantity', className: 'text-sm' },
+            { data: 'produceQuantity', className: 'text-sm' }, */
             { data: 'produceActions', className: 'text-sm' },
            
         ],

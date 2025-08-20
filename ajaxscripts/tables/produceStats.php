@@ -145,7 +145,7 @@ while ($row = $statsResult->fetch_assoc()) {
 $stmt->close();
 
 // Fetch all categories for consistency
-$categoriesQuery = "SELECT catId, categoryName FROM categories";
+$categoriesQuery = "SELECT catId, categoryName FROM categories WHERE categoryStatus = 1";
 $categoriesResult = $mysqli->query($categoriesQuery);
 
 if ($categoriesResult) {

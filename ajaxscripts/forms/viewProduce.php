@@ -11,10 +11,14 @@ $resProd = $getProd->fetch_assoc();
 <form autocomplete="off" id="farmProduceForm">
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="productName" class="form-label">Product Name <span class="text-danger">*</span></label>
+            <label for="productName" class="form-label">Product Name</label>
             <input id="productName" class="form-control border-radius-md" type="text" value="<?php echo htmlspecialchars($resProd['prodName'] ?? ''); ?>" readonly>
         </div>
-        <div class="col-12 col-md-6">
+         <div class="col-12 col-md-6">
+            <label for="producePrice" class="form-label">Price</label>
+            <input id="producePrice" class="form-control border-radius-md" type="number" min="0" step="0.01" value="<?php echo htmlspecialchars($resProd['prodPrice'] ?? ''); ?>" readonly>
+        </div>
+        <!-- <div class="col-12 col-md-6">
             <label for="productCategory" class="form-label">Category <span class="text-danger">*</span></label>
             <select id="productCategory" class="form-control border-radius-md" name="productCategory" disabled>
                 <option value="" disabled>Select a category</option>
@@ -26,23 +30,16 @@ $resProd = $getProd->fetch_assoc();
                 }
                 ?>
             </select>
-        </div>
+        </div> -->
     </div>
 
     <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="producePrice" class="form-label">Price <span class="text-danger">*</span></label>
-            <input id="producePrice" class="form-control border-radius-md" type="number" min="0" step="0.01" value="<?php echo htmlspecialchars($resProd['prodPrice'] ?? ''); ?>" readonly>
-        </div>
-        <div class="col-12 col-md-6">
-            <label for="expiryDate" class="form-label">Expiry Date <span class="text-danger">*</span></label>
+            <label for="expiryDate" class="form-label">Expiry Date</label>
             <input id="expiryDate" class="form-control border-radius-md" type="text" value="<?php echo htmlspecialchars($resProd['expirationDate'] ?? ''); ?>" readonly>
         </div>
-    </div>
-
-    <div class="row g-4">
         <div class="col-12 col-md-6">
-            <label for="productQuantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+            <label for="productQuantity" class="form-label">Quantity</label>
             <div class="input-group">
                 <input id="productQuantity" class="form-control border-radius-md" type="number" step="1" min="1" value="<?php echo htmlspecialchars($resProd['prodQuantity'] ?? ''); ?>" readonly>
                 <select id="quantityUnit" class="form-control border-radius-md" name="quantityUnit" disabled>
@@ -58,6 +55,10 @@ $resProd = $getProd->fetch_assoc();
                 </select>
             </div>
         </div>
+    </div>
+
+    <div class="row g-4">
+        
         <div class="col-12 col-md-6">
             <label for="productDescription" class="form-label">Description</label>
             <textarea id="productDescription" class="form-control border-radius-md" rows="4" readonly><?php echo htmlspecialchars($resProd['prodDescription'] ?? ''); ?></textarea>

@@ -199,10 +199,11 @@ if (empty($_SESSION['csrf_token'])) {
 <body>
   <main class="login-container">
     <div class="login-card">
-      <div class="mb-4">
-        <h3>FarmApp</h3>
+       <center> <div class="mb-4">
+        <img src="assets/img/logo-ct.png"> 
+       <br/>
         <p>Sign in to manage your farm</p>
-      </div>
+      </div></center>
       <form id="loginForm">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
         <div class="mb-4">
